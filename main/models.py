@@ -32,5 +32,5 @@ class Player(models.Model):
     jersey = models.IntegerField()
     height = models.CharField(max_length=5)
     weight = models.IntegerField()
-    school = models.CharField(max_length=35)
-    country = models.CharField(max_length=20)
+    school = models.CharField(max_length=50, null=True)
+    country = models.CharField(max_length=50, null=True)
