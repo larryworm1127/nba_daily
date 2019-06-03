@@ -8,12 +8,9 @@ from nba_py import player
 def load_player_data(apps, schema_editor):
     Player = apps.get_model("main", "Player")
 
-    file = open('a.txt', 'w+')
-
     players_df = player.PlayerList().info()
     for player_id in players_df['PERSON_ID'].values:
         data = player.PlayerSummary(player_id=player_id).info()
-        file.write(str(data) + '\n')
         Team = apps.get_model("main", "Team").objects.filter(team_id=data['TEAM_ID'].values[0])
         if len(Team) > 0:
             Player(
@@ -33,8 +30,7 @@ def load_player_data(apps, schema_editor):
                 country=data['COUNTRY'].values[0]
             ).save()
 
-        time.sleep(1)
-    file.close()
+        time.sleep(1)  # pause for 1 sec to prevent too many requests
 
 
 class Migration(migrations.Migration):
