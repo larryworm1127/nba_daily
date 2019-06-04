@@ -34,3 +34,9 @@ class Player(models.Model):
     weight = models.IntegerField()
     school = models.CharField(max_length=50, null=True)
     country = models.CharField(max_length=50, null=True)
+
+
+# ===================================================
+# Game Data Models
+# ===================================================
+
