@@ -2,6 +2,8 @@ from django.shortcuts import render
 
 
 def index(request):
+    """Index page.
+    """
     context = {
         'title': "Home"
     }
@@ -9,6 +11,8 @@ def index(request):
 
 
 def players(request):
+    """Individual player stats page.
+    """
     context = {
         'title': "Player",
         'player_summary_info': []

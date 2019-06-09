@@ -12,6 +12,9 @@ class Team(models.Model):
     team_city = models.CharField(max_length=15)
     team_name = models.CharField(max_length=15)
 
+    def __str__(self) -> str:
+        return f"{self.team_city} {self.team_name}"
+
 
 # ===================================================
 # Player Data Models
@@ -34,6 +37,9 @@ class Player(models.Model):
     weight = models.IntegerField()
     school = models.CharField(max_length=50, null=True)
     country = models.CharField(max_length=50, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}"
 
 
 # ===================================================
