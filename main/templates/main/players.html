@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6">
+        <br>
+        <h4>{{ player_summary_info["DISPLAY_FIRST_LAST"] }} #{{ player_summary_info["JERSEY"] }}
+          {{ player_summary_info["POSITION"] }}</h4>
+        <h4>
+          {% if player_summary_info["TEAM_ABBREVIATION"] in team_img %}
+            {% if team_img[player_summary_info["TEAM_ABBREVIATION"]]["img"] %}
+              <img class="team-logo-sm" alt="player-logo" src="{% static team_img[player_summary_info["TEAM_ABBREVIATION"]]["img"] %}">
+            {% endif %}
+          {% endif %}
+          <a class="nounderline dark-grey" href="/teams/{{ player_summary_info["TEAM_ID"] }}">
+            {{ player_summary_info["TEAM_CITY"] }} {{ player_summary_info["TEAM_NAME"] }}</a>
+        </h4>
+        {% if player_headshot %}
+          <img class="player-headshot" src={{ player_headshot }}>
+        {% endif %}
+        <ul class="list-unstyled">
+          <li><b>Height:</b> {{ player_summary_info["HEIGHT"] }}</li>
+          <li><b>Weight:</b> {{ player_summary_info["WEIGHT"] }} lbs</li>
+          <li><b>Born:</b> {{ pretty_birth_date }}</li>
+          <li><b>Age:</b> {{ age }}</li>
+          <li><b>From:</b> {{ player_summary_info["SCHOOL"] }}</li>
+          <li><b>NBA Debut:</b> {{ player_summary_info["DRAFT_YEAR"] }}</li>
+          {% if player_summary_info["DRAFT_ROUND"] == "Undrafted" %}
+            <li><b>Draft:</b> {{ player_summary_info["DRAFT_ROUND"] }}</li>
+          {% else %}
+            <li><b>Draft:</b> Round {{ player_summary_info["DRAFT_ROUND"] }} Number
+              {{ player_summary_info["DRAFT_NUMBER"] }}</li>
+          {% endif %}
+          <li><b>Years in NBA:</b> {{ player_summary_info["SEASON_EXP"] }}</li>
+          <li><b>Active years:</b> {{ player_summary_info["FROM_YEAR"] }} - {{ player_summary_info["TO_YEAR"] }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
