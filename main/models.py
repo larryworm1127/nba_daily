@@ -11,6 +11,12 @@ class Team(models.Model):
     team_div = models.CharField(max_length=10)
     team_city = models.CharField(max_length=15)
     team_name = models.CharField(max_length=15)
+    wins = models.IntegerField(default=0)
+    losses = models.IntegerField(default=0)
+    conf_rank = models.IntegerField(default=0)
+    div_rank = models.IntegerField(default=0)
+    season_year = models.CharField(max_length=7, default='2018-19')
+    nba_debut = models.CharField(max_length=4, default=4)
 
     def __str__(self) -> str:
         return f"{self.team_city} {self.team_name}"
