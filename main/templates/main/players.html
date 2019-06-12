@@ -10,7 +10,7 @@
         <h4>{{ summary_info.NAME }} #{{ summary_info.JERSEY }} {{ summary_info.POSITION }}</h4>
         <h4>
           <img class="team-logo-sm" alt="team-logo" src="{% static team_logo %}">
-          <a class="nounderline dark-grey" href="/teams/{{ team_info.TEAM_ID }}">{{ team_info.TEAM_CITY }} {{ team_info.TEAM_NAME }}</a>
+          <a class="nounderline dark-grey" href="{% url 'main:teams' team_info.TEAM_ID %}">{{ team_info.TEAM_CITY }} {{ team_info.TEAM_NAME }}</a>
         </h4>
         <img class="player-headshot" alt="player-image" src={{ player_photo }}>
         <ul class="list-unstyled">
