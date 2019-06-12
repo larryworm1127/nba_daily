@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.shortcuts import render, redirect
 
-from .models import Player
+from .models import Player, Team
 from . import PLAYER_PHOTO_LINK
 
 
@@ -45,10 +45,38 @@ def players(request, player_id):
         return redirect(index)
 
     context = {
-        'title': "Player",
+        'title': player_summary_info["NAME"],
         'summary_info': player_summary_info,
         'team_info': team_info,
         'player_photo': PLAYER_PHOTO_LINK.format(player_id=player_id),
         'team_logo': f"images/{team_info['TEAM_ABB']}.png"
     }
     return render(request, 'main/players.html', context)
+
+
+def teams(request, team_id):
+    """Individual team stats page.
+    """
+    try:
+        team = Team.objects.filter(team_id=team_id)[0]
+        team_summary_info = {
+            "NAME": f"{team.team_city} {team.team_name}",
+            "TEAM_ABB": team.team_abb,
+            "TEAM_CONF": team.team_conf,
+            "TEAM_DIV": team.team_div,
+            "CONF_RANK": team.conf_rank,
+            "DIV_RANK": team.div_rank,
+            "NBA_DEBUT": team.nba_debut,
+            "WINS": team.wins,
+            "LOSSES": team.losses,
+            "SEASON_YEAR": team.season_year
+        }
+    except (IndexError, Team.DoesNotExist):
+        return redirect(index)
+
+    context = {
+        'title': team_summary_info["NAME"],
+        'summary_info': team_summary_info,
+        'team_logo': f"images/{team_summary_info['TEAM_ABB']}.png"
+    }
+    return render(request, 'main/teams.html', context)
