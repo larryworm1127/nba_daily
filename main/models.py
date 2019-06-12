@@ -44,6 +44,7 @@ class Player(models.Model):
     school = models.CharField(max_length=50, null=True)
     country = models.CharField(max_length=50, null=True)
     season_exp = models.IntegerField(default=0)
+    rank = models.IntegerField(default=0)
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
