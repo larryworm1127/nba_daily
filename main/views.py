@@ -46,12 +46,33 @@ def players(request, player_id):
 
     context = {
         'title': player_summary_info["NAME"],
-        'summary_info': player_summary_info,
-        'team_info': team_info,
+        # 'summary_info': player_summary_info,
+        # 'team_info': team_info,
+        'info': player,
         'player_photo': PLAYER_PHOTO_LINK.format(player_id=player_id),
         'team_logo': f"images/{team_info['TEAM_ABB']}.png"
     }
     return render(request, 'main/players.html', context)
+
+
+def player_list(request):
+    """Player list page.
+    """
+    player_obj = Player.objects.all()
+    ranked_players = []
+    unranked_players = []
+    for player in player_obj:
+        if player.rank == 0:
+            unranked_players.append(player)
+        else:
+            ranked_players.append(player)
+
+    context = {
+        'title': "Player List",
+        'ranked_players': ranked_players,
+        'unranked_players': unranked_players
+    }
+    return render(request, 'main/player_list.html', context)
 
 
 def teams(request, team_id):
