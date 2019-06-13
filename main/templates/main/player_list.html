@@ -9,29 +9,35 @@
           <th class="bg-primary text-lg-center">RANK</th>
           <th class="text-lg-center">PLAYER</th>
           <th class="bg-primary text-lg-center">TEAM</th>
-          <th class="bg-primary text-lg-center">GP</th>
-          <th class="bg-primary text-lg-center">MIN</th>
-          <th class="bg-primary">PTS</th>
-          <th class="bg-primary">REB</th>
-          <th class="bg-primary">AST</th>
-          <th class="bg-primary boxscore-column-width">FG</th>
-          <th class="bg-primary">FG%</th>
-          <th class="bg-primary boxscore-column-width">3P</th>
-          <th class="bg-primary">3P%</th>
-          <th class="bg-primary boxscore-column-width">FT</th>
-          <th class="bg-primary">FT%</th>
-          <th class="bg-primary">OREB</th>
-          <th class="bg-primary">DREB</th>
-          <th class="bg-primary">STL</th>
-          <th class="bg-primary">BLK</th>
-          <th class="bg-primary">TOV</th>
-          <th class="bg-danger text-lg-center">EFF</th>
         </tr>
       </thead>
       <tbody>
         {% for player in ranked_players %}
           <tr>
             <td class="text-lg-center">{{ player.rank }}</td>
+            <th>
+              <a class="nounderline"
+                 href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
+            </th>
+            <th class="text-lg-center">
+              <a class="nounderline dark-grey"
+                 href="{% url 'main:teams' player.team.team_id %}">{{ player.team.team_abb }} </a>
+            </th>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <table class="player-vs-player-datatable table table-sm">
+      <thead class="thead-inverse">
+        <tr class="bg-primary text-white">
+          <th class="text-lg-center">PLAYER</th>
+          <th class="bg-primary text-lg-center">TEAM</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in unranked_players %}
+          <tr>
             <th>
               <a class="nounderline"
                  href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
