@@ -68,7 +68,7 @@ def player_list(request):
 
     context = {
         'title': "Player List",
-        'ranked_players': ranked_players,
+        'ranked_players': sorted(ranked_players, key=lambda p: p.rank),
         'unranked_players': unranked_players
     }
     return render(request, 'main/player_list.html', context)
