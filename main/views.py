@@ -100,3 +100,15 @@ def teams(request, team_id):
         'team_logo': f"images/{team_summary_info['TEAM_ABB']}.png"
     }
     return render(request, 'main/teams.html', context)
+
+
+def team_list(request):
+    """Team list page.
+    """
+    team_obj = Team.objects.all()
+
+    context = {
+        'title': "Team List",
+        'teams': team_obj
+    }
+    return render(request, 'main/team_list.html', context)
