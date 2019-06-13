@@ -46,9 +46,8 @@ def players(request, player_id):
 
     context = {
         'title': player_summary_info["NAME"],
-        # 'summary_info': player_summary_info,
-        # 'team_info': team_info,
-        'info': player,
+        'summary_info': player_summary_info,
+        'team_info': team_info,
         'player_photo': PLAYER_PHOTO_LINK.format(player_id=player_id),
         'team_logo': f"images/{team_info['TEAM_ABB']}.png"
     }
