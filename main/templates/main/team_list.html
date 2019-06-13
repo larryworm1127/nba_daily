@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <div class="container">
+    <br>
+
+    <table class="team-vs-team-datatable table table-sm">
+      <thead class="thead-inverse">
+        <tr class="bg-primary text-white">
+          <th class="bg-primary text-lg-center">TEAM</th>
+          <th class="bg-primary text-lg-center boxscore-column-width">W-L</th>
+          <th class="bg-primary text-lg-center">WIN%</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for team in teams %}
+          <tr>
+            <th class="text-lg-center">
+              <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }} </a>
+            </th>
+            <td class="text-lg-center">{{ team.wins }}-{{ team.losses }}</td>
+            <td class="text-lg-center">{% widthratio team.wins team.losses 1 %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
