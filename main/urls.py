@@ -1,3 +1,8 @@
+"""Main App URL Module
+
+@date: 06/02/2019
+@author: Larry Shi
+"""
 from django.urls import path
 
 from . import views

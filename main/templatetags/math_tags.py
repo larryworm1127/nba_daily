@@ -10,7 +10,6 @@ Current math tags available:
 @date: 06/13/2019
 @author: Larry Shi
 """
-
 from django import template
 from typing import Optional, Any
 
