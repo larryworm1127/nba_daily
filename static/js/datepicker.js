@@ -1,6 +1,6 @@
 $(function() {
     $("#datepicker").datepicker({
-        dateFormat: 'M dd, yy',
+        dateFormat: 'm-dd-yy',
         constrainInput: false,
         onSelect : function(){
             $('#dateform').submit();   

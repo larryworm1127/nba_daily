@@ -33,9 +33,9 @@ def score(request, date):
 def scores_post_request(request):
     """The score page after using the datepicker plugin.
     """
-    date = request.GET["date_pick"]
-    date_obj = parser.parse(date)
+    date = request.GET.get("dateform")
     print(date)
+    date_obj = parser.parse(date)
     return render_score_page(request, 'main/score.html', date_obj, date)
 
 

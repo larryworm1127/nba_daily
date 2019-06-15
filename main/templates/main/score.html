@@ -12,7 +12,7 @@
           {% csrf_token %}
           <a href="{% url 'main:score' yesterday %}" class="btn btn-primary btn-mds"><i class="fa fa-caret-left" aria-hidden="true"></i></a> &nbsp;
           <label for="datepicker"></label>
-          <input type="text" name="date_pick" id="datepicker" class="form-control form-control-lg" placeholder="&#xf073; &nbsp;{{ today_display }}">
+          <input type="text" name="date" id="datepicker" class="form-control form-control-lg" placeholder="&#xf073; &nbsp;{{ today_display }}">
           &nbsp; <a href="{% url 'main:score' tomorrow %}" class="btn btn-primary btn-md"><i class="fa fa-caret-right" aria-hidden="true"></i></a>
         </form>
 
