@@ -1,19 +1,94 @@
-from datetime import datetime
+"""Main App Views Module
+
+@date: 06/02/2019
+@author: Larry Shi
+"""
+
+from datetime import datetime, timedelta
+from dateutil import parser
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
+from nba_py import Scoreboard
 
 from .models import Player, Team
 from . import PLAYER_PHOTO_LINK
 
 
+# ==============================================================================
+# Scores views
+# ==============================================================================
 def index(request):
-    """Index page.
+    """Index page (with daily game scores).
     """
+    return render_score_page(request, 'main/index.html', datetime.today(), 'Home')
+
+
+def score(request, date):
+    """Scores page.
+    """
+    date_obj = parser.parse(date)
+    return render_score_page(request, 'main/score.html', date_obj, date)
+
+
+def scores_post_request(request):
+    """The score page after using the datepicker plugin.
+    """
+    date = request.GET["date_pick"]
+    date_obj = parser.parse(date)
+    print(date)
+    return render_score_page(request, 'main/score.html', date_obj, date)
+
+
+@csrf_protect
+def render_score_page(request, page: str, date: datetime.date, title: str):
+    """Render generic score page"""
+    # Get data and store in dictionary
+    daily_games = Scoreboard(day=date.day, month=date.month, year=date.year)
+    games = {game_num: {} for game_num in daily_games.game_header()['GAME_SEQUENCE']}
+    for _, data in daily_games.line_score().iterrows():
+        if data['TEAM_ID'] in daily_games.game_header()['HOME_TEAM_ID'].values:
+            prefix = 'HOME'
+        else:
+            prefix = 'AWAY'
+
+        team_data = games[data['GAME_SEQUENCE']]
+        team_data[f'{prefix}_TEAM'] = data['TEAM_ABBREVIATION']
+        team_data[f'{prefix}_TEAM_WINS_LOSSES'] = data['TEAM_WINS_LOSSES']
+        team_data[f'{prefix}_TEAM_LOGO'] = f"images/{data['TEAM_ABBREVIATION']}.png"
+        team_data[f'{prefix}_TEAM_PTS'] = data['PTS']
+
+    # Determine winner
+    for game_num, game in games.items():
+        if game['HOME_TEAM_PTS'] > game['AWAY_TEAM_PTS']:
+            game['WINNER'] = game['HOME_TEAM']
+        else:
+            game['WINNER'] = game['AWAY_TEAM']
+
+        # Determine game status and broadcaster
+        game['STATUS'] = daily_games.game_header()['GAME_STATUS_TEXT'][game_num - 1]
+
+        # Determine game broadcaster
+        broadcaster = daily_games.game_header()['NATL_TV_BROADCASTER_ABBREVIATION'][game_num - 1]
+        if not broadcaster:
+            game['BROADCASTER'] = ""
+        else:
+            game['BROADCASTER'] = broadcaster
+
     context = {
-        'title': "Home"
+        'title': title,
+        'today_display': date.strftime("%b %d, %Y"),
+        'tomorrow': (date + timedelta(1)).strftime("%m-%d-%Y"),
+        'tomorrow_display': (date + timedelta(1)).strftime("%b %d, %Y"),
+        'yesterday': (date - timedelta(1)).strftime("%m-%d-%Y"),
+        'yesterday_display': (date - timedelta(1)).strftime("%b %d, %Y"),
+        'games': games
     }
-    return render(request, 'main/index.html', context)
+    return render(request, page, context)
 
 
+# ==============================================================================
+# Players views
+# ==============================================================================
 def players(request, player_id):
     """Individual player stats page.
     """
@@ -74,6 +149,9 @@ def player_list(request):
     return render(request, 'main/player_list.html', context)
 
 
+# ==============================================================================
+# Teams views
+# ==============================================================================
 def teams(request, team_id):
     """Individual team stats page.
     """
