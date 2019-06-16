@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% load math_tags %}
+
 {% block body %}
   <div class="container">
     <br>
@@ -19,7 +21,7 @@
               <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }} </a>
             </th>
             <td class="text-lg-center">{{ team.wins }}-{{ team.losses }}</td>
-            <td class="text-lg-center">{% widthratio team.wins team.losses 1 %}</td>
+            <td class="text-lg-center">{{ team.wins|divide:82 }}</td>
           </tr>
         {% endfor %}
       </tbody>

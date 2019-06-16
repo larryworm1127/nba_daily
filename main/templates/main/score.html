@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+
+      <div class="col-lg-5">
+        <br>
+        <form id="dateform" action="{% url 'main:score_post' %}" method="post" class="form-inline text-lg-center">
+          {% csrf_token %}
+          <a href="{% url 'main:score' yesterday %}" class="btn btn-primary btn-mds"><i class="fa fa-caret-left" aria-hidden="true"></i></a> &nbsp;
+          <label for="datepicker"></label>
+          <input type="text" name="date" id="datepicker" class="form-control form-control-lg" placeholder="&#xf073; &nbsp;{{ today_display }}">
+          &nbsp; <a href="{% url 'main:score' tomorrow %}" class="btn btn-primary btn-md"><i class="fa fa-caret-right" aria-hidden="true"></i></a>
+        </form>
+
+        <div class="list-group">
+          {% for game in games.values %}
+            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="#">
+              <div class="row">
+                {% if game.WINNER == game.AWAY_TEAM %}
+                  <div class="col-xs-4">
+                    <b class="winning-team">
+                      <img class="team-logo" alt="away-logo" src="{% static game.AWAY_TEAM_LOGO %}"> {{ game.AWAY_TEAM }} {{ game.AWAY_TEAM_PTS }}
+                    </b>
+                    <br>
+                    {{ game.AWAY_TEAM_WINS_LOSSES }}
+                  </div>
+
+                  <div class="col-xs-4">
+                    <div class="final-text">
+                      {{ game.STATUS }}
+                    </div>
+                    <div class="broadcaster">
+                      {{ game.BROADCASTER }}
+                    </div>
+                  </div>
+
+                  <div class="col-xs-4">
+                    <img class="team-logo" alt="home-logo" src="{% static game.HOME_TEAM_LOGO %}"> {{ game.HOME_TEAM }} {{ game.HOME_TEAM_PTS }}
+                    <br>
+                    {{ game.HOME_TEAM_WINS_LOSSES }}
+                  </div>
+
+                {% elif game.WINNER == game.HOME_TEAM %}
+                  <div class="col-xs-4">
+                    <img class="team-logo" alt="away-logo" src="{% static game.AWAY_TEAM_LOGO %}"> {{ game.AWAY_TEAM }} {{ game.AWAY_TEAM_PTS }}
+                    <br>
+                    {{ game.AWAY_TEAM_WINS_LOSSES }}
+                  </div>
+
+                  <div class="col-xs-4">
+                    <div class="final-text">
+                      {{ game.GAME_STATUS_TEXT }}
+                    </div>
+                    <div class="broadcaster">
+                      {{ game.BROADCASTER }}
+                    </div>
+                  </div>
+
+                  <div class="col-xs-4">
+                    <b class="winning-team">
+                      <img class="team-logo" alt="home-logo" src="{% static game.HOME_TEAM_LOGO %}"> {{ game.HOME_TEAM }} {{ game.HOME_TEAM_PTS }}</b>
+                    <br>
+                    {{ game.HOME_TEAM_WINS_LOSSES }}
+                  </div>
+                {% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

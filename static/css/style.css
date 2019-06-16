@@ -59,6 +59,10 @@ body {
     margin-bottom: 25px;
 }
 
+#datepicker{
+    font-family: Helvetica, FontAwesome, serif
+}
+
 .date-title {
     margin-bottom: 20px;
 }

@@ -1,3 +1,9 @@
+"""Main App Models Module
+
+@date: 06/02/2019
+@author: Larry Shi
+"""
+
 from django.db import models
 
 
