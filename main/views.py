@@ -6,11 +6,13 @@
 
 from datetime import datetime, timedelta
 from dateutil import parser
+from django.forms import DateField
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from nba_py import Scoreboard
 
 from .models import Player, Team
+from .forms import DateForm
 from . import PLAYER_PHOTO_LINK
 
 
@@ -26,15 +28,6 @@ def index(request):
 def score(request, date):
     """Scores page.
     """
-    date_obj = parser.parse(date)
-    return render_score_page(request, 'main/score.html', date_obj, date)
-
-
-def scores_post_request(request):
-    """The score page after using the datepicker plugin.
-    """
-    date = request.GET.get("dateform")
-    print(date)
     date_obj = parser.parse(date)
     return render_score_page(request, 'main/score.html', date_obj, date)
 
@@ -73,6 +66,13 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
             game['BROADCASTER'] = ""
         else:
             game['BROADCASTER'] = broadcaster
+
+    # Validate date input
+    if request.method == 'POST':
+        form = DateForm(request.POST)
+        date_input = parser.parse(form.data.get('date'))
+        if form.is_valid():
+            return redirect('main:score', date=date_input)
 
     context = {
         'title': title,
