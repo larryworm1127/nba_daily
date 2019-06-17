@@ -8,7 +8,7 @@
 
       <div class="col-lg-5">
         <br>
-        <form id="dateform" action="{% url 'main:score_post' %}" method="post" class="form-inline text-lg-center">
+        <form id="dateform" method="post" class="form-inline text-lg-center">
           {% csrf_token %}
           <a href="{% url 'main:score' yesterday %}" class="btn btn-primary btn-mds"><i class="fa fa-caret-left" aria-hidden="true"></i></a> &nbsp;
           <label for="datepicker"></label>
