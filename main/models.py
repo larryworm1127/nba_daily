@@ -59,12 +59,7 @@ class Player(models.Model):
 # ===================================================
 # Game Data Models
 # ===================================================
-class Game(models.Model):
-    game_id = models.CharField(max_length=10)
-
-
 class GameLog(models.Model):
-    game = models.ManyToManyField(Game)
     game_date = models.CharField(max_length=30)
     matchup = models.CharField(max_length=11)
     minutes = models.IntegerField()
@@ -107,3 +102,10 @@ class TeamGameLog(GameLog):
 
     def __str__(self) -> str:
         return f"{self.team.team_city} {self.team.team_name} {self.matchup}"
+
+
+class Game(models.Model):
+    game_id = models.CharField(max_length=10)
+    dnp_players = models.ForeignKey(Player, on_delete=models.CASCADE)
+    player_stats = models.ForeignKey(PlayerGameLog, on_delete=models.CASCADE)
+    team_stats = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE)
