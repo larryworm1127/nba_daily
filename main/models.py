@@ -59,4 +59,51 @@ class Player(models.Model):
 # ===================================================
 # Game Data Models
 # ===================================================
+class Game(models.Model):
+    game_id = models.CharField(max_length=10)
 
+
+class GameLog(models.Model):
+    game = models.ManyToManyField(Game)
+    game_date = models.CharField(max_length=30)
+    matchup = models.CharField(max_length=11)
+    minutes = models.IntegerField()
+    points = models.IntegerField()
+    offense_reb = models.IntegerField()
+    defense_reb = models.IntegerField()
+    rebounds = models.IntegerField()
+    assists = models.IntegerField()
+    steals = models.IntegerField()
+    blocks = models.IntegerField()
+    turnovers = models.IntegerField()
+    fouls = models.IntegerField()
+    plus_minus = models.IntegerField()
+    fg_made = models.IntegerField()
+    fg_attempt = models.IntegerField()
+    fg_percent = models.FloatField()
+    fg3_made = models.IntegerField()
+    fg3_attempt = models.IntegerField()
+    fg3_percent = models.FloatField()
+    ft_made = models.IntegerField()
+    ft_attempt = models.IntegerField()
+    ft_percent = models.FloatField()
+    result = models.CharField(max_length=1)
+
+    class Meta:
+        abstract = True
+
+
+class PlayerGameLog(GameLog):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"{self.player.first_name} {self.player.last_name} {self.matchup}"
+
+
+class TeamGameLog(GameLog):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    curr_wins = models.IntegerField()
+    curr_losses = models.IntegerField()
+
+    def __str__(self) -> str:
+        return f"{self.team.team_city} {self.team.team_name} {self.matchup}"
