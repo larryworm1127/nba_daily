@@ -6,7 +6,6 @@
 
 from datetime import datetime, timedelta
 from dateutil import parser
-from django.forms import DateField
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from nba_py import Scoreboard
@@ -25,7 +24,7 @@ def index(request):
     return render_score_page(request, 'main/index.html', datetime.today(), 'Home')
 
 
-def score(request, date):
+def score(request, date: str):
     """Scores page.
     """
     date_obj = parser.parse(date)
@@ -89,7 +88,7 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
 # ==============================================================================
 # Players views
 # ==============================================================================
-def players(request, player_id):
+def players(request, player_id: str):
     """Individual player stats page.
     """
     try:
@@ -152,7 +151,7 @@ def player_list(request):
 # ==============================================================================
 # Teams views
 # ==============================================================================
-def teams(request, team_id):
+def teams(request, team_id: str):
     """Individual team stats page.
     """
     try:
