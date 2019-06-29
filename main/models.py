@@ -3,6 +3,7 @@
 @date: 06/02/2019
 @author: Larry Shi
 """
+from datetime import datetime
 
 from django.db import models
 
@@ -25,6 +26,13 @@ class Team(models.Model):
     nba_debut = models.CharField(max_length=4, default=4)
 
     def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.get_full_name()
+
+    def get_full_name(self) -> str:
+        """Return full name of the team: <team_city> <team_name>.
+        """
         return f"{self.team_city} {self.team_name}"
 
 
@@ -53,18 +61,25 @@ class Player(models.Model):
     rank = models.IntegerField(default=0)
 
     def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.get_full_name()
+
+    def get_full_name(self) -> str:
+        """Return full name of the player: <first_name> <last_name>.
+        """
         return f"{self.first_name} {self.last_name}"
+
+    def get_age(self) -> int:
+        """Return the calculated age of the player.
+        """
+        return datetime.today().year - datetime.strptime(self.birth_date, "%Y-%m-%d").year
 
 
 # ===================================================
 # Game Data Models
 # ===================================================
-class Game(models.Model):
-    game_id = models.CharField(max_length=10)
-
-
 class GameLog(models.Model):
-    game = models.ManyToManyField(Game)
     game_date = models.CharField(max_length=30)
     matchup = models.CharField(max_length=11)
     minutes = models.IntegerField()
@@ -107,3 +122,10 @@ class TeamGameLog(GameLog):
 
     def __str__(self) -> str:
         return f"{self.team.team_city} {self.team.team_name} {self.matchup}"
+
+
+class Game(models.Model):
+    game_id = models.CharField(max_length=10)
+    dnp_players = models.ForeignKey(Player, on_delete=models.CASCADE)
+    player_stats = models.ForeignKey(PlayerGameLog, on_delete=models.CASCADE)
+    team_stats = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE)

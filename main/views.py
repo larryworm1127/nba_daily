@@ -94,19 +94,19 @@ def players(request, player_id: str):
     try:
         player = Player.objects.filter(player_id=player_id)[0]
         player_summary_info = {
-            "NAME": f"{player.first_name} {player.last_name}",
+            "NAME": player.get_full_name(),
             "JERSEY": player.jersey,
             "POSITION": player.position,
             "HEIGHT": player.height,
             "WEIGHT": player.weight,
-            "SCHOOL": player.school if player.school is not None else "N/A",
+            "SCHOOL": player.school,
             "COUNTRY": player.country,
             "DRAFT_YEAR": player.draft_year,
             "DRAFT_ROUND": player.draft_round,
             "DRAFT_NUMBER": player.draft_number,
             "SEASON_EXP": player.season_exp,
             "BIRTH_DATE": player.birth_date,
-            "AGE": datetime.today().year - datetime.strptime(player.birth_date, "%Y-%m-%d").year
+            "AGE": player.get_age()
         }
 
         team_info = {
@@ -119,11 +119,11 @@ def players(request, player_id: str):
         return redirect(index)
 
     context = {
-        'title': player_summary_info["NAME"],
+        'title': player.get_full_name(),
         'summary_info': player_summary_info,
         'team_info': team_info,
         'player_photo': PLAYER_PHOTO_LINK.format(player_id=player_id),
-        'team_logo': f"images/{team_info['TEAM_ABB']}.png"
+        'team_logo': f"images/{player.team.team_abb}.png"
     }
     return render(request, 'main/players.html', context)
 
@@ -157,7 +157,7 @@ def teams(request, team_id: str):
     try:
         team = Team.objects.filter(team_id=team_id)[0]
         team_summary_info = {
-            "NAME": f"{team.team_city} {team.team_name}",
+            "NAME": team.get_full_name(),
             "TEAM_ABB": team.team_abb,
             "TEAM_CONF": team.team_conf,
             "TEAM_DIV": team.team_div,
@@ -172,9 +172,9 @@ def teams(request, team_id: str):
         return redirect(index)
 
     context = {
-        'title': team_summary_info["NAME"],
+        'title': team.get_full_name(),
         'summary_info': team_summary_info,
-        'team_logo': f"images/{team_summary_info['TEAM_ABB']}.png"
+        'team_logo': f"images/{team.team_abb}.png"
     }
     return render(request, 'main/teams.html', context)
 
