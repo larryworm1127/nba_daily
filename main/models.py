@@ -3,6 +3,7 @@
 @date: 06/02/2019
 @author: Larry Shi
 """
+from datetime import datetime
 
 from django.db import models
 
@@ -25,6 +26,13 @@ class Team(models.Model):
     nba_debut = models.CharField(max_length=4, default=4)
 
     def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.get_full_name()
+
+    def get_full_name(self) -> str:
+        """Return full name of the team: <team_city> <team_name>.
+        """
         return f"{self.team_city} {self.team_name}"
 
 
@@ -53,7 +61,19 @@ class Player(models.Model):
     rank = models.IntegerField(default=0)
 
     def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.get_full_name()
+
+    def get_full_name(self) -> str:
+        """Return full name of the player: <first_name> <last_name>.
+        """
         return f"{self.first_name} {self.last_name}"
+
+    def get_age(self) -> int:
+        """Return the calculated age of the player.
+        """
+        return datetime.today().year - datetime.strptime(self.birth_date, "%Y-%m-%d").year
 
 
 # ===================================================
