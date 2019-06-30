@@ -147,10 +147,8 @@ def teams(request, team_id: str):
 def team_list(request):
     """Team list page.
     """
-    team_obj = Team.objects.all()
-
     context = {
         'title': "Team List",
-        'teams': team_obj
+        'teams': Team.objects.all()
     }
     return render(request, 'main/team_list.html', context)
