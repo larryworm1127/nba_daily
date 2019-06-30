@@ -7,26 +7,26 @@
     <div class="row">
       <div class="col-lg-6">
         <br>
-        <h4>{{ summary_info.NAME }} #{{ summary_info.JERSEY }} {{ summary_info.POSITION }}</h4>
+        <h4>{{ player.get_full_name }} #{{ player.jersey }} {{ player.position }}</h4>
         <h4>
           <img class="team-logo-sm" alt="team-logo" src="{% static team_logo %}">
-          <a class="nounderline dark-grey" href="{% url 'main:teams' team_info.TEAM_ID %}">{{ team_info.TEAM_CITY }} {{ team_info.TEAM_NAME }}</a>
+          <a class="nounderline dark-grey" href="{% url 'main:teams' player.team.team_id %}">{{ player.team.get_full_name }}</a>
         </h4>
         <img class="player-headshot" alt="player-image" src={{ player_photo }}>
         <ul class="list-unstyled">
-          <li><b>Height:</b> {{ summary_info.HEIGHT }}</li>
-          <li><b>Weight:</b> {{ summary_info.WEIGHT }} lbs</li>
-          <li><b>Born:</b> {{ summary_info.BIRTH_DATE }}</li>
-          <li><b>Age:</b> {{ summary_info.AGE }}</li>
-          <li><b>School:</b> {{ summary_info.SCHOOL }}</li>
-          <li><b>Country:</b> {{ summary_info.COUNTRY }}</li>
-          <li><b>NBA Debut:</b> {{ summary_info.DRAFT_YEAR }}</li>
-          {% if summary_info.DRAFT_ROUND == "Undrafted" %}
-            <li><b>Draft:</b> {{ summary_info.DRAFT_ROUND }}</li>
+          <li><b>Height:</b> {{ player.height }}</li>
+          <li><b>Weight:</b> {{ player.weight }} lbs</li>
+          <li><b>Born:</b> {{ player.birth_date }}</li>
+          <li><b>Age:</b> {{ player.get_age }}</li>
+          <li><b>School:</b> {{ player.school }}</li>
+          <li><b>Country:</b> {{ player.country }}</li>
+          <li><b>NBA Debut:</b> {{ player.draft_year }}</li>
+          {% if player.draft_round == "Undrafted" %}
+            <li><b>Draft:</b> {{ player.draft_round }}</li>
           {% else %}
-            <li><b>Draft:</b> Round {{ summary_info.DRAFT_ROUND }} Number {{ summary_info.DRAFT_NUMBER }}</li>
+            <li><b>Draft:</b> Round {{ player.draft_round }} Number {{ player.draft_number }}</li>
           {% endif %}
-          <li><b>Years in NBA:</b> {{ summary_info.SEASON_EXP }}</li>
+          <li><b>Years in NBA:</b> {{ player.season_exp }}</li>
         </ul>
       </div>
     </div>
