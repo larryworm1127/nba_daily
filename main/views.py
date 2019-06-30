@@ -133,24 +133,12 @@ def teams(request, team_id: str):
     """
     try:
         team = Team.objects.filter(team_id=team_id)[0]
-        team_summary_info = {
-            "NAME": team.get_full_name(),
-            "TEAM_ABB": team.team_abb,
-            "TEAM_CONF": team.team_conf,
-            "TEAM_DIV": team.team_div,
-            "CONF_RANK": team.conf_rank,
-            "DIV_RANK": team.div_rank,
-            "NBA_DEBUT": team.nba_debut,
-            "WINS": team.wins,
-            "LOSSES": team.losses,
-            "SEASON_YEAR": team.season_year
-        }
     except (IndexError, Team.DoesNotExist):
         return redirect(index)
 
     context = {
         'title': team.get_full_name(),
-        'summary_info': team_summary_info,
+        'team': team,
         'team_logo': f"images/{team.team_abb}.png"
     }
     return render(request, 'main/teams.html', context)
