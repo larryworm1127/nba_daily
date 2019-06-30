@@ -92,7 +92,6 @@ class GameLog(models.Model):
     blocks = models.IntegerField()
     turnovers = models.IntegerField()
     fouls = models.IntegerField()
-    plus_minus = models.IntegerField()
     fg_made = models.IntegerField()
     fg_attempt = models.IntegerField()
     fg_percent = models.FloatField()
@@ -110,8 +109,11 @@ class GameLog(models.Model):
 
 class PlayerGameLog(GameLog):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    plus_minus = models.IntegerField()
 
     def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
         return f"{self.player.first_name} {self.player.last_name} {self.matchup}"
 
 
@@ -121,6 +123,8 @@ class TeamGameLog(GameLog):
     curr_losses = models.IntegerField()
 
     def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
         return f"{self.team.team_city} {self.team.team_name} {self.matchup}"
 
 
