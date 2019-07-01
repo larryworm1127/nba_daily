@@ -82,10 +82,22 @@ class Player(models.Model):
 
 # ===================================================
 # Game Data Models
+#
+# methods:
+#   - player.PlayerGameLog(player_id)
+#   - team.TeamGameLog(team_id)
 # ===================================================
+class Game(models.Model):
+    """Individual game model.
+    """
+    game_id = models.CharField(max_length=10)
+    # dnp_players = models.ForeignKey(Player, on_delete=models.CASCADE)
+
+
 class GameLog(models.Model):
     """Game log template model.
     """
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=1)
     game_date = models.CharField(max_length=30)
     matchup = models.CharField(max_length=11)
     minutes = models.IntegerField()
@@ -136,12 +148,3 @@ class TeamGameLog(GameLog):
         """Return human-readable representation of the object.
         """
         return f"{self.team.team_city} {self.team.team_name}, {self.matchup}"
-
-
-class Game(models.Model):
-    """Individual game model.
-    """
-    game_id = models.CharField(max_length=10)
-    dnp_players = models.ForeignKey(Player, on_delete=models.CASCADE)
-    player_stats = models.ForeignKey(PlayerGameLog, on_delete=models.CASCADE)
-    team_stats = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE)
