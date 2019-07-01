@@ -12,6 +12,8 @@ from django.db import models
 # Team Data Models
 # ===================================================
 class Team(models.Model):
+    """Individual team model.
+    """
     team_id = models.IntegerField()
     team_abb = models.CharField(max_length=3)
     team_conf = models.CharField(max_length=4)
@@ -43,6 +45,8 @@ class Team(models.Model):
 #   - player.PlayerSummary(player_id)
 # ===================================================
 class Player(models.Model):
+    """Individual player model.
+    """
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
@@ -80,6 +84,8 @@ class Player(models.Model):
 # Game Data Models
 # ===================================================
 class GameLog(models.Model):
+    """Game log template model.
+    """
     game_date = models.CharField(max_length=30)
     matchup = models.CharField(max_length=11)
     minutes = models.IntegerField()
@@ -108,6 +114,8 @@ class GameLog(models.Model):
 
 
 class PlayerGameLog(GameLog):
+    """Individual player game log model.
+    """
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     plus_minus = models.IntegerField()
 
@@ -118,6 +126,8 @@ class PlayerGameLog(GameLog):
 
 
 class TeamGameLog(GameLog):
+    """Individual team game log model.
+    """
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     curr_wins = models.IntegerField()
     curr_losses = models.IntegerField()
@@ -129,6 +139,8 @@ class TeamGameLog(GameLog):
 
 
 class Game(models.Model):
+    """Individual game model.
+    """
     game_id = models.CharField(max_length=10)
     dnp_players = models.ForeignKey(Player, on_delete=models.CASCADE)
     player_stats = models.ForeignKey(PlayerGameLog, on_delete=models.CASCADE)
