@@ -6,6 +6,7 @@ mathematical operations
 
 Current math tags available:
   - divide
+  - multiply
 
 @date: 06/13/2019
 @author: Larry Shi
