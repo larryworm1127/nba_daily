@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% load static %}
+{% load math_tags %}
 
 {% block body %}
   <div class="container">
@@ -10,7 +11,8 @@
         <h4>{{ player.get_full_name }} #{{ player.jersey }} {{ player.position }}</h4>
         <h4>
           <img class="team-logo-sm" alt="team-logo" src="{% static team_logo %}">
-          <a class="nounderline dark-grey" href="{% url 'main:teams' player.team.team_id %}">{{ player.team.get_full_name }}</a>
+          <a class="nounderline dark-grey"
+             href="{% url 'main:teams' player.team.team_id %}">{{ player.team.get_full_name }}</a>
         </h4>
         <img class="player-headshot" alt="player-image" src={{ player_photo }}>
         <ul class="list-unstyled">
@@ -30,5 +32,60 @@
         </ul>
       </div>
     </div>
+    <br>
+
+    <h4>Regular Season</h4>
+    <table class="player-games-datatable table table-sm">
+      <thead class="thead-inverse">
+        <tr class="bg-warning text-white">
+          <th class="text-lg-center">DATE</th>
+          <th class="bg-primary text-lg-center">MATCH</th>
+          <th class="bg-primary">W/L</th>
+          <th class="bg-primary">MIN</th>
+          <th class="bg-primary">PTS</th>
+          <th class="bg-primary">REB</th>
+          <th class="bg-primary">AST</th>
+          <th class="bg-primary boxscore-column-width">FG</th>
+          <th class="bg-primary">FG%</th>
+          <th class="bg-primary boxscore-column-width">3P</th>
+          <th class="bg-primary">3P%</th>
+          <th class="bg-primary boxscore-column-width">FT</th>
+          <th class="bg-primary">FT%</th>
+          <th class="bg-primary">OREB</th>
+          <th class="bg-primary">DREB</th>
+          <th class="bg-primary">STL</th>
+          <th class="bg-primary">BLK</th>
+          <th class="bg-primary">TOV</th>
+          <th class="bg-primary">PF</th>
+          <th class="bg-primary">+/-</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for game in player.playergamelog_set.all %}
+          <tr>
+            <th class="text-lg-center">{{ game.game_date }}</th>
+            <th class="text-lg-center"><a class="nounderline" href="#">{{ game.matchup }}</a></th>
+            <td>{{ game.result }}</td>
+            <td>{{ game.minutes }}</td>
+            <td>{{ game.points }}</td>
+            <td>{{ game.rebounds }}</td>
+            <td>{{ game.assists }}</td>
+            <td>{{ game.fg_made }}-{{ game.fg_attempt }}</td>
+            <td>{{ game.fg_percent|multiply:100 }}</td>
+            <td>{{ game.fg3_made }}-{{ game.fg3_attempt }}</td>
+            <td>{{ game.fg3_percent|multiply:100 }}</td>
+            <td>{{ game.ft_made }}-{{ game.ft_attempt }}</td>
+            <td>{{ game.ft_percent|multiply:100 }}</td>
+            <td>{{ game.offense_reb }}</td>
+            <td>{{ game.defense_reb }}</td>
+            <td>{{ game.steals }}</td>
+            <td>{{ game.blocks }}</td>
+            <td>{{ game.turnovers }}</td>
+            <td>{{ game.fouls }}</td>
+            <td>{{ game.plus_minus }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 {% endblock %}

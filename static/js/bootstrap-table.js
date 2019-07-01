@@ -247,9 +247,9 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-    $('.body-measurements-datatable').DataTable({
+    $('.player-list-table').DataTable({
         "drawCallback": function( settings ) {
-            $(".body-measurements-datatable").wrap("<div class='table-responsive'></div>");
+            $(".player-list-table").wrap("<div class='table-responsive'></div>");
         },
 
         paging: false,
@@ -261,21 +261,31 @@ $(document).ready(function() {
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]}
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]}
         ]
     });
 });
 
 $(document).ready(function() {
-    $('.spot-up-shooting-datatable').DataTable({
+    $('.team-list-table').DataTable({
         "drawCallback": function( settings ) {
-            $(".spot-up-shooting-datatable").wrap("<div class='table-responsive'></div>");
+            $(".player-list-table").wrap("<div class='table-responsive'></div>");
         },
 
         paging: false,
@@ -287,117 +297,24 @@ $(document).ready(function() {
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]}
-        ]
-    });
-});
-
-$(document).ready(function() {
-    $('.strength-and-agility-datatable').DataTable({
-        "drawCallback": function( settings ) {
-            $(".strength-and-agility-datatable").wrap("<div class='table-responsive'></div>");
-        },
-
-        paging: false,
-        "bFilter": false,
-        "bInfo" : false,
-        /* Disable initial sort */
-        "aaSorting": [],
-        "aoColumns": [
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]}
-        ]
-    });
-});
-
-$(document).ready(function() {
-    $('.player-vs-player-datatable').DataTable({
-        "drawCallback": function( settings ) {
-            $(".player-vs-player-datatable").wrap("<div class='table-responsive'></div>");
-        },
-
-        paging: false,
-        "bFilter": false,
-        "bInfo" : false,
-        /* Disable initial sort */
-        "aaSorting": [],
-        "aoColumns": [
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]}
-        ]
-    });
-});
-
-$(document).ready(function() {
-    $('.team-vs-team-datatable').DataTable({
-        "drawCallback": function( settings ) {
-            $(".player-vs-player-datatable").wrap("<div class='table-responsive'></div>");
-        },
-
-        paging: false,
-        "bFilter": false,
-        "bInfo" : false,
-        /* Disable initial sort */
-        "aaSorting": [],
-        "aoColumns": [
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]}
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]},
+            // {"orderSequence": ["desc", "asc"]}
         ]
     });
 });

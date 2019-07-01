@@ -114,7 +114,7 @@ class PlayerGameLog(GameLog):
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
-        return f"{self.player.first_name} {self.player.last_name} {self.matchup}"
+        return f"{self.player.first_name} {self.player.last_name}, {self.matchup}"
 
 
 class TeamGameLog(GameLog):
@@ -125,7 +125,7 @@ class TeamGameLog(GameLog):
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
-        return f"{self.team.team_city} {self.team.team_name} {self.matchup}"
+        return f"{self.team.team_city} {self.team.team_name}, {self.matchup}"
 
 
 class Game(models.Model):
