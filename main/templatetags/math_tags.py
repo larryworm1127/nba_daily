@@ -10,25 +10,40 @@ Current math tags available:
 @date: 06/13/2019
 @author: Larry Shi
 """
+from typing import Optional, Any, Union
+
 from django import template
-from typing import Optional, Any
 
 register = template.Library()
 
 
 @register.filter
 def divide(value: Any, arg: Any) -> Optional[float]:
-    """Custom django template filter.
-
-    Integer division filter for django template language
+    """Number division filter for django template language
 
     === Attributes ===
-    numerator:
+    value:
         the numerator of the division.
-    denominator:
+    arg:
         the denominator of the division.
     """
     try:
         return round(int(value) / int(arg), 2)
     except (ValueError, ZeroDivisionError):
+        return None
+
+
+@register.filter
+def multiply(value: Any, arg: Any) -> Optional[Union[int, float]]:
+    """Number multiplication filter for django template language.
+
+    === Attributes ===
+    value:
+        the first number to be multiplied.
+    arg:
+        the second number to be multiplied.
+    """
+    try:
+        return round(value * arg, 1)
+    except ValueError:
         return None

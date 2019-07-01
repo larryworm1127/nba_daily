@@ -6,7 +6,7 @@
   <div class="container">
     <br>
 
-    <table class="team-vs-team-datatable table table-sm">
+    <table class="team-list-table table table-sm">
       <thead class="thead-inverse">
         <tr class="bg-primary text-white">
           <th class="bg-primary text-lg-center">TEAM</th>
@@ -18,10 +18,10 @@
         {% for team in teams %}
           <tr>
             <th class="text-lg-center">
-              <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }} </a>
+              <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }}</a>
             </th>
             <td class="text-lg-center">{{ team.wins }}-{{ team.losses }}</td>
-            <td class="text-lg-center">{{ team.wins|divide:82 }}</td>
+            <td class="text-lg-center">{{ team.wins|divide:82|multiply:100 }}</td>
           </tr>
         {% endfor %}
       </tbody>
