@@ -97,7 +97,7 @@ class Game(models.Model):
 class GameLog(models.Model):
     """Game log template model.
     """
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=1)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
     game_date = models.CharField(max_length=30)
     matchup = models.CharField(max_length=11)
     minutes = models.IntegerField()
