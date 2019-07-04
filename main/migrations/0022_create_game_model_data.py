@@ -12,12 +12,12 @@ def load_data(apps, schema_editor):
 
     game_ids = set([])
     for team_obj in Teams.objects.all():
-        data = team.TeamGameLogs(team_obj.team_id, season=2018-19).info()
+        data = team.TeamGameLogs(team_obj.team_id, season='2018-19').info()
 
         for game_id in data.get("Game_ID"):
             print(game_id)
             game_ids.add(game_id)
-            time.sleep(1)
+            time.sleep(0.5)
 
     for game_id in game_ids:
         Game(game_id=game_id).save()

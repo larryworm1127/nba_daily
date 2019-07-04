@@ -12,4 +12,10 @@ admin.site.register(Player)
 admin.site.register(Team)
 admin.site.register(TeamGameLog)
 admin.site.register(PlayerGameLog)
-admin.site.register(Game)
+
+
+class GameAdmin(admin.ModelAdmin):
+    search_fields = ('game_id',)
+
+
+admin.site.register(Game, GameAdmin)

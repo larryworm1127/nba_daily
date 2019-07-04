@@ -93,6 +93,11 @@ class Game(models.Model):
     game_id = models.CharField(max_length=10)
     # dnp_players = models.ForeignKey(Player, on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return f"{self.game_id}"
+
 
 class GameLog(models.Model):
     """Game log template model.
