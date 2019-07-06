@@ -8,7 +8,7 @@
     <br>
     <div class="row">
       <div class="col-lg-5">
-        <h3>{{ pretty_date }}</h3>
+        <h3>{{ team_game_log.0.game_date }}</h3>
         <br>
         <table class="table table-sm">
           <thead class="thead-inverse">
@@ -29,13 +29,21 @@
 
             {% for tstats in team_game_log %}
               <tr>
-                {% if tstats.result == 'W' %}
+                {% if tstats.result == 'W' and tstats.team == game.home_team %}
                   <th class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static home_team_logo %}">{{ tstats.team.team_abb }}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.team_abb }}
                   </th>
+                {% elif tstats.result == 'L' and tstats.team == game.home_team %}
+                  <td class="text-lg-center">
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                  </td>
+                {% elif tstats.result == 'W' and tstats.team == game.away_team %}
+                  <td class="text-lg-center">
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                  </td>
                 {% else %}
                   <td class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static away_team_logo %}">{{ tstats.team.team_abb }}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.team_abb }}
                   </td>
                 {% endif %}
 
@@ -57,23 +65,19 @@
             {% endfor %}
           </tbody>
         </table>
-        {% if nba_recap %}
-          <a target="_blank" class="btn btn-secondary nounderline" href="{{ nba_recap }}">
-            <i class="fa fa-play-circle" aria-hidden="true"></i>&nbsp;Watch NBA Recap
-          </a>
-          <br>
-        {% endif %}
       </div>
     </div>
+    <br>
 
+    {# Boxscore Tables #}
     {% for tstats in team_game_log %}
       <table class="boxscores-datatable table table-sm">
         <h4>
           <a class="nounderline dark-grey" href="{% url 'main:teams' tstats.team.team_id %}">
-            {% if game.home_team.team_abb == tstats.team.team_abb %}
-              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static home_team_logo %}">{{ tstats.team.get_full_name }}
+            {% if game.home_team == tstats.team %}
+              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.get_full_name }}
             {% else %}
-              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static away_team_logo %}">{{ tstats.team.get_full_name }}
+              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.get_full_name }}
             {% endif %}
           </a>
           ({{ tstats.curr_wins }}-{{ tstats.curr_losses }})
@@ -101,8 +105,9 @@
           </tr>
         </thead>
         <tbody>
+          {# Players Data Rows #}
           {% for pstats in player_game_log %}
-            {% if pstats.player.team.team_abb == tstats.team.team_abb %}
+            {% if pstats.player.team == tstats.team %}
               <tr>
                 <th>
                   <a class="nounderline" href="{% url 'main:players' pstats.player.player_id %}">{{ pstats.player.get_full_name }}</a>
@@ -127,6 +132,35 @@
               </tr>
             {% endif %}
           {% endfor %}
+
+          {# DNP Players Data Rows #}
+          {% for player, reason in dnp_players.items %}
+            {% if player.team == tstats.team %}
+              <tr>
+                <th>
+                  <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.get_full_name }}</a><br/>
+                  {{ reason }}
+                </th>
+                <td class="text-lg-center">0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0-0</td>
+                <td>0.0</td>
+                <td>0-0</td>
+                <td>0.0</td>
+                <td>0-0</td>
+                <td>0.0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
         </tbody>
         <tfoot>
           <tr>
@@ -147,7 +181,7 @@
             <td>{{ tstats.blocks }}</td>
             <td>{{ tstats.turnovers }}</td>
             <td>{{ tstats.fouls }}</td>
-            <td>{{ tstats.plus_minus }}</td>
+            <td>{{ tstats.get_plus_minus }}</td>
           </tr>
         </tfoot>
       </table>
@@ -156,7 +190,7 @@
 
     <br>
     <div class="row">
-      {% if inactive_player %}
+      {% if inactive_player|length > 0 %}
         <div class="col-lg-6">
           <h4>Inactive Players</h4>
           <table class="table table-sm">

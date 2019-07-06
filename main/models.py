@@ -165,3 +165,10 @@ class TeamGameLog(GameLog):
         """Return human-readable representation of the object.
         """
         return f"{self.team.team_city} {self.team.team_name}, {self.matchup}"
+
+    def get_plus_minus(self) -> int:
+        """Return the plus-minus of the team in that game.
+        """
+        opp_team = self.game.away_team if self.game.home_team == self.team else self.game.home_team
+        opp_score = self.game.teamgamelog_set.filter(team__team_id=opp_team.team_id)[0].points
+        return self.points - opp_score
