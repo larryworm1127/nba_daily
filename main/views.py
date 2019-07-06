@@ -50,6 +50,7 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
         team_data[f'{prefix}_TEAM_WINS_LOSSES'] = data['TEAM_WINS_LOSSES']
         team_data[f'{prefix}_TEAM_LOGO'] = f"images/{data['TEAM_ABBREVIATION']}.png"
         team_data[f'{prefix}_TEAM_PTS'] = data['PTS']
+        team_data['GAME_ID'] = data['GAME_ID']
 
     # Determine winner
     for game_num, game in games.items():

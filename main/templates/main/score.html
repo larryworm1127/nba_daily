@@ -18,7 +18,7 @@
 
         <div class="list-group">
           {% for game in games.values %}
-            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="#">
+            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{% url 'main:boxscore' game.GAME_ID %}">
               <div class="row">
                 {% if game.WINNER == game.AWAY_TEAM %}
                   <div class="col-xs-4">
