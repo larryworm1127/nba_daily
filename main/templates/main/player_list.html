@@ -39,12 +39,10 @@
         {% for player in unranked_players %}
           <tr>
             <th>
-              <a class="nounderline"
-                 href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
+              <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
             </th>
             <th class="text-lg-center">
-              <a class="nounderline dark-grey"
-                 href="{% url 'main:teams' player.team.team_id %}">{{ player.team.team_abb }} </a>
+              <a class="nounderline dark-grey" href="{% url 'main:teams' player.team.team_id %}">{{ player.team.team_abb }} </a>
             </th>
           </tr>
         {% endfor %}
