@@ -51,7 +51,7 @@
         {% for game in team.teamgamelog_set.all %}
           <tr>
             <th class="text-lg-center">{{ game.game_date }}</th>
-            <th class="text-lg-center"><a class="nounderline" href="#">{{ game.matchup }}</a></th>
+            <th class="text-lg-center"><a class="nounderline" href="{% url 'main:boxscore' game.game.game_id %}">{{ game.matchup }}</a></th>
             <td>{{ game.result }}</td>
             <td>{{ game.minutes }}</td>
             <td>{{ game.points }}</td>
