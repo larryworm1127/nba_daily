@@ -12,7 +12,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('score/<str:date>', views.score, name='score'),
     path('players/', views.player_list, name='player_list'),
-    path('players/<int:player_id>/', views.players, name='players'),
+    path('players/<str:player_id>/', views.players, name='players'),
     path('teams/', views.team_list, name='team_list'),
-    path('teams/<int:team_id>/', views.teams, name='teams')
+    path('teams/<str:team_id>/', views.teams, name='teams'),
+    path('games/<str:game_id>', views.box_score, name='boxscore')
 ]

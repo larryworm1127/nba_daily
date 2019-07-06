@@ -10,6 +10,7 @@ django = "*"
 pandas = "*"
 nba-py = {git = "https://github.com/larryworm1127/nba_py.git"}
 requests-cache = "*"
+simplejson = "*"
 
 [requires]
 python_version = "3.6"
