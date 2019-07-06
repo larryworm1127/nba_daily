@@ -1,0 +1,232 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+{% load math_tags %}
+
+{% block body %}
+  <div class="container">
+    <br>
+    <div class="row">
+      <div class="col-lg-5">
+        <h3>{{ team_game_log.0.game_date }}</h3>
+        <br>
+        <table class="table table-sm">
+          <thead class="thead-inverse">
+            <tr class="bg-primary text-white">
+              <th class="text-lg-center">TEAM</th>
+              <th class="bg-primary text-lg-center">Q1</th>
+              <th class="bg-primary text-lg-center">Q2</th>
+              <th class="bg-primary text-lg-center">Q3</th>
+              <th class="bg-primary text-lg-center">Q4</th>
+              <th class="bg-primary text-lg-center">OT1</th>
+              <th class="bg-primary text-lg-center">OT2</th>
+              <th class="bg-primary text-lg-center">OT3</th>
+              <th class="bg-primary text-lg-center">OT4</th>
+              <th class="bg-primary text-lg-center">TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for tstats in team_game_log %}
+              <tr>
+                {% if tstats.result == 'W' and tstats.team == game.home_team %}
+                  <th class="text-lg-center">
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                  </th>
+                {% elif tstats.result == 'L' and tstats.team == game.home_team %}
+                  <td class="text-lg-center">
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                  </td>
+                {% elif tstats.result == 'W' and tstats.team == game.away_team %}
+                  <td class="text-lg-center">
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                  </td>
+                {% else %}
+                  <td class="text-lg-center">
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                  </td>
+                {% endif %}
+
+                <td class="text-lg-center">{{ tstats.pts_q1 }}</td>
+                <td class="text-lg-center">{{ tstats.pts_q2 }}</td>
+                <td class="text-lg-center">{{ tstats.pts_q3 }}</td>
+                <td class="text-lg-center">{{ tstats.pts_q4 }}</td>
+                <td class="text-lg-center">{{ tstats.pts_ot1 }}</td>
+                <td class="text-lg-center">{{ tstats.pts_ot2 }}</td>
+                <td class="text-lg-center">{{ tstats.pts_ot3 }}</td>
+                <td class="text-lg-center">{{ tstats.pts_ot4 }}</td>
+
+                {% if tstats.result == 'W' %}
+                  <th class="text-lg-center">{{ tstats.points }}</th>
+                {% else %}
+                  <td class="text-lg-center">{{ tstats.points }}</td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <br>
+
+    {# Boxscore Tables #}
+    {% for tstats in team_game_log %}
+      <table class="boxscores-datatable table table-sm">
+        <h4>
+          <a class="nounderline dark-grey" href="{% url 'main:teams' tstats.team.team_id %}">
+            {% if game.home_team == tstats.team %}
+              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.get_full_name }}
+            {% else %}
+              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.get_full_name }}
+            {% endif %}
+          </a>
+          ({{ tstats.curr_wins }}-{{ tstats.curr_losses }})
+        </h4>
+        <thead class="thead-inverse">
+          <tr class="bg-primary text-white">
+            <th class="text-lg-center">PLAYER</th>
+            <th class="bg-primary text-lg-center">MIN</th>
+            <th class="bg-primary">PTS</th>
+            <th class="bg-primary">REB</th>
+            <th class="bg-primary">AST</th>
+            <th class="bg-primary boxscore-column-width">FG</th>
+            <th class="bg-primary">FG%</th>
+            <th class="bg-primary boxscore-column-width">3P</th>
+            <th class="bg-primary">3P%</th>
+            <th class="bg-primary boxscore-column-width">FT</th>
+            <th class="bg-primary">FT%</th>
+            <th class="bg-primary">OREB</th>
+            <th class="bg-primary">DREB</th>
+            <th class="bg-primary">STL</th>
+            <th class="bg-primary">BLK</th>
+            <th class="bg-primary">TOV</th>
+            <th class="bg-primary">PF</th>
+            <th class="bg-primary">+/-</th>
+          </tr>
+        </thead>
+        <tbody>
+          {# Players Data Rows #}
+          {% for pstats in player_game_log %}
+            {% if pstats.player.team == tstats.team %}
+              <tr>
+                <th>
+                  <a class="nounderline" href="{% url 'main:players' pstats.player.player_id %}">{{ pstats.player.get_full_name }}</a>
+                </th>
+                <td class="text-lg-center">{{ pstats.minutes }}</td>
+                <td>{{ pstats.points }}</td>
+                <td>{{ pstats.rebounds }}</td>
+                <td>{{ pstats.assists }}</td>
+                <td>{{ pstats.fg_made }}-{{ pstats.fg_attempt }}</td>
+                <td>{{ pstats.fg_percent|multiply:100 }}</td>
+                <td>{{ pstats.fg3_made }}-{{ pstats.fg3_attempt }}</td>
+                <td>{{ pstats.fg3_percent|multiply:100 }}</td>
+                <td>{{ pstats.ft_made }}-{{ pstats.ft_attempt }}</td>
+                <td>{{ pstats.ft_percent|multiply:100 }}</td>
+                <td>{{ pstats.offense_reb }}</td>
+                <td>{{ pstats.defense_reb }}</td>
+                <td>{{ pstats.steals }}</td>
+                <td>{{ pstats.blocks }}</td>
+                <td>{{ pstats.turnovers }}</td>
+                <td>{{ pstats.fouls }}</td>
+                <td>{{ pstats.plus_minus }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+
+          {# DNP Players Data Rows #}
+          {% for player, reason in dnp_players.items %}
+            {% if player.team == tstats.team %}
+              <tr>
+                <th>
+                  <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.get_full_name }}</a><br/>
+                  {{ reason }}
+                </th>
+                <td class="text-lg-center">0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0-0</td>
+                <td>0.0</td>
+                <td>0-0</td>
+                <td>0.0</td>
+                <td>0-0</td>
+                <td>0.0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>TEAM</th>
+            <td class="text-lg-center">{{ tstats.minutes }}</td>
+            <td>{{ tstats.points }}</td>
+            <td>{{ tstats.rebounds }}</td>
+            <td>{{ tstats.assists }}</td>
+            <td class="boxscore-column-width">{{ tstats.fg_made }}-{{ tstats.fg_attempt }}</td>
+            <td>{{ tstats.fg_percent|multiply:100 }}</td>
+            <td>{{ tstats.fg3_made }}-{{ tstats.fg3_attempt }}</td>
+            <td>{{ tstats.fg3_percent|multiply:100 }}</td>
+            <td>{{ tstats.ft_made }}-{{ tstats.ft_attempt }}</td>
+            <td>{{ tstats.ft_percent|multiply:100 }}</td>
+            <td>{{ tstats.offense_reb }}</td>
+            <td>{{ tstats.defense_reb }}</td>
+            <td>{{ tstats.steals }}</td>
+            <td>{{ tstats.blocks }}</td>
+            <td>{{ tstats.turnovers }}</td>
+            <td>{{ tstats.fouls }}</td>
+            <td>{{ tstats.get_plus_minus }}</td>
+          </tr>
+        </tfoot>
+      </table>
+      <br>
+    {% endfor %}
+
+    <br>
+    <div class="row">
+      {% if inactive_player|length > 0 %}
+        <div class="col-lg-6">
+          <h4>Inactive Players</h4>
+          <table class="table table-sm">
+            <thead class="thead-inverse">
+              <tr class="bg-danger text-white">
+                <th class="text-lg-center">NAME</th>
+                <th class="bg-danger text-lg-center">TEAM</th>
+                <th class="bg-danger text-lg-center">JERSEY NUMBER</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for player in inactive_player %}
+                <tr>
+                  <th><a class="nounderline dark-grey" href="{% url 'main:players' player.player_id %}">{{ player.get_full_name }}</a></th>
+                  <td class="text-lg-center">{{ player.team.team_abb }}</td>
+                  <td class="text-lg-center">{{ player.jersey }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+
+    </div>
+    <br>
+
+    {% if youtube_url %}
+      <div class="row">
+        <div class="col-lg-12">
+          <br>
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="{{ youtube_url }}"></iframe>
+          </div>
+          <br>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

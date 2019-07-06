@@ -91,12 +91,16 @@ class Game(models.Model):
     """Individual game model.
     """
     game_id = models.CharField(max_length=10)
-    # dnp_players = models.ForeignKey(Player, on_delete=models.CASCADE)
+    dnp_players = models.TextField(null=True, blank=True)
+    inactive_players = models.TextField(null=True, blank=True)
+    order = models.TextField(null=True, blank=True)
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home')
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away')
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
-        return f"{self.game_id}"
+        return f"{self.home_team} vs. {self.away_team}"
 
 
 class GameLog(models.Model):
@@ -148,8 +152,23 @@ class TeamGameLog(GameLog):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     curr_wins = models.IntegerField()
     curr_losses = models.IntegerField()
+    pts_q1 = models.IntegerField()
+    pts_q2 = models.IntegerField()
+    pts_q3 = models.IntegerField()
+    pts_q4 = models.IntegerField()
+    pts_ot1 = models.IntegerField()
+    pts_ot2 = models.IntegerField()
+    pts_ot3 = models.IntegerField()
+    pts_ot4 = models.IntegerField()
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
         return f"{self.team.team_city} {self.team.team_name}, {self.matchup}"
+
+    def get_plus_minus(self) -> int:
+        """Return the plus-minus of the team in that game.
+        """
+        opp_team = self.game.away_team if self.game.home_team == self.team else self.game.home_team
+        opp_score = self.game.teamgamelog_set.filter(team__team_id=opp_team.team_id)[0].points
+        return self.points - opp_score
