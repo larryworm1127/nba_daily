@@ -14,7 +14,7 @@ from django.db import models
 class Team(models.Model):
     """Individual team model.
     """
-    team_id = models.IntegerField()
+    team_id = models.CharField(max_length=10)
     team_abb = models.CharField(max_length=3)
     team_conf = models.CharField(max_length=4)
     team_div = models.CharField(max_length=10)
@@ -37,6 +37,11 @@ class Team(models.Model):
         """
         return f"{self.team_city} {self.team_name}"
 
+    def get_logo_path(self) -> str:
+        """Return the team logo path.
+        """
+        return f"images/{self.team_abb}.png"
+
 
 # ===================================================
 # Player Data Models
@@ -51,7 +56,7 @@ class Player(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     birth_date = models.CharField(max_length=20)
-    player_id = models.IntegerField()
+    player_id = models.CharField(max_length=10)
     draft_year = models.CharField(max_length=10)
     draft_round = models.CharField(max_length=10)
     draft_number = models.CharField(max_length=10)
@@ -61,8 +66,8 @@ class Player(models.Model):
     weight = models.IntegerField()
     school = models.CharField(max_length=50, null=True)
     country = models.CharField(max_length=50, null=True)
-    season_exp = models.IntegerField(default=0)
-    rank = models.IntegerField(default=0)
+    season_exp = models.IntegerField()
+    rank = models.IntegerField(null=True)
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
@@ -91,6 +96,8 @@ class Game(models.Model):
     """Individual game model.
     """
     game_id = models.CharField(max_length=10)
+    game_date = models.CharField(max_length=30)
+    matchup = models.CharField(max_length=11)
     dnp_players = models.TextField(null=True, blank=True)
     inactive_players = models.TextField(null=True, blank=True)
     order = models.TextField(null=True, blank=True)
