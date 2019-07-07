@@ -25,7 +25,10 @@ SETTING_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+try:
+    DEBUG = os.environ['DEBUG']
+except KeyError:
+    DEBUG = True
 
 ALLOWED_HOSTS = ['nba-daily-2019.herokuapp.com', '127.0.0.1', 'localhost']
 
