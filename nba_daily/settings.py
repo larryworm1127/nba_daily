@@ -26,7 +26,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['nba-daily-2019.herokuapp.com']
+ALLOWED_HOSTS = ['nba-daily-2019.herokuapp.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -124,6 +124,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfile')
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
