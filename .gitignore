@@ -106,3 +106,4 @@ venv.bak/
 .idea
 db.sqlite3-journal
 nba_cache.sqlite
+staticfiles/
