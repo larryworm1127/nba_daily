@@ -6,6 +6,7 @@
 from datetime import datetime
 
 from django.db import models
+from . import PLAYER_PHOTO_LINK
 
 
 # ===================================================
@@ -83,6 +84,11 @@ class Player(models.Model):
         """Return the calculated age of the player.
         """
         return datetime.today().year - datetime.strptime(self.birth_date, "%Y-%m-%d").year
+
+    def get_photo_url(self) -> str:
+        """Return the URL to player photo.
+        """
+        return str(PLAYER_PHOTO_LINK.render(player_id=self.player_id))
 
 
 # ===================================================

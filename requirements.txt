@@ -5,9 +5,12 @@ Django==2.2.3
 django-heroku==0.3.1
 gunicorn==19.9.0
 idna==2.8
--e git://github.com/larryworm1127/nba_py.git#egg=nba_py
+Jinja2==2.10.1
+MarkupSafe==1.1.1
+-e git://github.com/larryworm1127/nba_py.git@a668d5eabf1b5260d732d69b138bb7b4bac1b920#egg=nba_py
 numpy==1.16.4
 pandas==0.24.2
+psycopg2==2.8.3
 python-dateutil==2.8.0
 pytz==2019.1
 requests==2.22.0
