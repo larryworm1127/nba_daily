@@ -8,7 +8,7 @@ import os
 import time
 
 from nba_py import game, team, player
-from simplejson import load
+from simplejson import load, dump
 
 
 def get_team_list() -> None:
@@ -27,10 +27,47 @@ def get_player_list(season: str = '2018-19') -> None:
     season:
         the season to get the player list from.
     """
-    logging.info(f'Retrieving player list data')
+    logging.info('Retrieving player list data')
 
     player_list = player.PlayerList(season=season).info()
     player_list.to_json('data/player_list.json')
+
+
+def get_team_summary() -> None:
+    """Retrieve individual team summary data using API.
+    """
+    with open('data/team_list.json') as f:
+        teams = load(f)
+
+    for team_id in teams['TEAM_ID'].values():
+        logging.info(f'Retrieving team summary data for {team_id}')
+
+        data = team.TeamSummary(team_id).info()
+        data.to_json(f'data/team_summary/{team_id}.json')
+
+        time.sleep(1)
+
+    assert len(os.listdir('data/team_summary')) == 30
+
+
+def get_player_summary() -> None:
+    """Retrieve individual player summary data using API.
+    """
+    with open('data/player_list.json') as f:
+        players = load(f)
+
+    for index, player_id in enumerate(players['PERSON_ID'].values()):
+        logging.info(f'Retrieving player summary data for {player_id}')
+
+        if list(players['TEAM_ID'].values())[index] == 0:
+            continue
+
+        data = player.PlayerSummary(player_id).info()
+        data.to_json(f'data/player_summary/{player_id}.json')
+
+        time.sleep(1)
+
+    assert len(os.listdir('data/player_summary')) == 483
 
 
 def get_player_game_log(season: str = '2018-19') -> None:
@@ -57,26 +94,6 @@ def get_player_game_log(season: str = '2018-19') -> None:
     assert len(os.listdir(f'data/player_game_log/{season}')) == 483
 
 
-def get_player_summary() -> None:
-    """Retrieve individual player summary data using API.
-    """
-    with open('data/player_list.json') as f:
-        players = load(f)
-
-    for index, player_id in enumerate(players['PERSON_ID'].values()):
-        logging.info(f'Retrieving player summary data for {player_id}')
-
-        if list(players['TEAM_ID'].values())[index] == 0:
-            continue
-
-        data = player.PlayerSummary(player_id).info()
-        data.to_json(f'data/player_summary/{player_id}.json')
-
-        time.sleep(1)
-
-    assert len(os.listdir(f'data/player_summary/')) == 483
-
-
 def get_team_game_log(season: str = '2018-19') -> None:
     """Retrieve individual team game log data using API.
 
@@ -98,13 +115,15 @@ def get_team_game_log(season: str = '2018-19') -> None:
     assert len(os.listdir(f'data/team_game_log/{season}')) == 30
 
 
-def get_box_score(season: str = '2018-19') -> None:
-    """Retrieve individual game player box score data using API.
+def get_game_list(season: str = '2018-19') -> None:
+    """Retrieve game list data from team game log.
 
     === Attributes ===
     season:
         the season in which the games are played.
     """
+    logging.info('Retrieving game list data')
+
     with open('data/team_list.json') as f:
         teams = load(f)['TEAM_ID'].values()
 
@@ -116,9 +135,23 @@ def get_box_score(season: str = '2018-19') -> None:
         for game_id in game_log.get("Game_ID").values():
             games.add(game_id)
 
+    with open('data/game_list.json', 'w+') as f:
+        dump(list(games), f)
+
+
+def get_box_score(season: str = '2018-19') -> None:
+    """Retrieve individual game player box score data using API.
+
+    === Attributes ===
+    season:
+        the season in which the games are played.
+    """
+    with open('data/game_list.json') as f:
+        games = load(f)
+
     for game_id in games:
         logging.info(f'Retrieving box score data for {game_id}')
-        data = game.Boxscore(game_id).player_stats()
+        data = game.Boxscore(game_id, season=season).player_stats()
         data.to_json(f'data/boxscore/{season}/{game_id}.json')
 
         time.sleep(1)
@@ -126,7 +159,34 @@ def get_box_score(season: str = '2018-19') -> None:
     assert len(os.listdir(f'data/boxscore/{season}')) == 1230
 
 
-g = [1626187, 1628500, 1626780, 203460, 1629008, 1629117, 1629129, 1629134, 1629341, 204001, 1627738, 1627749, 1627756, 1627785, 202389]
+def get_box_score_summary(season: str = '2018-19') -> None:
+    """Retrieve individual game box score summary data using API.
+
+    === Attributes ===
+    season:
+        the season in which the games are played.
+    """
+    with open('data/game_list.json') as f:
+        games = load(f)
+
+    for game_id in games:
+        logging.info(f'Retrieving box score summary data for {game_id}')
+
+        data = game.BoxscoreSummary(game_id, season=season)
+        game_summary = data.game_summary()
+        game_summary.to_json(f'data/boxscore_summary/{season}/game_summary/{game_id}.json')
+
+        line_score = data.line_score()
+        line_score.to_json(f'data/boxscore_summary/{season}/line_score/{game_id}.json')
+
+        time.sleep(1)
+
+    assert len(os.listdir(f'data/boxscore_summary/{season}/line_score')) == 1230
+    assert len(os.listdir(f'data/boxscore_summary/{season}/game_summary')) == 1230
+
+
+g = [1626187, 1628500, 1626780, 203460, 1629008, 1629117, 1629129, 1629134, 1629341, 204001, 1627738, 1627749, 1627756,
+     1627785, 202389]
 
 if __name__ == '__main__':
     # Configure logger
@@ -139,7 +199,12 @@ if __name__ == '__main__':
     # get_team_list()
     # get_player_list()
 
+    # get_team_summary()
+    # get_player_summary()
+
     # get_player_game_log()
     # get_team_game_log()
-    # get_player_summary()
-    get_box_score()
+
+    # get_game_list()
+    # get_box_score()
+    # get_box_score_summary()
