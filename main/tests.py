@@ -67,7 +67,8 @@ class TeamModelTest(TestCase):
             losses=72,
             conf_rank=2,
             div_rank=3,
-            nba_debut=1968
+            nba_debut=1968,
+            season_year='2018-19'
         )
 
     def test_get_full_name(self):
