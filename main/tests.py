@@ -30,7 +30,8 @@ class PlayerModelTest(TestCase):
             height='5-6',
             weight=175,
             school='UCLA',
-            country='USA'
+            country='USA',
+            season_exp=1
         )
 
     def test_get_full_name(self):
@@ -68,7 +69,7 @@ class TeamModelTest(TestCase):
             conf_rank=2,
             div_rank=3,
             nba_debut=1968,
-            season_year='2018-19'
+            season='2018-19'
         )
 
     def test_get_full_name(self):
