@@ -4,8 +4,10 @@
 @author: Larry Shi
 """
 from datetime import datetime
+from typing import Dict, List
 
 from django.db import models
+from simplejson.decoder import JSONDecoder
 
 from . import PLAYER_PHOTO_LINK
 
@@ -109,7 +111,6 @@ class Game(models.Model):
     game_id = models.CharField(max_length=10)
     season = models.CharField(max_length=7)
     game_date = models.CharField(max_length=30)
-    matchup = models.CharField(max_length=11)
     dnp_players = models.TextField(null=True, blank=True)
     inactive_players = models.TextField(null=True, blank=True)
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home')
@@ -119,6 +120,30 @@ class Game(models.Model):
         """Return human-readable representation of the object.
         """
         return f"{self.home_team} vs. {self.away_team}"
+
+    def get_dnp_players(self) -> Dict[Player, str]:
+        """Return formatted DNP player data.
+        """
+        inst = JSONDecoder()
+        dnp_players = {
+            Player.objects.filter(player_id=player_id)[0]: reason
+            for player_id, reason in inst.decode(self.dnp_players).items()
+            if len(Player.objects.filter(player_id=player_id)) > 0
+        }
+
+        return dnp_players
+
+    def get_inactive_players(self) -> List[Player]:
+        """Return formatted inactive player data.
+        """
+        inst = JSONDecoder()
+        inactive_player = [
+            Player.objects.filter(player_id=player_id)[0]
+            for player_id in inst.decode(self.inactive_players)
+            if len(Player.objects.filter(player_id=player_id)) > 0
+        ]
+
+        return inactive_player
 
 
 # ==============================================================================
@@ -133,6 +158,7 @@ class GameLog(models.Model):
     """Game log template model.
     """
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    matchup = models.CharField(max_length=11)
     minutes = models.IntegerField()
     points = models.IntegerField()
     offense_reb = models.IntegerField()
@@ -176,7 +202,7 @@ class TeamGameLog(GameLog):
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
-        return f"{self.team.team_city} {self.team.team_name}, {self.game.matchup}"
+        return f"{self.team.team_city} {self.team.team_name}, {self.matchup}"
 
     def get_plus_minus(self) -> int:
         """Return the plus-minus of the team in that game.
@@ -197,4 +223,4 @@ class PlayerGameLog(GameLog):
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
-        return f"{self.player.first_name} {self.player.last_name}, {self.game.matchup}"
+        return f"{self.player.first_name} {self.player.last_name}, {self.matchup}"

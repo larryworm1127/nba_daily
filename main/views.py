@@ -170,16 +170,6 @@ def box_score(request, game_id: str):
 
     # Organizes data
     inst = JSONDecoder()
-    dnp_players = {
-        Player.objects.filter(player_id=player_id)[0]: reason.strip()
-        for player_id, reason in inst.decode(game.dnp_players).items()
-        if len(Player.objects.filter(player_id=player_id)) > 0
-    }
-    inactive_player = [
-        Player.objects.filter(player_id=player_id)[0]
-        for player_id in inst.decode(game.inactive_players)
-        if len(Player.objects.filter(player_id=player_id)) > 0
-    ]
     player_game_log = [
         game.playergamelog_set.filter(player__player_id=player_id)[0]
         for player_id in inst.decode(game.order)
@@ -188,9 +178,7 @@ def box_score(request, game_id: str):
 
     context = {
         'title': 'Boxscore',
-        'inactive_player': inactive_player,
         'game': game,
-        'dnp_players': dnp_players,
         'home_team_logo': f"images/{game.home_team.team_abb}.png",
         'away_team_logo': f"images/{game.away_team.team_abb}.png",
         'team_game_log': game.teamgamelog_set.all(),

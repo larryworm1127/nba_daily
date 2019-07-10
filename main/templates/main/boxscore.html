@@ -134,7 +134,7 @@
           {% endfor %}
 
           {# DNP Players Data Rows #}
-          {% for player, reason in dnp_players.items %}
+          {% for player, reason in game.get_dnp_players.items %}
             {% if player.team == tstats.team %}
               <tr>
                 <th>
@@ -202,7 +202,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for player in inactive_player %}
+              {% for player in game.get_inactive_players %}
                 <tr>
                   <th><a class="nounderline dark-grey" href="{% url 'main:players' player.player_id %}">{{ player.get_full_name }}</a></th>
                   <td class="text-lg-center">{{ player.team.team_abb }}</td>
