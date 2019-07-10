@@ -21,7 +21,7 @@ class PlayerModelTest(TestCase):
             first_name='a',
             last_name='b',
             birth_date='2000-01-01',
-            player_id='01',
+            player_id=1,
             draft_year='2019',
             draft_round='1',
             draft_number='1',
@@ -37,14 +37,14 @@ class PlayerModelTest(TestCase):
     def test_get_full_name(self):
         """Test <get_full_name> method in Player model.
         """
-        player = Player.objects.get(id=1)
-        expected_full_name = f'{player.first_name}, {player.last_name}'
+        player = Player.objects.get(player_id=1)
+        expected_full_name = f'{player.first_name} {player.last_name}'
         self.assertEqual(expected_full_name, player.get_full_name())
 
     def test_get_age(self):
         """Test <get_age> method in Player model.
         """
-        player = Player.objects.get(id=1)
+        player = Player.objects.get(player_id=1)
         expected_age = 19
         self.assertEqual(expected_age, player.get_age())
 
