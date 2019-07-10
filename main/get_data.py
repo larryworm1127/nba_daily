@@ -7,7 +7,7 @@ import logging
 import os
 import time
 
-from nba_py import game, team, player
+from nba_py import game, team, player, league
 from simplejson import load, dump
 
 
@@ -31,6 +31,19 @@ def get_player_list(season: str = '2018-19') -> None:
 
     player_list = player.PlayerList(season=season).info()
     player_list.to_json('data/player_list.json')
+
+
+def get_player_league_leader(season: str) -> None:
+    """Retrieve player league leader data using API.
+
+    === Attributes ===
+    season:
+        the season to get the league leader data from.
+    """
+    logging.info('Retrieve league leader data')
+
+    leaders = league.Leaders(stat_category="EFF", season=season).results()
+    leaders.to_json('data/player_leaders.json')
 
 
 def get_team_summary() -> None:
@@ -196,8 +209,11 @@ if __name__ == '__main__':
         level=logging.DEBUG
     )
 
+    season_year = '2018-19'
+
     # get_team_list()
     # get_player_list()
+    get_player_league_leader(season_year)
 
     # get_team_summary()
     # get_player_summary()

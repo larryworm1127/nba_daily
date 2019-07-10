@@ -19,7 +19,7 @@ from . import PLAYER_PHOTO_LINK
 class Team(models.Model):
     """Individual team model.
     """
-    team_id = models.IntegerField
+    team_id = models.IntegerField()
     team_abb = models.CharField(max_length=3)
     team_conf = models.CharField(max_length=4)
     team_div = models.CharField(max_length=10)
