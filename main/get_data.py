@@ -182,15 +182,17 @@ def get_box_score_summary(season: str) -> None:
     with open('data/game_list.json') as f:
         games = load(f)
 
-    for game_id in games:
+    temp = games.index('0021800797')
+
+    for game_id in games[temp:]:
         logging.info(f'Retrieving box score summary data for {game_id}')
 
         data = game.BoxscoreSummary(game_id, season=season)
-        # game_summary = data.game_summary()
-        # game_summary.to_json(f'data/boxscore_summary/{season}/game_summary/{game_id}.json')
-        #
-        # line_score = data.line_score()
-        # line_score.to_json(f'data/boxscore_summary/{season}/line_score/{game_id}.json')
+        game_summary = data.game_summary()
+        game_summary.to_json(f'data/boxscore_summary/{season}/game_summary/{game_id}.json')
+
+        line_score = data.line_score()
+        line_score.to_json(f'data/boxscore_summary/{season}/line_score/{game_id}.json')
 
         inactive_player = data.inactive_players()
         inactive_player.to_json(f'data/boxscore_summary/{season}/inactive_players/{game_id}.json')

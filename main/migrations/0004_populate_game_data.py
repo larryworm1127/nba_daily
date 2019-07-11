@@ -16,8 +16,8 @@ def load_game_data(apps, schema_editor):
 
     for game_id in games:
         boxscore = read_json(f'main/data/boxscore/2018-19/{game_id}.json')
-        game_summary = read_json(f'main/data/boxscore_summary/game_summary/2018-19/{game_id}.json')
-        inactive_data = read_json(f'main/data/boxscore_summary/inactive_player/2018-19/{game_id}.json')
+        game_summary = read_json(f'main/data/boxscore_summary/2018-19/game_summary/{game_id}.json')
+        inactive_data = read_json(f'main/data/boxscore_summary/2018-19/inactive_players/{game_id}.json')
 
         dnp_players = {
             data['PLAYER_ID']: data['COMMENT'].strip() for _, data in boxscore.iterrows() if math.isnan(data['PF'])
@@ -27,13 +27,18 @@ def load_game_data(apps, schema_editor):
         ]
         Game(
             game_id=game_id,
-            season=game_summary['SEASON'],
-            game_date=parser.parse(game_summary['GAME_DATE_EST']).strftime("%b %d, %Y"),
+            season='2018-19',
+            game_date=parser.parse(game_summary['GAME_DATE_EST'][0]).strftime("%b %d, %Y"),
             dnp_players=dumps(dnp_players),
             inactive_players=dumps(inactive_players),
             home_team=Team.objects.filter(team_id=game_summary['HOME_TEAM_ID'])[0],
             away_team=Team.objects.filter(team_id=game_summary['VISITOR_TEAM_ID'])[0]
         ).save()
+
+
+def undo(apps, schema_editor):
+    Game = apps.get_model("main", "Game")
+    Game.objects.all().delete()
 
 
 class Migration(migrations.Migration):
@@ -43,5 +48,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(load_game_data)
+        migrations.RunPython(load_game_data, undo)
     ]

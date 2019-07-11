@@ -30,6 +30,11 @@ def load_team_data(apps, schema_editor):
         ).save()
 
 
+def undo(apps, schema_editor):
+    Team = apps.get_model("main", "Team")
+    Team.objects.all().delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -37,5 +42,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(load_team_data)
+        migrations.RunPython(load_team_data, undo)
     ]
