@@ -11,6 +11,7 @@ def load_data(apps, schema_editor):
 
     for team_obj in Team.objects.all():
         game_log = read_json(f'main/data/team_game_log/2018-19/{team_obj.team_id}.json', dtype={'Game_ID': str})
+
         for _, team_data in game_log.iterrows():
             line_score = read_json(f'main/data/boxscore_summary/2018-19/line_score/{team_data["Game_ID"]}.json')
             index = 0 if line_score['TEAM_ID'][0] == team_obj.team_id else 1
