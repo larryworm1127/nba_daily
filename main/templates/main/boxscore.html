@@ -8,7 +8,7 @@
     <br>
     <div class="row">
       <div class="col-lg-5">
-        <h3>{{ team_game_log.0.game_date }}</h3>
+        <h3>{{ game.game_date }}</h3>
         <br>
         <table class="table table-sm">
           <thead class="thead-inverse">
@@ -31,19 +31,11 @@
               <tr>
                 {% if tstats.result == 'W' and tstats.team == game.home_team %}
                   <th class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">&nbsp{{ tstats.team.team_abb }}
                   </th>
-                {% elif tstats.result == 'L' and tstats.team == game.home_team %}
-                  <td class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.team_abb }}
-                  </td>
-                {% elif tstats.result == 'W' and tstats.team == game.away_team %}
-                  <td class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.team_abb }}
-                  </td>
                 {% else %}
                   <td class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.team_abb }}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">&nbsp{{ tstats.team.team_abb }}
                   </td>
                 {% endif %}
 
@@ -74,11 +66,7 @@
       <table class="boxscores-datatable table table-sm">
         <h4>
           <a class="nounderline dark-grey" href="{% url 'main:teams' tstats.team.team_id %}">
-            {% if game.home_team == tstats.team %}
-              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static home_team_logo %}">&nbsp{{ tstats.team.get_full_name }}
-            {% else %}
-              <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static away_team_logo %}">&nbsp{{ tstats.team.get_full_name }}
-            {% endif %}
+            <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static tstats.team.get_logo_path %}">&nbsp{{ tstats.team.get_full_name }}
           </a>
           ({{ tstats.curr_wins }}-{{ tstats.curr_losses }})
         </h4>
@@ -106,8 +94,8 @@
         </thead>
         <tbody>
           {# Players Data Rows #}
-          {% for pstats in player_game_log %}
-            {% if pstats.player.team == tstats.team %}
+          {% for index in tstats.playergamelog_set|length %}
+            {% with pstats = tstats.playergamelog_set.index %}
               <tr>
                 <th>
                   <a class="nounderline" href="{% url 'main:players' pstats.player.player_id %}">{{ pstats.player.get_full_name }}</a>
@@ -130,7 +118,7 @@
                 <td>{{ pstats.fouls }}</td>
                 <td>{{ pstats.plus_minus }}</td>
               </tr>
-            {% endif %}
+            {% endwith %}
           {% endfor %}
 
           {# DNP Players Data Rows #}

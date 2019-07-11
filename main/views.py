@@ -179,8 +179,6 @@ def box_score(request, game_id: str):
     context = {
         'title': 'Boxscore',
         'game': game,
-        'home_team_logo': f"images/{game.home_team.team_abb}.png",
-        'away_team_logo': f"images/{game.away_team.team_abb}.png",
         'team_game_log': game.teamgamelog_set.all(),
         'player_game_log': player_game_log,
     }
