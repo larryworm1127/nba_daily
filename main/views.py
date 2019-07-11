@@ -102,8 +102,6 @@ def players(request, player_id: str):
     context = {
         'title': player.get_full_name(),
         'player': player,
-        'player_photo': PLAYER_PHOTO_LINK.format(player_id=player_id),
-        'team_logo': f"images/{player.team.team_abb}.png"
     }
     return render(request, 'main/players.html', context)
 
@@ -142,7 +140,6 @@ def teams(request, team_id: str):
     context = {
         'title': team.get_full_name(),
         'team': team,
-        'team_logo': f"images/{team.team_abb}.png"
     }
     return render(request, 'main/teams.html', context)
 
@@ -168,18 +165,9 @@ def box_score(request, game_id: str):
     except (IndexError, Game.DoesNotExist):
         return redirect(index)
 
-    # Organizes data
-    inst = JSONDecoder()
-    player_game_log = [
-        game.playergamelog_set.filter(player__player_id=player_id)[0]
-        for player_id in inst.decode(game.order)
-        if len(game.playergamelog_set.filter(player__player_id=player_id)) > 0
-    ]
-
     context = {
         'title': 'Boxscore',
         'game': game,
         'team_game_log': game.teamgamelog_set.all(),
-        'player_game_log': player_game_log,
     }
     return render(request, 'main/boxscore.html', context)

@@ -10,11 +10,11 @@
         <br>
         <h4>{{ player.get_full_name }} #{{ player.jersey }} {{ player.position }}</h4>
         <h4>
-          <img class="team-logo-sm" alt="team-logo" src="{% static team_logo %}">
+          <img class="team-logo-sm" alt="team-logo" src="{% static player.team.get_logo_path %}">
           <a class="nounderline dark-grey"
              href="{% url 'main:teams' player.team.team_id %}">{{ player.team.get_full_name }}</a>
         </h4>
-        <img class="player-headshot" alt="player-image" src={{ player_photo }}>
+        <img class="player-headshot" alt="player-image" src={{ player.get_photo_url }}>
         <ul class="list-unstyled">
           <li><b>Height:</b> {{ player.height }}</li>
           <li><b>Weight:</b> {{ player.weight }} lbs</li>
