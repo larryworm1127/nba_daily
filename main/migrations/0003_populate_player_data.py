@@ -33,10 +33,6 @@ def load_player_data(apps, schema_editor):
         except TypeError:
             school = "N/A" if data['SCHOOL'][0] == ' ' else data['SCHOOL'][0]
 
-        print("player_rank", player_rank)
-        print("school", school)
-        print("country", data['COUNTRY'][0])
-
         Player(
             team=apps.get_model("main", "Team").objects.filter(team_id=data['TEAM_ID'][0])[0],
             first_name=data['FIRST_NAME'][0],
