@@ -50,7 +50,8 @@ def load_data(apps, schema_editor):
 
 def get_player_order(player_obj, game_id):
     boxscore = read_json(f'main/data/boxscore/2018-19/{game_id}.json')
-    opp_count = len(boxscore[boxscore.TEAM_ID != player_obj.team.team_id])
+    player_team = boxscore[boxscore.PLAYER_ID == player_obj.player_id]['TEAM_ID'].values[0]
+    opp_count = len(boxscore[boxscore.TEAM_ID != player_team])
 
     index = 0
     for item in boxscore.itertuples():
