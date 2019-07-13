@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 ('school', models.CharField(max_length=50, null=True)),
                 ('country', models.CharField(max_length=50, null=True)),
                 ('season_exp', models.IntegerField()),
-                ('rank', models.IntegerField(null=True)),
+                ('rank', models.IntegerField()),
             ],
         ),
         migrations.CreateModel(

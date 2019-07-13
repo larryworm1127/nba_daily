@@ -76,7 +76,7 @@ class Player(models.Model):
     school = models.CharField(max_length=50, null=True)
     country = models.CharField(max_length=50, null=True)
     season_exp = models.IntegerField()
-    rank = models.IntegerField(null=True)
+    rank = models.IntegerField()
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
