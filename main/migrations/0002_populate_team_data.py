@@ -7,6 +7,8 @@ from simplejson import load
 def load_team_data(apps, schema_editor):
     Team = apps.get_model("main", "Team")
 
+    print("Migrate Individual Team Data.")
+
     with open('main/data/team_list.json') as f:
         teams = load(f)
 

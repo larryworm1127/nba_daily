@@ -11,6 +11,8 @@ def load_game_data(apps, schema_editor):
     Game = apps.get_model('main', 'Game')
     Team = apps.get_model('main', 'Team')
 
+    print("Migrate Individual Game Data.")
+
     with open('main/data/game_list.json') as f:
         games = load(f)
 

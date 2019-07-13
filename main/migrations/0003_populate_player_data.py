@@ -9,6 +9,8 @@ from simplejson import load
 def load_player_data(apps, schema_editor):
     Player = apps.get_model("main", "Player")
 
+    print("Migrate Individual Player Data.")
+
     with open('main/data/player_list.json') as f:
         players = load(f)
 

@@ -10,6 +10,8 @@ def load_data(apps, schema_editor):
     Game = apps.get_model('main', 'Game')
     Players = apps.get_model('main', 'Player')
 
+    print("Migrate Individual Player Game Log Data.")
+
     for player_obj in Players.objects.all():
         game_log = read_json(f'main/data/player_game_log/2018-19/{player_obj.player_id}.json', dtype={'Game_ID': str})
 
