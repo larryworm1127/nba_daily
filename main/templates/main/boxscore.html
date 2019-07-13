@@ -27,7 +27,7 @@
           </thead>
           <tbody>
 
-            {% for tstats in team_game_log %}
+            {% for tstats in game.teamgamelog_set.all %}
               <tr>
                 {% if tstats.result == 'W' and tstats.team == game.home_team %}
                   <th class="text-lg-center">
@@ -62,7 +62,7 @@
     <br>
 
     {# Boxscore Tables #}
-    {% for tstats in team_game_log %}
+    {% for tstats in game.teamgamelog_set.all %}
       <table class="boxscores-datatable table table-sm">
         <h4>
           <a class="nounderline dark-grey" href="{% url 'main:teams' tstats.team.team_id %}">
@@ -94,31 +94,29 @@
         </thead>
         <tbody>
           {# Players Data Rows #}
-          {% for index in tstats.playergamelog_set|length %}
-            {% with pstats = tstats.playergamelog_set.index %}
-              <tr>
-                <th>
-                  <a class="nounderline" href="{% url 'main:players' pstats.player.player_id %}">{{ pstats.player.get_full_name }}</a>
-                </th>
-                <td class="text-lg-center">{{ pstats.minutes }}</td>
-                <td>{{ pstats.points }}</td>
-                <td>{{ pstats.rebounds }}</td>
-                <td>{{ pstats.assists }}</td>
-                <td>{{ pstats.fg_made }}-{{ pstats.fg_attempt }}</td>
-                <td>{{ pstats.fg_percent|multiply:100 }}</td>
-                <td>{{ pstats.fg3_made }}-{{ pstats.fg3_attempt }}</td>
-                <td>{{ pstats.fg3_percent|multiply:100 }}</td>
-                <td>{{ pstats.ft_made }}-{{ pstats.ft_attempt }}</td>
-                <td>{{ pstats.ft_percent|multiply:100 }}</td>
-                <td>{{ pstats.offense_reb }}</td>
-                <td>{{ pstats.defense_reb }}</td>
-                <td>{{ pstats.steals }}</td>
-                <td>{{ pstats.blocks }}</td>
-                <td>{{ pstats.turnovers }}</td>
-                <td>{{ pstats.fouls }}</td>
-                <td>{{ pstats.plus_minus }}</td>
-              </tr>
-            {% endwith %}
+          {% for pstats in tstats.get_player_game_logs %}
+            <tr>
+              <th>
+                <a class="nounderline" href="{% url 'main:players' pstats.player.player_id %}">{{ pstats.player.get_full_name }}</a>
+              </th>
+              <td class="text-lg-center">{{ pstats.minutes }}</td>
+              <td>{{ pstats.points }}</td>
+              <td>{{ pstats.rebounds }}</td>
+              <td>{{ pstats.assists }}</td>
+              <td>{{ pstats.fg_made }}-{{ pstats.fg_attempt }}</td>
+              <td>{{ pstats.fg_percent|multiply:100 }}</td>
+              <td>{{ pstats.fg3_made }}-{{ pstats.fg3_attempt }}</td>
+              <td>{{ pstats.fg3_percent|multiply:100 }}</td>
+              <td>{{ pstats.ft_made }}-{{ pstats.ft_attempt }}</td>
+              <td>{{ pstats.ft_percent|multiply:100 }}</td>
+              <td>{{ pstats.offense_reb }}</td>
+              <td>{{ pstats.defense_reb }}</td>
+              <td>{{ pstats.steals }}</td>
+              <td>{{ pstats.blocks }}</td>
+              <td>{{ pstats.turnovers }}</td>
+              <td>{{ pstats.fouls }}</td>
+              <td>{{ pstats.plus_minus }}</td>
+            </tr>
           {% endfor %}
 
           {# DNP Players Data Rows #}
@@ -176,9 +174,10 @@
       <br>
     {% endfor %}
 
+    {# Inactive Player Data Rows #}
     <br>
     <div class="row">
-      {% if inactive_player|length > 0 %}
+      {% if inactive_player %}
         <div class="col-lg-6">
           <h4>Inactive Players</h4>
           <table class="table table-sm">

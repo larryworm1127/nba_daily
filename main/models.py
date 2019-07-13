@@ -3,6 +3,8 @@
 @date: 06/02/2019
 @author: Larry Shi
 """
+from __future__ import annotations
+
 from datetime import datetime
 from typing import Dict, List
 
@@ -159,7 +161,7 @@ class GameLog(models.Model):
     """
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     matchup = models.CharField(max_length=11)
-    minutes = models.IntegerField()
+    minutes = models.IntegerField()  # TODO: change it to char field to show min as well
     points = models.IntegerField()
     offense_reb = models.IntegerField()
     defense_reb = models.IntegerField()
@@ -210,6 +212,13 @@ class TeamGameLog(GameLog):
         opp_team = self.game.away_team if self.game.home_team == self.team else self.game.home_team
         opp_score = self.game.teamgamelog_set.filter(team__team_id=opp_team.team_id)[0].points
         return self.points - opp_score
+
+    def get_player_game_logs(self) -> List[PlayerGameLog]:
+        """Return a list of player game log object in order of display.
+        """
+        num_players = len(self.playergamelog_set.all())
+        return [self.playergamelog_set.filter(order=index)[0] for index in range(num_players)
+                if len(self.playergamelog_set.filter(order=index)) > 0]
 
 
 class PlayerGameLog(GameLog):

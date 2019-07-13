@@ -113,7 +113,7 @@ def player_list(request):
     ranked_players = []
     unranked_players = []
     for player in player_obj:
-        if player.rank == 0:
+        if player.rank < 1:
             unranked_players.append(player)
         else:
             ranked_players.append(player)
@@ -168,6 +168,5 @@ def box_score(request, game_id: str):
     context = {
         'title': 'Boxscore',
         'game': game,
-        'team_game_log': game.teamgamelog_set.all(),
     }
     return render(request, 'main/boxscore.html', context)
