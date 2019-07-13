@@ -7,8 +7,8 @@ import re
 
 from datetime import date, datetime
 
-from django.test import TestCase
 from hypothesis import given
+from hypothesis.extra.django import TestCase
 from hypothesis.strategies import from_regex, dates
 
 from .models import Player, Team

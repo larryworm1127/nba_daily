@@ -11,7 +11,6 @@ def load_data(apps, schema_editor):
     Players = apps.get_model('main', 'Player')
 
     for player_obj in Players.objects.all():
-        print(player_obj.player_id)
         game_log = read_json(f'main/data/player_game_log/2018-19/{player_obj.player_id}.json', dtype={'Game_ID': str})
 
         for _, data in game_log.iterrows():
