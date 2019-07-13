@@ -102,8 +102,6 @@ def players(request, player_id: str):
     context = {
         'title': player.get_full_name(),
         'player': player,
-        'player_photo': PLAYER_PHOTO_LINK.format(player_id=player_id),
-        'team_logo': f"images/{player.team.team_abb}.png"
     }
     return render(request, 'main/players.html', context)
 
@@ -115,7 +113,7 @@ def player_list(request):
     ranked_players = []
     unranked_players = []
     for player in player_obj:
-        if player.rank == 0:
+        if player.rank < 1:
             unranked_players.append(player)
         else:
             ranked_players.append(player)
@@ -142,7 +140,6 @@ def teams(request, team_id: str):
     context = {
         'title': team.get_full_name(),
         'team': team,
-        'team_logo': f"images/{team.team_abb}.png"
     }
     return render(request, 'main/teams.html', context)
 
@@ -168,32 +165,8 @@ def box_score(request, game_id: str):
     except (IndexError, Game.DoesNotExist):
         return redirect(index)
 
-    # Organizes data
-    inst = JSONDecoder()
-    dnp_players = {
-        Player.objects.filter(player_id=player_id)[0]: reason.strip()
-        for player_id, reason in inst.decode(game.dnp_players).items()
-        if len(Player.objects.filter(player_id=player_id)) > 0
-    }
-    inactive_player = [
-        Player.objects.filter(player_id=player_id)[0]
-        for player_id in inst.decode(game.inactive_players)
-        if len(Player.objects.filter(player_id=player_id)) > 0
-    ]
-    player_game_log = [
-        game.playergamelog_set.filter(player__player_id=player_id)[0]
-        for player_id in inst.decode(game.order)
-        if len(game.playergamelog_set.filter(player__player_id=player_id)) > 0
-    ]
-
     context = {
         'title': 'Boxscore',
-        'inactive_player': inactive_player,
         'game': game,
-        'dnp_players': dnp_players,
-        'home_team_logo': f"images/{game.home_team.team_abb}.png",
-        'away_team_logo': f"images/{game.away_team.team_abb}.png",
-        'team_game_log': game.teamgamelog_set.all(),
-        'player_game_log': player_game_log,
     }
     return render(request, 'main/boxscore.html', context)

@@ -44,7 +44,12 @@ def multiply(value: Any, arg: Any) -> Optional[Union[int, float]]:
     arg:
         the second number to be multiplied.
     """
+    # print("value", len(value))
+    # print("arg", arg)
     try:
+        if isinstance(arg, str) or isinstance(value, str):
+            return 0
+
         return round(value * arg, 1)
     except ValueError:
         return None

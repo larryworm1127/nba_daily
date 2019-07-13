@@ -9,7 +9,7 @@
       <div class="col-md-6">
         <br>
         <h4>{{ team.get_full_name }}</h4>
-        <img class="team-logo-lg" alt="team-logo" src="{% static team_logo %}">
+        <img class="team-logo-lg" alt="team-logo" src="{% static team.get_logo_path %}">
 
         <h4>{{ team.season_year }}</h4>
         <ul class="list-unstyled">
@@ -50,7 +50,7 @@
       <tbody>
         {% for game in team.teamgamelog_set.all %}
           <tr>
-            <th class="text-lg-center">{{ game.game_date }}</th>
+            <th class="text-lg-center">{{ game.game.game_date }}</th>
             <th class="text-lg-center"><a class="nounderline" href="{% url 'main:boxscore' game.game.game_id %}">{{ game.matchup }}</a></th>
             <td>{{ game.result }}</td>
             <td>{{ game.minutes }}</td>
