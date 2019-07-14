@@ -73,8 +73,8 @@ class Player(models.Model):
     jersey = models.IntegerField()
     height = models.CharField(max_length=5)
     weight = models.IntegerField()
-    school = models.CharField(max_length=50, null=True)
-    country = models.CharField(max_length=50, null=True)
+    school = models.CharField(max_length=50)
+    country = models.CharField(max_length=50)
     season_exp = models.IntegerField()
     rank = models.IntegerField()
 
@@ -161,7 +161,7 @@ class GameLog(models.Model):
     """
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     matchup = models.CharField(max_length=11)
-    minutes = models.IntegerField()  # TODO: change it to char field to show min as well
+    minutes = models.IntegerField()
     points = models.IntegerField()
     offense_reb = models.IntegerField()
     defense_reb = models.IntegerField()
