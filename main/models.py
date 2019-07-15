@@ -147,6 +147,16 @@ class Game(models.Model):
 
         return inactive_player
 
+    def home_team_game_log(self) -> TeamGameLog:
+        """Return the home team game log object.
+        """
+        return self.teamgamelog_set.filter(team=self.home_team)[0]
+
+    def away_team_game_log(self) -> TeamGameLog:
+        """Return the away team game log object.
+        """
+        return self.teamgamelog_set.filter(team=self.away_team)[0]
+
 
 # ==============================================================================
 # Game Log Data Models

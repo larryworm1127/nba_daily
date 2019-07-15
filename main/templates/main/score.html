@@ -17,16 +17,17 @@
         </form>
 
         <div class="list-group">
-          {% for game in games.values %}
-            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{% url 'main:boxscore' game.GAME_ID %}">
+          {% for game in games %}
+            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{% url 'main:boxscore' game.game_id %}">
               <div class="row">
-                {% if game.WINNER == game.AWAY_TEAM %}
+                {% if game.away_team_game_log.result == 'W' %}
                   <div class="col-xs-4">
                     <b class="winning-team">
-                      <img class="team-logo" alt="away-logo" src="{% static game.AWAY_TEAM_LOGO %}"> {{ game.AWAY_TEAM }} {{ game.AWAY_TEAM_PTS }}
-                    </b>
+                      <img class="team-logo" alt="away-logo" src="{% static game.away_team.get_logo_path %}">
+                        {{ game.away_team.team_abb }} {{ game.away_team_game_log.points }}
+                    </b>away
                     <br>
-                    {{ game.AWAY_TEAM_WINS_LOSSES }}
+                    {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
                   </div>
 
                   <div class="col-xs-4">
@@ -39,16 +40,18 @@
                   </div>
 
                   <div class="col-xs-4">
-                    <img class="team-logo" alt="home-logo" src="{% static game.HOME_TEAM_LOGO %}"> {{ game.HOME_TEAM }} {{ game.HOME_TEAM_PTS }}
+                    <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
+                      {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}
                     <br>
-                    {{ game.HOME_TEAM_WINS_LOSSES }}
+                    {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
                   </div>
 
-                {% elif game.WINNER == game.HOME_TEAM %}
+                {% else %}
                   <div class="col-xs-4">
-                    <img class="team-logo" alt="away-logo" src="{% static game.AWAY_TEAM_LOGO %}"> {{ game.AWAY_TEAM }} {{ game.AWAY_TEAM_PTS }}
+                    <img class="team-logo" alt="away-logo" src="{% static game.away_team.get_logo_path %}">
+                      {{ game.away_team.team_abb }} {{ game.away_team_game_log.points }}
                     <br>
-                    {{ game.AWAY_TEAM_WINS_LOSSES }}
+                    {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
                   </div>
 
                   <div class="col-xs-4">
@@ -62,9 +65,10 @@
 
                   <div class="col-xs-4">
                     <b class="winning-team">
-                      <img class="team-logo" alt="home-logo" src="{% static game.HOME_TEAM_LOGO %}"> {{ game.HOME_TEAM }} {{ game.HOME_TEAM_PTS }}</b>
+                      <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
+                        { game.home_team.team_abb }} {{ game.get_home_team_game_log.points }}</b>
                     <br>
-                    {{ game.HOME_TEAM_WINS_LOSSES }}
+                    {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
                   </div>
                 {% endif %}
               </div>
