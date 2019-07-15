@@ -10,9 +10,7 @@ from dateutil import parser
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from nba_py import Scoreboard
-from simplejson.decoder import JSONDecoder
 
-from . import PLAYER_PHOTO_LINK
 from .forms import DateForm
 from .models import Player, Team, Game
 
