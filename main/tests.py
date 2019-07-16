@@ -41,7 +41,8 @@ class PlayerModelTest(TestCase):
             weight=175,
             school='UCLA',
             country='USA',
-            season_exp=1
+            season_exp=1,
+            rank=1
         )
 
     @given(from_regex(NAME_REGEX, fullmatch=True), from_regex(NAME_REGEX, fullmatch=True))
