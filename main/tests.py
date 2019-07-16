@@ -16,6 +16,7 @@ from .models import Player, Team
 
 # Constants
 NAME_REGEX = re.compile(r'[a-zA-Z]{2,15}')
+ABB_REGEX = re.compile(r'[a-zA-Z]{3}')
 
 
 class PlayerModelTest(TestCase):
@@ -86,16 +87,21 @@ class TeamModelTest(TestCase):
             season='2018-19'
         )
 
-    def test_get_full_name(self):
+    @given(from_regex(NAME_REGEX, fullmatch=True), from_regex(NAME_REGEX, fullmatch=True))
+    def test_get_full_name(self, team_city: str, team_name: str):
         """Test <get_full_name> method in Team model.
         """
         team = Team.objects.get(id=1)
-        expected_full_name = "Atlanta Hawks"
+        team.team_city = team_city
+        team.team_name = team_name
+        expected_full_name = f'{team_city} {team_name}'
         self.assertEqual(expected_full_name, team.get_full_name())
 
-    def test_get_logo_path(self):
+    @given(from_regex(ABB_REGEX, fullmatch=True))
+    def test_get_logo_path(self, team_abb: str):
         """Test <get_logo_path> method in Team model.
         """
         team = Team.objects.get(id=1)
-        expected_logo_path = "images/ATL.png"
+        team.team_abb = team_abb
+        expected_logo_path = f"images/{team_abb}.png"
         self.assertEqual(expected_logo_path, team.get_logo_path())
