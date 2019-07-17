@@ -27,10 +27,12 @@ def load_game_data(apps, schema_editor):
         inactive_players = [
             p_data['PLAYER_ID'] for _, p_data in inactive_data.iterrows()
         ]
+        broadcaster = game_summary['NATL_TV_BROADCASTER_ABBREVIATION'][0]
         Game(
             game_id=game_id,
             season='2018-19',
             game_date=parser.parse(game_summary['GAME_DATE_EST'][0]).strftime("%b %d, %Y"),
+            broadcaster=broadcaster if not isinstance(broadcaster, float) else '',
             dnp_players=dumps(dnp_players),
             inactive_players=dumps(inactive_players),
             home_team=Team.objects.filter(team_id=game_summary['HOME_TEAM_ID'])[0],

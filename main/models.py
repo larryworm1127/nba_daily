@@ -113,10 +113,11 @@ class Game(models.Model):
     game_id = models.CharField(max_length=10)
     season = models.CharField(max_length=7)
     game_date = models.CharField(max_length=30)
-    dnp_players = models.TextField(null=True, blank=True)
-    inactive_players = models.TextField(null=True, blank=True)
+    dnp_players = models.TextField(blank=True)
+    inactive_players = models.TextField(blank=True)
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home')
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away')
+    broadcaster = models.CharField(max_length=10, blank=True)
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.

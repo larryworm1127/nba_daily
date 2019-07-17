@@ -18,10 +18,18 @@
               <th class="bg-primary text-lg-center">Q2</th>
               <th class="bg-primary text-lg-center">Q3</th>
               <th class="bg-primary text-lg-center">Q4</th>
-              <th class="bg-primary text-lg-center">OT1</th>
-              <th class="bg-primary text-lg-center">OT2</th>
-              <th class="bg-primary text-lg-center">OT3</th>
-              <th class="bg-primary text-lg-center">OT4</th>
+              {% if game.teamgamelog_set.all.0.pts_ot1 and game.teamgamelog_set.all.1.pts_ot1 %}
+                <th class="bg-primary text-lg-center">OT1</th>
+              {% endif %}
+              {% if game.teamgamelog_set.all.0.pts_ot2 and game.teamgamelog_set.all.1.pts_ot2 %}
+                <th class="bg-primary text-lg-center">OT2</th>
+              {% endif %}
+              {% if game.teamgamelog_set.all.0.pts_ot3 and game.teamgamelog_set.all.1.pts_ot3 %}
+                <th class="bg-primary text-lg-center">OT3</th>
+              {% endif %}
+              {% if game.teamgamelog_set.all.0.pts_ot4 and game.teamgamelog_set.all.1.pts_ot4 %}
+                <th class="bg-primary text-lg-center">OT4</th>
+              {% endif %}
               <th class="bg-primary text-lg-center">TOTAL</th>
             </tr>
           </thead>
@@ -43,10 +51,18 @@
                 <td class="text-lg-center">{{ tstats.pts_q2 }}</td>
                 <td class="text-lg-center">{{ tstats.pts_q3 }}</td>
                 <td class="text-lg-center">{{ tstats.pts_q4 }}</td>
-                <td class="text-lg-center">{{ tstats.pts_ot1 }}</td>
-                <td class="text-lg-center">{{ tstats.pts_ot2 }}</td>
-                <td class="text-lg-center">{{ tstats.pts_ot3 }}</td>
-                <td class="text-lg-center">{{ tstats.pts_ot4 }}</td>
+                {% if tstats.pts_ot1 %}
+                  <td class="text-lg-center">{{ tstats.pts_ot1 }}</td>
+                {% endif %}
+                {% if tstats.pts_ot2 %}
+                  <td class="text-lg-center">{{ tstats.pts_ot2 }}</td>
+                {% endif %}
+                {% if tstats.pts_ot3 %}
+                  <td class="text-lg-center">{{ tstats.pts_ot3 }}</td>
+                {% endif %}
+                {% if tstats.pts_ot4 %}
+                  <td class="text-lg-center">{{ tstats.pts_ot4 }}</td>
+                {% endif %}
 
                 {% if tstats.result == 'W' %}
                   <th class="text-lg-center">{{ tstats.points }}</th>
@@ -177,7 +193,7 @@
     {# Inactive Player Data Rows #}
     <br>
     <div class="row">
-      {% if inactive_player %}
+      {% if game.inactive_players|length > 0 %}
         <div class="col-lg-6">
           <h4>Inactive Players</h4>
           <table class="table table-sm">

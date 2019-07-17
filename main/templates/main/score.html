@@ -31,12 +31,8 @@
                   </div>
 
                   <div class="col-xs-4">
-                    <div class="final-text">
-                      {{ game.STATUS }}
-                    </div>
-                    <div class="broadcaster">
-                      {{ game.BROADCASTER }}
-                    </div>
+                    <div class="final-text">Final</div>
+                    <div class="broadcaster">{{ game.broadcaster }}</div>
                   </div>
 
                   <div class="col-xs-4">
@@ -55,18 +51,14 @@
                   </div>
 
                   <div class="col-xs-4">
-                    <div class="final-text">
-                      {{ game.GAME_STATUS_TEXT }}
-                    </div>
-                    <div class="broadcaster">
-                      {{ game.BROADCASTER }}
-                    </div>
+                    <div class="final-text">Final</div>
+                    <div class="broadcaster">{{ game.broadcaster }}</div>
                   </div>
 
                   <div class="col-xs-4">
                     <b class="winning-team">
                       <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
-                        {{ game.home_team.team_abb }} {{ game.get_home_team_game_log.points }}</b>
+                        {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}</b>
                     <br>
                     {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
                   </div>

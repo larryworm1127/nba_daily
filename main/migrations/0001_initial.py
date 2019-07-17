@@ -19,8 +19,9 @@ class Migration(migrations.Migration):
                 ('game_id', models.CharField(max_length=10)),
                 ('season', models.CharField(max_length=7)),
                 ('game_date', models.CharField(max_length=30)),
-                ('dnp_players', models.TextField(blank=True, null=True)),
-                ('inactive_players', models.TextField(blank=True, null=True)),
+                ('dnp_players', models.TextField(blank=True)),
+                ('inactive_players', models.TextField(blank=True)),
+                ('broadcaster', models.CharField(max_length=10, blank=True)),
             ],
         ),
         migrations.CreateModel(
