@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+{% load math_tags %}
+
+{% block body %}
+  <div class="container">
+    <br>
+    {% for class, header in headers %}
+      <h4>{{ header }}</h4>
+      <table class="standings-datatable table table-sm">
+        <thead>
+          <tr class="{{ class }} text-white">
+            <th>SEED</th>
+            <th>TEAM</th>
+            <th>W-L</th>
+            <th>WIN%</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for team in east_conf_standing %}
+            <tr>
+              {% if team.conf_rank < 9 %}
+                <th>{{ team.conf_rank }}</th>
+              {% else %}
+                <td>{{ team.conf_rank }}</td>
+              {% endif %}
+              <th>
+                <a class="nounderline grey" href="{% url 'main:teams' team.team_id %}">
+                  <img class="team-logo" alt="team-logo" src="{% static team.get_logo_path %}"> {{ team.get_full_name }}
+                </a>
+              </th>
+              <td class="boxscore-column-width">{{ team.wins }}-{{ team.losses }}</td>
+              <td>{{ team.wins|divide:82|multiply:100 }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+    {% endfor %}
+  </div>
+{% endblock %}

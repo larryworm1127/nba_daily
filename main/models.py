@@ -51,6 +51,20 @@ class Team(models.Model):
         """
         return f"images/{self.team_abb}.png"
 
+    @classmethod
+    def get_east_standing(cls) -> List[Team]:
+        """Return the East conference teams in standing order.
+        """
+        result = [team for team in cls.objects.all() if team.team_conf == 'East']
+        return sorted(result, key=lambda t: t.conf_rank)
+
+    @classmethod
+    def get_west_standing(cls) -> List[Team]:
+        """Return the West conference teams in standing order.
+        """
+        result = [team for team in cls.objects.all() if team.team_conf == 'West']
+        return sorted(result, key=lambda t: t.conf_rank)
+
 
 # ==============================================================================
 # Player Data Models
@@ -151,12 +165,12 @@ class Game(models.Model):
     def home_team_game_log(self) -> TeamGameLog:
         """Return the home team game log object.
         """
-        return self.teamgamelog_set.filter(team=self.home_team)[0]
+        return self.teamgamelog_set.get(team=self.home_team)
 
     def away_team_game_log(self) -> TeamGameLog:
         """Return the away team game log object.
         """
-        return self.teamgamelog_set.filter(team=self.away_team)[0]
+        return self.teamgamelog_set.get(team=self.away_team)
 
 
 # ==============================================================================
@@ -221,7 +235,7 @@ class TeamGameLog(GameLog):
         """Return the plus-minus of the team in that game.
         """
         opp_team = self.game.away_team if self.game.home_team == self.team else self.game.home_team
-        opp_score = self.game.teamgamelog_set.filter(team__team_id=opp_team.team_id)[0].points
+        opp_score = self.game.teamgamelog_set.get(team=opp_team).points
         return self.points - opp_score
 
     def get_player_game_logs(self) -> List[PlayerGameLog]:
