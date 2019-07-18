@@ -36,39 +36,6 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
     """
     games = Game.objects.filter(game_date=date.strftime("%b %d, %Y"))
 
-    # Get data and store in dictionary
-    # daily_games = Scoreboard(day=date.day, month=date.month, year=date.year)
-    # games = {game_num: {} for game_num in daily_games.game_header()['GAME_SEQUENCE']}
-    # for _, data in daily_games.line_score().iterrows():
-    #     if data['TEAM_ID'] in daily_games.game_header()['HOME_TEAM_ID'].values:
-    #         prefix = 'HOME'
-    #     else:
-    #         prefix = 'AWAY'
-    #
-    #     team_data = games[data['GAME_SEQUENCE']]
-    #     team_data[f'{prefix}_TEAM'] = data['TEAM_ABBREVIATION']
-    #     team_data[f'{prefix}_TEAM_WINS_LOSSES'] = data['TEAM_WINS_LOSSES']
-    #     team_data[f'{prefix}_TEAM_LOGO'] = f"images/{data['TEAM_ABBREVIATION']}.png"
-    #     team_data[f'{prefix}_TEAM_PTS'] = data['PTS']
-    #     team_data['GAME_ID'] = data['GAME_ID']
-    #
-    # # Determine winner
-    # for game_num, game in games.items():
-    #     if game['HOME_TEAM_PTS'] > game['AWAY_TEAM_PTS']:
-    #         game['WINNER'] = game['HOME_TEAM']
-    #     else:
-    #         game['WINNER'] = game['AWAY_TEAM']
-    #
-    #     # Determine game status and broadcaster
-    #     game['STATUS'] = daily_games.game_header()['GAME_STATUS_TEXT'][game_num - 1]
-    #
-    #     # Determine game broadcaster
-    #     broadcaster = daily_games.game_header()['NATL_TV_BROADCASTER_ABBREVIATION'][game_num - 1]
-    #     if not broadcaster:
-    #         game['BROADCASTER'] = ""
-    #     else:
-    #         game['BROADCASTER'] = broadcaster
-
     # Validate date input
     if request.method == 'POST':
         form = DateForm(request.POST)
@@ -95,8 +62,8 @@ def players(request, player_id: str):
     """Individual player stats page.
     """
     try:
-        player = Player.objects.filter(player_id=player_id)[0]
-    except (IndexError, Player.DoesNotExist):
+        player = Player.objects.get(player_id=player_id)
+    except Player.DoesNotExist:
         return redirect(index)
 
     context = {
@@ -133,8 +100,8 @@ def teams(request, team_id: str):
     """Individual team stats page.
     """
     try:
-        team = Team.objects.filter(team_id=team_id)[0]
-    except (IndexError, Team.DoesNotExist):
+        team = Team.objects.get(team_id=team_id)
+    except Team.DoesNotExist:
         return redirect(index)
 
     context = {
@@ -161,8 +128,8 @@ def box_score(request, game_id: str):
     """Single game box score page.
     """
     try:
-        game = Game.objects.filter(game_id=game_id)[0]
-    except (IndexError, Game.DoesNotExist):
+        game = Game.objects.get(game_id=game_id)
+    except Game.DoesNotExist:
         return redirect(index)
 
     context = {
