@@ -170,3 +170,18 @@ def box_score(request, game_id: str):
         'game': game,
     }
     return render(request, 'main/boxscore.html', context)
+
+
+# ==============================================================================
+# Standing views
+# ==============================================================================
+def standing(request):
+    """Season standing page.
+    """
+    context = {
+        'title': 'Standing',
+        'headers': [('bg-danger', 'East Conference'), ('bg-primary', 'West Conference')],
+        'east_conf_standing': Team.get_east_standing(),
+        'west_conf_standing': Team.get_west_standing()
+    }
+    return render(request, 'main/standing.html', context)
