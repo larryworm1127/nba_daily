@@ -57,10 +57,8 @@ class Migration(migrations.Migration):
                 ('team_name', models.CharField(max_length=15)),
                 ('wins', models.IntegerField()),
                 ('losses', models.IntegerField()),
-                ('conf_rank', models.IntegerField()),
-                ('div_rank', models.IntegerField()),
-                ('season', models.CharField(max_length=7)),
                 ('nba_debut', models.CharField(max_length=4)),
+                ('max_year', models.CharField(max_length=4)),
             ],
         ),
         migrations.CreateModel(

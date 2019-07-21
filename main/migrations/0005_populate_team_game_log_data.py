@@ -16,7 +16,7 @@ def load_data(apps, schema_editor):
     for _, team_data in game_log.iterrows():
         team_obj = Team.objects.get(team_id=team_data['Team_ID'])
         line_score = read_json(f'main/data/boxscore_summary/2018-19/line_score/{team_data["Game_ID"]}.json')
-        index = 0 if line_score.ge['TEAM_ID'][0] == team_obj.team_id else 1
+        index = 0 if line_score['TEAM_ID'][0] == team_obj.team_id else 1
         TeamGameLog(
             team=team_obj,
             game=Game.objects.get(game_id=team_data['Game_ID']),
@@ -60,6 +60,7 @@ def undo(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ('main', '0004_populate_game_data'),
     ]

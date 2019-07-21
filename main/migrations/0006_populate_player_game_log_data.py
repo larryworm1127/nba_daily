@@ -63,7 +63,7 @@ def get_player_order(player_obj, game_id):
         if item.PLAYER_ID == player_obj.player_id:
             index = item.Index
 
-    if index >= opp_count:
+    if index >= opp_count and boxscore['TEAM_ID'][0] != player_team:
         index -= opp_count
 
     return index
@@ -75,6 +75,7 @@ def undo(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ('main', '0005_populate_team_game_log_data'),
     ]
