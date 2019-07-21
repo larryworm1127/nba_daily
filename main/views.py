@@ -64,7 +64,7 @@ def players(request, player_id: str):
     try:
         player = Player.objects.get(player_id=player_id)
     except Player.DoesNotExist:
-        return redirect(index)
+        return redirect('main:index')
 
     context = {
         'title': player.get_full_name(),
@@ -102,7 +102,7 @@ def teams(request, team_id: str):
     try:
         team = Team.objects.get(team_id=team_id)
     except Team.DoesNotExist:
-        return redirect(index)
+        return redirect('main:index')
 
     context = {
         'title': team.get_full_name(),
@@ -130,7 +130,7 @@ def box_score(request, game_id: str):
     try:
         game = Game.objects.get(game_id=game_id)
     except Game.DoesNotExist:
-        return redirect(index)
+        return redirect('main:index')
 
     context = {
         'title': 'Boxscore',

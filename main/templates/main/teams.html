@@ -13,9 +13,9 @@
 
         <h4>{{ team.season_year }}</h4>
         <ul class="list-unstyled">
-          <li><b>W-L Record:</b> <a href="#">{{ team.wins }} - {{ team.losses }}</a></li>
-          <li><b>{{ team.team_conf }} Conference:</b> Rank {{ team.conf_rank }}</li>
-          <li><b>{{ team.team_div }} Divison:</b> Rank {{ team.div_rank }}</li>
+          <li><b>W-L Record:</b> <a href="{% url 'main:standing' %}">{{ team.wins }} - {{ team.losses }}</a></li>
+          <li><b>Conference:</b> {{ team.team_conf }}</li>
+          <li><b>Divison:</b> {{ team.team_div }}</li>
           <li><b>NBA Debut:</b> {{ team.nba_debut }}</li>
         </ul>
       </div>
