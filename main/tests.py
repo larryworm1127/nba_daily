@@ -82,10 +82,8 @@ class TeamModelTest(TestCase):
             team_name='Hawks',
             wins=10,
             losses=72,
-            conf_rank=2,
-            div_rank=3,
             nba_debut=1968,
-            season='2018-19'
+            max_year=2019
         )
 
     @given(from_regex(NAME_REGEX, fullmatch=True), from_regex(NAME_REGEX, fullmatch=True))
