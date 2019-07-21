@@ -48,22 +48,27 @@ def get_player_league_leader(season: str) -> None:
     leaders.to_json(f'data/{season}/player_leaders.json')
 
 
-def get_team_summary() -> None:
+def get_team_summary(season: str) -> None:
     """Retrieve individual team summary data using API.
+
+    === Attributes ===
+    season:
+        the season to get the team summary from.
     """
     with open('data/team_list.json') as f:
         teams = load(f)
 
-    # TODO: drop conf_rank, div_rank, and season_year column
+    team_summ = pd.DataFrame()
     for team_id in teams['TEAM_ID'].values():
         logging.info(f'Retrieving team summary data for {team_id}')
 
-        data = team.TeamSummary(team_id).info()
-        data.to_json(f'data/team_summary/{team_id}.json')
+        data = team.TeamSummary(team_id, season=season).info()  # type: pd.DataFrame
+        team_summ = team_summ.append(data, ignore_index=True)
 
         time.sleep(1)
 
-    assert len(os.listdir('data/team_summary')) == 30
+    team_summ = team_summ.drop(columns=['SEASON_YEAR', 'TEAM_CODE', 'PCT', 'CONF_RANK', 'DIV_RANK'])
+    team_summ.to_json('data/team_summary.json')
 
 
 def get_player_summary() -> None:
@@ -99,8 +104,8 @@ def get_player_game_stats(season: str) -> None:
     data.fillna(0, inplace=True)
     data.to_json(f'data/{season}/player_game_log.json')
 
-    # data = league.PlayerStats(season=season).overall()
-    # data.to_json(f'data/{season}/player_stats.json')
+    data = league.PlayerStats(season=season).overall()
+    data.to_json(f'data/{season}/player_stats.json')
 
 
 def get_team_game_stats(season: str) -> None:
@@ -124,8 +129,8 @@ def get_team_game_stats(season: str) -> None:
 
     all_game_log.to_json(f'data/{season}/team_game_log.json')
 
-    # data = league.TeamStats(season=season).overall()
-    # data.to_json(f'data/{season}/team_stats.json')
+    data = league.TeamStats(season=season).overall()
+    data.to_json(f'data/{season}/team_stats.json')
 
 
 def get_game_list(season: str) -> None:
@@ -218,10 +223,10 @@ if __name__ == '__main__':
     # get_player_list(season_year)
     # get_player_league_leader(season_year)
 
-    # get_team_summary()
+    get_team_summary(season_year)
     # get_player_summary()
 
-    get_player_game_stats(season_year)
+    # get_player_game_stats(season_year)
     # get_team_game_stats(season_year)
 
     # get_game_list(season_year)

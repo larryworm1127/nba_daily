@@ -32,6 +32,7 @@ class Team(models.Model):
     wins = models.IntegerField()
     losses = models.IntegerField()
     nba_debut = models.CharField(max_length=4)
+    max_year = models.CharField(max_length=4)
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
