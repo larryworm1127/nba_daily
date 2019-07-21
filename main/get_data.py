@@ -54,6 +54,7 @@ def get_team_summary() -> None:
     with open('data/team_list.json') as f:
         teams = load(f)
 
+    # TODO: drop conf_rank, div_rank, and season_year column
     for team_id in teams['TEAM_ID'].values():
         logging.info(f'Retrieving team summary data for {team_id}')
 

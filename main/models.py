@@ -31,9 +31,6 @@ class Team(models.Model):
     team_name = models.CharField(max_length=15)
     wins = models.IntegerField()
     losses = models.IntegerField()
-    conf_rank = models.IntegerField()
-    div_rank = models.IntegerField()
-    season = models.CharField(max_length=7)
     nba_debut = models.CharField(max_length=4)
 
     def __str__(self) -> str:
