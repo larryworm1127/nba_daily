@@ -26,9 +26,6 @@ def load_team_data(apps, schema_editor):
             team_name=data['TEAM_NAME'][0],
             wins=data['W'][0],
             losses=data['L'][0],
-            conf_rank=data['CONF_RANK'][0],
-            div_rank=data['DIV_RANK'][0],
-            season=data['SEASON_YEAR'][0],
             nba_debut=data['MIN_YEAR'][0]
         ).save()
 
