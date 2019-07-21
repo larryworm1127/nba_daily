@@ -55,43 +55,62 @@ def get_team_summary(season: str) -> None:
     season:
         the season to get the team summary from.
     """
-    with open('data/team_list.json') as f:
-        teams = load(f)
+    teams = pd.read_json('data/team_list.json')  # type: pd.DataFrame
 
     team_summ = pd.DataFrame()
-    for team_id in teams['TEAM_ID'].values():
-        logging.info(f'Retrieving team summary data for {team_id}')
+    for team_data in teams.itertuples(index=False):
+        logging.info(f'Retrieving team summary data for {team_data.TEAM_ID}')
 
-        data = team.TeamSummary(team_id, season=season).info()  # type: pd.DataFrame
+        data = team.TeamSummary(team_data.TEAM_ID, season=season).info()  # type: pd.DataFrame
         team_summ = team_summ.append(data, ignore_index=True)
 
         time.sleep(1)
 
-    team_summ = team_summ.drop(columns=['SEASON_YEAR', 'TEAM_CODE', 'PCT', 'CONF_RANK', 'DIV_RANK'])
+    team_summ = team_summ.drop(columns=[
+        'SEASON_YEAR',
+        'TEAM_CODE',
+        'PCT',
+        'CONF_RANK',
+        'DIV_RANK'
+    ])
     team_summ.to_json('data/team_summary.json')
 
 
 def get_player_summary() -> None:
     """Retrieve individual player summary data using API.
     """
-    with open('data/2018-19/player_list.json') as f:
-        players = load(f)
+    players = pd.read_json('data/2018-19/player_list.json')  # type: pd.DataFrame
 
-    for index, player_id in enumerate(players['PERSON_ID'].values()):
-        logging.info(f'Retrieving player summary data for {player_id}')
+    player_summ = pd.DataFrame()
+    for player_data in players.itertuples(index=False):
+        logging.info(f'Retrieving player summary data for {player_data.PERSON_ID}')
 
-        if list(players['TEAM_ID'].values())[index] == 0:
+        if player_data.ROSTERSTATUS == 0:
             continue
 
-        data = player.PlayerSummary(player_id).info()
-        data.to_json(f'data/player_summary/{player_id}.json')
+        data = player.PlayerSummary(player_data.PERSON_ID).info()  # type: pd.DataFrame
+        player_summ = player_summ.append(data, ignore_index=True)
 
-        time.sleep(1)
+        time.sleep(0.5)
 
-    assert len(os.listdir('data/player_summary')) == 483
+    player_summ.drop(columns=[
+        'DISPLAY_FIRST_LAST',
+        'DISPLAY_LAST_COMMA_FIRST',
+        'DISPLAY_FI_LAST',
+        'LAST_AFFILIATION',
+        'TEAM_CODE',
+        'PLAYERCODE',
+        'DLEAGUE_FLAG',
+        'NBA_FLAG',
+        'GAMES_PLAYED_FLAG',
+        'TEAM_ABBREVIATION',
+        'TEAM_NAME',
+        'TEAM_CITY'
+    ])
+    player_summ.to_json('data/player_summary.json')
 
 
-def get_player_game_stats(season: str) -> None:
+def get_player_game_log(season: str) -> None:
     """Retrieve individual player game log data using API.
 
     === Attributes ===
@@ -104,11 +123,19 @@ def get_player_game_stats(season: str) -> None:
     data.fillna(0, inplace=True)
     data.to_json(f'data/{season}/player_game_log.json')
 
+
+def get_player_season_stats(season: str) -> None:
+    """Retrieve individual player season stats using API.
+
+    === Attributes ===
+    season:
+        the season to get the player stats from.
+    """
     data = league.PlayerStats(season=season).overall()
     data.to_json(f'data/{season}/player_stats.json')
 
 
-def get_team_game_stats(season: str) -> None:
+def get_team_game_log(season: str) -> None:
     """Retrieve individual team game log data using API.
 
     === Attributes ===
@@ -129,6 +156,14 @@ def get_team_game_stats(season: str) -> None:
 
     all_game_log.to_json(f'data/{season}/team_game_log.json')
 
+
+def get_team_season_stats(season: str) -> None:
+    """Retrieve individual team season stats using API.
+
+    === Attributes ===
+    season:
+        the season to get the team stats from.
+    """
     data = league.TeamStats(season=season).overall()
     data.to_json(f'data/{season}/team_stats.json')
 
@@ -142,16 +177,8 @@ def get_game_list(season: str) -> None:
     """
     logging.info('Retrieving game list data')
 
-    with open('data/team_list.json') as f:
-        teams = load(f)['TEAM_ID'].values()
-
-    games = set([])
-    for team_id in teams:
-        with open(f'data/team_game_log/{season}/{team_id}.json') as f:
-            game_log = load(f)
-
-        for game_id in game_log.get("Game_ID").values():
-            games.add(game_id)
+    game_log = league.GameLog(season=season, player_or_team=Player_or_Team.Team).overall()  # type: pd.DataFrame
+    games = {data.GAME_ID for data in game_log.itertuples(index=False)}
 
     with open('data/game_list.json', 'w+') as f:
         dump(list(games), f)
@@ -187,9 +214,7 @@ def get_box_score_summary(season: str) -> None:
     with open('data/game_list.json') as f:
         games = load(f)
 
-    temp = games.index('0021800797')
-
-    for game_id in games[temp:]:
+    for game_id in games:
         logging.info(f'Retrieving box score summary data for {game_id}')
 
         data = game.BoxscoreSummary(game_id, season=season)
@@ -223,11 +248,13 @@ if __name__ == '__main__':
     # get_player_list(season_year)
     # get_player_league_leader(season_year)
 
-    get_team_summary(season_year)
-    # get_player_summary()
+    # get_team_summary(season_year)
+    get_player_summary()
 
-    # get_player_game_stats(season_year)
-    # get_team_game_stats(season_year)
+    # get_player_game_log(season_year)
+    # get_team_game_log(season_year)
+    # get_player_season_stats(season_year)
+    # get_team_season_stats(season_year)
 
     # get_game_list(season_year)
     # get_box_score(season_year)

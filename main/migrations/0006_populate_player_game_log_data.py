@@ -75,6 +75,7 @@ def undo(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ('main', '0005_populate_team_game_log_data'),
     ]
