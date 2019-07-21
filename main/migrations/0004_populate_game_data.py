@@ -13,11 +13,11 @@ def load_game_data(apps, schema_editor):
 
     print("Migrate Individual Game Data.")
 
-    with open('main/data/game_list.json') as f:
+    with open('main/data/2018-19/game_list.json') as f:
         games = load(f)
 
     for game_id in games:
-        boxscore = read_json(f'main/data/boxscore/2018-19/{game_id}.json')
+        boxscore = read_json(f'main/data/2018-19/boxscore/{game_id}.json')
         game_summary = read_json(f'main/data/boxscore_summary/2018-19/game_summary/{game_id}.json')
         inactive_data = read_json(f'main/data/boxscore_summary/2018-19/inactive_players/{game_id}.json')
 
@@ -35,8 +35,8 @@ def load_game_data(apps, schema_editor):
             broadcaster=broadcaster if not isinstance(broadcaster, float) else '',
             dnp_players=dumps(dnp_players),
             inactive_players=dumps(inactive_players),
-            home_team=Team.objects.filter(team_id=game_summary['HOME_TEAM_ID'])[0],
-            away_team=Team.objects.filter(team_id=game_summary['VISITOR_TEAM_ID'])[0]
+            home_team=Team.objects.get(team_id=game_summary['HOME_TEAM_ID']),
+            away_team=Team.objects.get(team_id=game_summary['VISITOR_TEAM_ID'])
         ).save()
 
 

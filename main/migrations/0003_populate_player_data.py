@@ -11,10 +11,10 @@ def load_player_data(apps, schema_editor):
 
     print("Migrate Individual Player Data.")
 
-    with open('main/data/player_list.json') as f:
+    with open('main/data/2018-19/player_list.json') as f:
         players = load(f)
 
-    with open('main/data/player_leaders.json') as f:
+    with open('main/data/2018-19/player_leaders.json') as f:
         leaders = load(f)
 
     for player_id in players['PERSON_ID'].values():
@@ -34,7 +34,7 @@ def load_player_data(apps, schema_editor):
             school = "N/A" if data['SCHOOL'][0] == ' ' else data['SCHOOL'][0]
 
         Player(
-            team=apps.get_model("main", "Team").objects.filter(team_id=data['TEAM_ID'][0])[0],
+            team=apps.get_model("main", "Team").objects.get(team_id=data['TEAM_ID'][0]),
             first_name=data['FIRST_NAME'][0],
             last_name=data['LAST_NAME'][0],
             birth_date=data['BIRTHDATE'][0][:10],

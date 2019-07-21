@@ -7,7 +7,9 @@ import logging
 import os
 import time
 
+import pandas as pd
 from nba_py import game, team, player, league
+from nba_py.constants import Player_or_Team
 from simplejson import load, dump
 
 
@@ -30,7 +32,7 @@ def get_player_list(season: str) -> None:
     logging.info('Retrieving player list data')
 
     player_list = player.PlayerList(season=season).info()
-    player_list.to_json('data/player_list.json')
+    player_list.to_json(f'data/{season}/player_list.json')
 
 
 def get_player_league_leader(season: str) -> None:
@@ -43,7 +45,7 @@ def get_player_league_leader(season: str) -> None:
     logging.info('Retrieve league leader data')
 
     leaders = league.Leaders(stat_category="EFF", season=season).results()
-    leaders.to_json('data/player_leaders.json')
+    leaders.to_json(f'data/{season}/player_leaders.json')
 
 
 def get_team_summary() -> None:
@@ -66,7 +68,7 @@ def get_team_summary() -> None:
 def get_player_summary() -> None:
     """Retrieve individual player summary data using API.
     """
-    with open('data/player_list.json') as f:
+    with open('data/2018-19/player_list.json') as f:
         players = load(f)
 
     for index, player_id in enumerate(players['PERSON_ID'].values()):
@@ -83,31 +85,24 @@ def get_player_summary() -> None:
     assert len(os.listdir('data/player_summary')) == 483
 
 
-def get_player_game_log(season: str) -> None:
+def get_player_game_stats(season: str) -> None:
     """Retrieve individual player game log data using API.
 
     === Attributes ===
     season:
         the season to get the player game log from.
     """
-    with open('data/player_list.json') as f:
-        players = load(f)
+    logging.info('Retrieving player game log data.')
 
-    for index, player_id in enumerate(players['PERSON_ID'].values()):
-        logging.info(f'Retrieving player game log data for {player_id}')
+    data = league.GameLog(season=season, player_or_team=Player_or_Team.Player).overall()
+    data.fillna(0, inplace=True)
+    data.to_json(f'data/{season}/player_game_log.json')
 
-        if list(players['TEAM_ID'].values())[index] == 0:
-            continue
-
-        data = player.PlayerGameLogs(player_id, season=season).info()
-        data.to_json(f'data/player_game_log/{season}/{player_id}.json')
-
-        time.sleep(1)
-
-    assert len(os.listdir(f'data/player_game_log/{season}')) == 483
+    # data = league.PlayerStats(season=season).overall()
+    # data.to_json(f'data/{season}/player_stats.json')
 
 
-def get_team_game_log(season: str) -> None:
+def get_team_game_stats(season: str) -> None:
     """Retrieve individual team game log data using API.
 
     === Attributes ===
@@ -117,15 +112,19 @@ def get_team_game_log(season: str) -> None:
     with open('data/team_list.json') as f:
         teams = load(f)['TEAM_ID'].values()
 
+    all_game_log = pd.DataFrame()
     for team_id in teams:
         logging.info(f'Retrieving team game log data for {team_id}')
 
-        data = team.TeamGameLogs(team_id, season=season).info()
-        data.to_json(f'data/team_game_log/{season}/{team_id}.json')
+        data = team.TeamGameLogs(team_id, season=season).info()  # type: pd.DataFrame
+        all_game_log = all_game_log.append(data, ignore_index=True)
 
         time.sleep(1)
 
-    assert len(os.listdir(f'data/team_game_log/{season}')) == 30
+    all_game_log.to_json(f'data/{season}/team_game_log.json')
+
+    # data = league.TeamStats(season=season).overall()
+    # data.to_json(f'data/{season}/team_stats.json')
 
 
 def get_game_list(season: str) -> None:
@@ -204,9 +203,6 @@ def get_box_score_summary(season: str) -> None:
     assert len(os.listdir(f'data/boxscore_summary/{season}/inactive_players')) == 1230
 
 
-g = [1626187, 1628500, 1626780, 203460, 1629008, 1629117, 1629129, 1629134, 1629341, 204001, 1627738, 1627749, 1627756,
-     1627785, 202389]
-
 if __name__ == '__main__':
     # Configure logger
     logging.basicConfig(
@@ -224,9 +220,9 @@ if __name__ == '__main__':
     # get_team_summary()
     # get_player_summary()
 
-    # get_player_game_log(season_year)
-    # get_team_game_log(season_year)
+    get_player_game_stats(season_year)
+    # get_team_game_stats(season_year)
 
     # get_game_list(season_year)
     # get_box_score(season_year)
-    get_box_score_summary(season_year)
+    # get_box_score_summary(season_year)

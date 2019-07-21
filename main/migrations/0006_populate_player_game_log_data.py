@@ -12,45 +12,49 @@ def load_data(apps, schema_editor):
 
     print("Migrate Individual Player Game Log Data.")
 
-    for player_obj in Players.objects.all():
-        game_log = read_json(f'main/data/player_game_log/2018-19/{player_obj.player_id}.json', dtype={'Game_ID': str})
+    game_log = read_json('main/data/2018-19/player_game_log.json', dtype={'GAME_ID': str})
 
-        for _, data in game_log.iterrows():
-            order = get_player_order(player_obj, data['Game_ID'])
-            game = Game.objects.filter(game_id=data['Game_ID'])[0]
-            team_game_log = TeamGameLog.objects.filter(game__game_id=data['Game_ID'], matchup=data['MATCHUP'])[0]
-            PlayerGameLog(
-                game=game,
-                team_game_log=team_game_log,
-                order=order,
-                player=player_obj,
-                plus_minus=data['PLUS_MINUS'],
-                matchup=data['MATCHUP'],
-                minutes=data['MIN'],
-                points=data['PTS'],
-                offense_reb=data['OREB'],
-                defense_reb=data['DREB'],
-                rebounds=data['REB'],
-                assists=data['AST'],
-                steals=data['STL'],
-                blocks=data['BLK'],
-                turnovers=data['TOV'],
-                fouls=data['PF'],
-                fg_made=data['FGM'],
-                fg_attempt=data['FGA'],
-                fg_percent=data['FG_PCT'],
-                fg3_made=data['FG3M'],
-                fg3_attempt=data['FG3A'],
-                fg3_percent=data['FG3_PCT'],
-                ft_made=data['FTM'],
-                ft_attempt=data['FTA'],
-                ft_percent=data['FT_PCT'],
-                result=data['WL']
-            ).save()
+    for _, data in game_log.iterrows():
+        try:
+            player_obj = Players.objects.get(player_id=data['PLAYER_ID'])
+        except Players.DoesNotExist:
+            continue
+
+        order = get_player_order(player_obj, data['GAME_ID'])
+        game = Game.objects.get(game_id=data['GAME_ID'])
+        team_game_log = TeamGameLog.objects.get(game__game_id=data['GAME_ID'], matchup=data['MATCHUP'])
+        PlayerGameLog(
+            game=game,
+            team_game_log=team_game_log,
+            order=order,
+            player=player_obj,
+            plus_minus=data['PLUS_MINUS'],
+            matchup=data['MATCHUP'],
+            minutes=data['MIN'],
+            points=data['PTS'],
+            offense_reb=data['OREB'],
+            defense_reb=data['DREB'],
+            rebounds=data['REB'],
+            assists=data['AST'],
+            steals=data['STL'],
+            blocks=data['BLK'],
+            turnovers=data['TOV'],
+            fouls=data['PF'],
+            fg_made=data['FGM'],
+            fg_attempt=data['FGA'],
+            fg_percent=data['FG_PCT'],
+            fg3_made=data['FG3M'],
+            fg3_attempt=data['FG3A'],
+            fg3_percent=data['FG3_PCT'],
+            ft_made=data['FTM'],
+            ft_attempt=data['FTA'],
+            ft_percent=data['FT_PCT'],
+            result=data['WL']
+        ).save()
 
 
 def get_player_order(player_obj, game_id):
-    boxscore = read_json(f'main/data/boxscore/2018-19/{game_id}.json')
+    boxscore = read_json(f'main/data/2018-19/boxscore/{game_id}.json')
     player_team = boxscore[boxscore.PLAYER_ID == player_obj.player_id]['TEAM_ID'].values[0]
     opp_count = len(boxscore[boxscore.TEAM_ID != player_team])
 
