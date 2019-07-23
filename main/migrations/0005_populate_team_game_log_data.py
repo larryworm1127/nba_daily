@@ -2,6 +2,7 @@
 
 from django.db import migrations
 from pandas import read_json
+from simplejson import load
 
 
 def load_data(apps, schema_editor):
@@ -15,7 +16,11 @@ def load_data(apps, schema_editor):
 
     for _, team_data in game_log.iterrows():
         team_obj = Team.objects.get(team_id=team_data['Team_ID'])
-        line_score = read_json(f'main/data/boxscore_summary/2018-19/line_score/{team_data["Game_ID"]}.json')
+
+        with open(f'main/data/2018-19/boxscore_summary/{team_data["Game_ID"]}.json') as f:
+            boxscore_summary = load(f)
+
+        line_score = read_json(boxscore_summary['LINE_SCORE'])
         index = 0 if line_score['TEAM_ID'][0] == team_obj.team_id else 1
         TeamGameLog(
             team=team_obj,

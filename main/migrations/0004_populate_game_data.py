@@ -17,15 +17,18 @@ def load_game_data(apps, schema_editor):
         games = load(f)
 
     for game_id in games:
+        with open(f'main/data/2018-19/boxscore_summary/{game_id}.json') as f:
+            boxscore_summary = load(f)
+
         boxscore = read_json(f'main/data/2018-19/boxscore/{game_id}.json')
-        game_summary = read_json(f'main/data/boxscore_summary/2018-19/game_summary/{game_id}.json')
-        inactive_data = read_json(f'main/data/boxscore_summary/2018-19/inactive_players/{game_id}.json')
+        game_summary = read_json(boxscore_summary['GAME_SUMMARY'])
+        inactive_data = read_json(boxscore_summary['INACTIVE_PLAYER'])
 
         dnp_players = {
             data['PLAYER_ID']: data['COMMENT'].strip() for _, data in boxscore.iterrows() if math.isnan(data['PF'])
         }
         inactive_players = [
-            p_data['PLAYER_ID'] for _, p_data in inactive_data.iterrows()
+            int(p_data['PLAYER_ID']) for _, p_data in inactive_data.iterrows()
         ]
         broadcaster = game_summary['NATL_TV_BROADCASTER_ABBREVIATION'][0]
         Game(
