@@ -4,6 +4,7 @@ import pandas as pd
 from django.db import migrations
 
 
+# TODO: gotta change these 2
 def load_team_data(apps, schema_editor):
     Team = apps.get_model('main', 'Team')
     TeamSeasonStats = apps.get_model('main', 'TeamSeasonStats')
@@ -15,6 +16,7 @@ def load_team_data(apps, schema_editor):
 
         TeamSeasonStats(
             team=Team.objects.get(team_id=team_data.TEAM_ID),
+            season='2018-19',
             minutes=team_data.MIN,
             points=team_data.PTS,
             offense_reb=team_data.OREB,
@@ -40,6 +42,7 @@ def load_team_data(apps, schema_editor):
 
 def load_player_data(apps, schema_editor):
     Player = apps.get_model('main', 'Player')
+    Team = apps.get_model('main', 'Team')
     PlayerSeasonStats = apps.get_model('main', 'PlayerSeasonStats')
 
     print("Migrate Individual Player Season Stats Data.")
@@ -53,6 +56,8 @@ def load_player_data(apps, schema_editor):
 
         PlayerSeasonStats(
             player=player_obj,
+            curr_team=Team.objects.get(team_id=player_data.TEAM_ID),
+            season='2018-19',
             games_played=player_data.GP,
             minutes=player_data.MIN,
             points=player_data.PTS,
