@@ -143,7 +143,7 @@ class Game(models.Model):
         dnp_players = {
             Player.objects.get(player_id=player_id): reason
             for player_id, reason in inst.decode(self.dnp_players).items()
-            if len(Player.objects.filter(player_id=player_id)) > 0
+            if Player.objects.filter(player_id=player_id).count() > 0
         }
 
         return dnp_players
@@ -155,7 +155,7 @@ class Game(models.Model):
         inactive_player = [
             Player.objects.get(player_id=player_id)
             for player_id in inst.decode(self.inactive_players)
-            if len(Player.objects.filter(player_id=player_id)) > 0
+            if Player.objects.filter(player_id=player_id).count() > 0
         ]
 
         return inactive_player
@@ -239,9 +239,9 @@ class TeamGameLog(GameLog):
     def get_player_game_logs(self) -> List[PlayerGameLog]:
         """Return a list of player game log object in order of display.
         """
-        num_players = len(self.playergamelog_set.all())
+        num_players = self.playergamelog_set.all().count()
         return [self.playergamelog_set.get(order=index) for index in range(num_players)
-                if len(self.playergamelog_set.filter(order=index)) > 0]
+                if self.playergamelog_set.filter(order=index).count() > 0]
 
 
 class PlayerGameLog(GameLog):
