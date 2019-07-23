@@ -64,6 +64,18 @@ class Team(models.Model):
         return sorted(result, key=lambda t: t.conf_rank)
 
 
+class TeamStanding(models.Model):
+    """Individual team standing model.
+    """
+    team = models.OneToOneField(Team, on_delete=models.CASCADE)
+    wins = models.IntegerField()
+    losses = models.IntegerField()
+    home_wins = models.IntegerField()
+    home_losses = models.IntegerField()
+    away_wins = models.IntegerField()
+    away_losses = models.IntegerField()
+
+
 # ==============================================================================
 # Player Data Models
 #
@@ -109,6 +121,52 @@ class Player(models.Model):
         """Return the URL to player photo.
         """
         return str(PLAYER_PHOTO_LINK.render(player_id=self.player_id))
+
+
+# ==============================================================================
+# Season Stats Models
+# ==============================================================================
+class SeasonStats(models.Model):
+    """Season stats template model.
+    """
+    minutes = models.IntegerField()
+    points = models.IntegerField()
+    offense_reb = models.IntegerField()
+    defense_reb = models.IntegerField()
+    rebounds = models.IntegerField()
+    assists = models.IntegerField()
+    steals = models.IntegerField()
+    blocks = models.IntegerField()
+    turnovers = models.IntegerField()
+    fouls = models.IntegerField()
+    fg_made = models.IntegerField()
+    fg_attempt = models.IntegerField()
+    fg_percent = models.FloatField()
+    fg3_made = models.IntegerField()
+    fg3_attempt = models.IntegerField()
+    fg3_percent = models.FloatField()
+    ft_made = models.IntegerField()
+    ft_attempt = models.IntegerField()
+    ft_percent = models.FloatField()
+    plus_minus = models.IntegerField()
+
+    class Meta:
+        abstract = True
+
+
+class TeamSeasonStats(SeasonStats):
+    """Individual team season stats model.
+    """
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+
+
+class PlayerSeasonStats(SeasonStats):
+    """Individual player season stats model.
+    """
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    games_played = models.IntegerField()
+    double_double = models.IntegerField()
+    triple_double = models.IntegerField()
 
 
 # ==============================================================================

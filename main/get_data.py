@@ -133,7 +133,7 @@ class CollectData:
             'TEAM_NAME',
             'TEAM_CITY'
         ])
-        player_summ.to_json('data/player_summary.json')
+        player_summ.to_json(f'data/{self.season}/player_summary.json')
 
     def get_player_game_log(self) -> None:
         """Retrieve individual player game log data using API.
@@ -295,7 +295,11 @@ class CollectData:
             ]).to_json()
 
             with open(f'data/{self.season}/boxscore_summary/{game_id}.json', 'w+') as f:
-                result = {'GAME_SUMMARY': game_summary, 'LINE_SCORE': line_score, 'INACTIVE_PLAYER': inactive_player}
+                result = {
+                    'GAME_SUMMARY': game_summary,
+                    'LINE_SCORE': line_score,
+                    'INACTIVE_PLAYER': inactive_player
+                }
                 dump(result, f)
 
             time.sleep(0.5)
