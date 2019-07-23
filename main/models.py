@@ -159,6 +159,11 @@ class TeamSeasonStats(SeasonStats):
     """
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
+    def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.team.get_full_name()
+
 
 class PlayerSeasonStats(SeasonStats):
     """Individual player season stats model.
@@ -167,6 +172,11 @@ class PlayerSeasonStats(SeasonStats):
     games_played = models.IntegerField()
     double_double = models.IntegerField()
     triple_double = models.IntegerField()
+
+    def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.player.get_full_name()
 
 
 # ==============================================================================
