@@ -20,7 +20,7 @@ def load_data(apps, schema_editor):
         with open(f'main/data/2018-19/boxscore_summary/{team_data.Game_ID}.json') as f:
             boxscore_summary = load(f)
 
-        line_score = pd.read_json(boxscore_summary.LINE_SCORE)
+        line_score = pd.read_json(boxscore_summary['LINE_SCORE'])
         index = 0 if line_score.TEAM_ID[0] == team_obj.team_id else 1
         TeamGameLog(
             team=team_obj,
