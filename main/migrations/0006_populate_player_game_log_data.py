@@ -22,7 +22,7 @@ def load_data(apps, schema_editor):
 
         order = get_player_order(player_obj, data.GAME_ID)
         game = Game.objects.get(game_id=data.GAME_ID)
-        team_game_log = TeamGameLog.objects.get(game__game_id=data.GAME_ID, matchup=data.MATCHUP)
+        team_game_log = TeamGameLog.objects.get(game__game_id=data.GAME_ID, team__team_id=data.TEAM_ID)
         PlayerGameLog(
             game=game,
             team_game_log=team_game_log,

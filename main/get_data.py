@@ -44,7 +44,7 @@ class CollectData:
         """
         self.logger.info(f'Retrieving team list data')
 
-        team_list = team.TeamList().info()
+        team_list = team.TeamList().info()[['TEAM_ID']]
         team_list.to_json('data/team_list.json')
 
     def get_player_list(self) -> None:
@@ -56,7 +56,7 @@ class CollectData:
         """
         self.logger.info('Retrieving player list data')
 
-        player_list = player.PlayerList(season=self.season).info()
+        player_list = player.PlayerList(season=self.season).info()[['PERSON_ID']]
         player_list.to_json(f'data/{self.season}/player_list.json')
 
     def get_player_league_leader(self) -> None:
@@ -68,7 +68,7 @@ class CollectData:
         """
         self.logger.info('Retrieve league leader data')
 
-        leaders = league.Leaders(stat_category="EFF", season=self.season).results()
+        leaders = league.Leaders(stat_category="EFF", season=self.season).results()[['PLAYER_ID', 'RANK']]
         leaders.to_json(f'data/{self.season}/player_leaders.json')
 
     def get_team_summary(self) -> None:
@@ -80,6 +80,7 @@ class CollectData:
         """
         teams = pd.read_json('data/team_list.json')  # type: pd.DataFrame
 
+        # Collect data and add them to the main data frame
         team_summ = pd.DataFrame()
         for team_data in teams.itertuples(index=False):
             self.logger.info(f'Retrieving team summary data for {team_data.TEAM_ID}')
@@ -89,6 +90,7 @@ class CollectData:
 
             time.sleep(1)
 
+        # Remove data columns that won't be needed
         team_summ = team_summ.drop(columns=[
             'SEASON_YEAR',
             'TEAM_CODE',
@@ -103,6 +105,7 @@ class CollectData:
         """
         players = pd.read_json('data/2018-19/player_list.json')  # type: pd.DataFrame
 
+        # Collect data and add them to the main data frame
         player_summ = pd.DataFrame()
         for player_data in players.itertuples(index=False):
             self.logger.info(f'Retrieving player summary data for {player_data.PERSON_ID}')
@@ -115,7 +118,8 @@ class CollectData:
 
             time.sleep(0.5)
 
-        player_summ.drop(columns=[
+        # Remove data columns that won't be needed
+        player_summ = player_summ.drop(columns=[
             'DISPLAY_FIRST_LAST',
             'DISPLAY_LAST_COMMA_FIRST',
             'DISPLAY_FI_LAST',
@@ -140,8 +144,15 @@ class CollectData:
         """
         self.logger.info('Retrieving player game log data.')
 
-        data = league.GameLog(season=self.season, player_or_team=Player_or_Team.Player).overall()
+        data = league.GameLog(season=self.season, player_or_team=Player_or_Team.Player).overall()  # type: pd.DataFrame
         data.fillna(0, inplace=True)
+        data = data.drop(columns=[
+            'VIDEO_AVAILABLE',
+            'TEAM_ABBREVIATION',
+            'TEAM_NAME',
+            'SEASON_ID',
+            'PLAYER_NAME'
+        ])
         data.to_json(f'data/{self.season}/player_game_log.json')
 
     def get_player_season_stats(self) -> None:
@@ -153,7 +164,14 @@ class CollectData:
         """
         self.logger.info('Retrieve player season stats data.')
 
-        data = league.PlayerStats(season=self.season).overall()
+        data = league.PlayerStats(season=self.season).overall()  # type: pd.DataFrame
+        data = data.drop(columns=[
+            'CFID',
+            'CFPARAMS',
+            'TEAM_ABBREVIATION',
+            'PLAYER_NAME'
+            'AGE'
+        ])
         data.to_json(f'data/{self.season}/player_stats.json')
 
     def get_team_game_log(self) -> None:
@@ -187,6 +205,12 @@ class CollectData:
         self.logger.info('Retrieve team season stats data.')
 
         data = league.TeamStats(season=self.season).overall()
+        data = data.drop(columns=[
+            'CFID',
+            'CFPARAMS',
+            'TEAM_NAME'
+            'AGE'
+        ])
         data.to_json(f'data/{self.season}/team_stats.json')
 
     def get_game_list(self) -> None:

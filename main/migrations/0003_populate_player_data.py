@@ -6,6 +6,7 @@ from django.db import migrations
 
 def load_player_data(apps, schema_editor):
     Player = apps.get_model("main", "Player")
+    Team = apps.get_model("main", "Team")
 
     print("Migrate Individual Player Data.")
 
@@ -18,7 +19,7 @@ def load_player_data(apps, schema_editor):
         school = "N/A" if data.SCHOOL is None or data.SCHOOL == ' ' else data.SCHOOL
 
         Player(
-            team=apps.get_model("main", "Team").objects.get(team_id=data.TEAM_ID),
+            team=Team.objects.get(team_id=data.TEAM_ID),
             first_name=data.FIRST_NAME,
             last_name=data.LAST_NAME,
             birth_date=data.BIRTHDATE[:10],
