@@ -17,6 +17,9 @@ def load_team_data(apps, schema_editor):
         TeamSeasonStats(
             team=Team.objects.get(team_id=team_data.TEAM_ID),
             season='2018-19',
+            wins=team_data.W,
+            losses=team_data.L,
+            win_percent=team_data.W_PCT,
             minutes=team_data.MIN,
             points=team_data.PTS,
             offense_reb=team_data.OREB,

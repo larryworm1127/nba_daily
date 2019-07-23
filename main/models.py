@@ -159,6 +159,9 @@ class TeamSeasonStats(SeasonStats):
     """Individual team season stats model.
     """
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    wins = models.IntegerField()
+    losses = models.IntegerField()
+    win_percent = models.FloatField()
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.

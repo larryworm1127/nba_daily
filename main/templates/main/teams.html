@@ -1,78 +1,67 @@
-{% extends 'layout.html' %}
+{% extends 'team_base.html' %}
 
-{% load static %}
 {% load math_tags %}
 
-{% block body %}
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <br>
-        <h4>{{ team.get_full_name }}</h4>
-        <img class="team-logo-lg" alt="team-logo" src="{% static team.get_logo_path %}">
+{% block content %}
 
-        <h4>{{ team.season_year }}</h4>
-        <ul class="list-unstyled">
-          <li><b>W-L Record:</b> <a href="{% url 'main:standing' %}">{{ team.wins }} - {{ team.losses }}</a></li>
-          <li><b>Conference:</b> {{ team.team_conf }}</li>
-          <li><b>Divison:</b> {{ team.team_div }}</li>
-          <li><b>NBA Debut:</b> {{ team.nba_debut }}</li>
-          <li><b>Max Year:</b> {{ team.max_year }}</li>
-        </ul>
-      </div>
-    </div>
-    <br>
-
-    <h4>Regular Season </h4>
-    <table class="team-games-datatable table table-sm">
-      <thead class="thead-inverse">
-        <tr class="bg-warning text-white">
-          <th class="text-lg-center">DATE</th>
-          <th class="bg-primary text-lg-center">MATCH</th>
-          <th class="bg-primary">W/L</th>
-          <th class="bg-primary">MIN</th>
-          <th class="bg-primary">PTS</th>
-          <th class="bg-primary">REB</th>
-          <th class="bg-primary">AST</th>
-          <th class="bg-primary boxscore-column-width">FG</th>
-          <th class="bg-primary">FG%</th>
-          <th class="bg-primary boxscore-column-width">3P</th>
-          <th class="bg-primary">3P%</th>
-          <th class="bg-primary boxscore-column-width">FT</th>
-          <th class="bg-primary">FT%</th>
-          <th class="bg-primary">OREB</th>
-          <th class="bg-primary">DREB</th>
-          <th class="bg-primary">STL</th>
-          <th class="bg-primary">BLK</th>
-          <th class="bg-primary">TOV</th>
-          <th class="bg-primary">PF</th>
+  <h4>Career Regular Season</h4>
+  <table class="seasons-datatable table table-sm">
+    <thead class="thead-inverse">
+      <tr class="bg-primary text-white">
+        <th class="text-lg-center">SEASON</th>
+        <th class="bg-primary">W</th>
+        <th class="bg-primary">L</th>
+        <th class="bg-primary">Win%</th>
+        <th class="bg-primary">MIN</th>
+        <th class="bg-primary">PTS</th>
+        <th class="bg-primary">REB</th>
+        <th class="bg-primary">AST</th>
+        <th class="bg-primary boxscore-column-width">FG</th>
+        <th class="bg-primary">FG%</th>
+        <th class="bg-primary boxscore-column-width">3P</th>
+        <th class="bg-primary">3P%</th>
+        <th class="bg-primary boxscore-column-width">FT</th>
+        <th class="bg-primary">FT%</th>
+        <th class="bg-primary">OREB</th>
+        <th class="bg-primary">DREB</th>
+        <th class="bg-primary">STL</th>
+        <th class="bg-primary">BLK</th>
+        <th class="bg-primary">TOV</th>
+        <th class="bg-primary">PF</th>
+        <th class="bg-primary">+/-</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for season_stats in data %}
+        <tr>
+          <th class="text-lg-center">
+            <a class="nounderline" href="{% url 'main:team_games' team.team_id '2018-19' %}">
+              {{ season_stats.season }}
+            </a>
+          </th>
+          <td>{{ season_stats.wins }}</td>
+          <td>{{ season_stats.losses }}</td>
+          <td>{{ season_stats.win_percent }}</td>
+          <td>{{ season_stats.minutes }}</td>
+          <td>{{ season_stats.points }}</td>
+          <td>{{ season_stats.rebounds }}</td>
+          <td>{{ season_stats.assists }}</td>
+          <td>{{ season_stats.fg_made }}-{{ season_stats.fg_attempt }}</td>
+          <td>{{ season_stats.fg_percent|multiply:100 }}</td>
+          <td>{{ season_stats.fg3_made }}-{{ season_stats.fg3_attempt }}</td>
+          <td>{{ season_stats.fg3_percent|multiply:100 }}</td>
+          <td>{{ season_stats.ft_made }}-{{ season_stats.ft_attempt }}</td>
+          <td>{{ season_stats.ft_percent|multiply:100 }}</td>
+          <td>{{ season_stats.offense_reb }}</td>
+          <td>{{ season_stats.defense_reb }}</td>
+          <td>{{ season_stats.steals }}</td>
+          <td>{{ season_stats.blocks }}</td>
+          <td>{{ season_stats.turnovers }}</td>
+          <td>{{ season_stats.fouls }}</td>
+          <td>{{ season_stats.plus_minus }}</td>
         </tr>
-      </thead>
-      <tbody>
-        {% for game in team.teamgamelog_set.all %}
-          <tr>
-            <th class="text-lg-center">{{ game.game.game_date }}</th>
-            <th class="text-lg-center"><a class="nounderline" href="{% url 'main:boxscore' game.game.game_id %}">{{ game.matchup }}</a></th>
-            <td>{{ game.result }}</td>
-            <td>{{ game.minutes }}</td>
-            <td>{{ game.points }}</td>
-            <td>{{ game.rebounds }}</td>
-            <td>{{ game.assists }}</td>
-            <td>{{ game.fg_made }}-{{ game.fg_attempt }}</td>
-            <td>{{ game.fg_percent|multiply:100 }}</td>
-            <td>{{ game.fg3_made }}-{{ game.fg3_attempt }}</td>
-            <td>{{ game.fg3_percent|multiply:100 }}</td>
-            <td>{{ game.ft_made }}-{{ game.ft_attempt }}</td>
-            <td>{{ game.ft_percent|multiply:100 }}</td>
-            <td>{{ game.offense_reb }}</td>
-            <td>{{ game.defense_reb }}</td>
-            <td>{{ game.steals }}</td>
-            <td>{{ game.blocks }}</td>
-            <td>{{ game.turnovers }}</td>
-            <td>{{ game.fouls }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+      {% endfor %}
+    </tbody>
+  </table>
+
 {% endblock %}

@@ -99,6 +99,9 @@ class Migration(migrations.Migration):
                 ('ft_attempt', models.FloatField()),
                 ('ft_percent', models.FloatField()),
                 ('plus_minus', models.FloatField()),
+                ('wins', models.IntegerField()),
+                ('losses', models.IntegerField()),
+                ('win_percent', models.FloatField()),
                 ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='main.Team')),
             ],
             options={
