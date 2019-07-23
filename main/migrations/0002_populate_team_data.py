@@ -3,15 +3,13 @@
 import pandas as pd
 from django.db import migrations
 
-from pandas import read_json
-
 
 def load_team_data(apps, schema_editor):
     Team = apps.get_model("main", "Team")
 
     print("Migrate Individual Team Data.")
 
-    data = read_json('main/data/team_summary.json')  # type: pd.DataFrame
+    data = pd.read_json('main/data/team_summary.json')  # type: pd.DataFrame
 
     for team in data.itertuples(index=False):
         Team(

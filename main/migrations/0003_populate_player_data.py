@@ -2,7 +2,6 @@
 
 import pandas as pd
 from django.db import migrations
-from pandas import read_json
 
 
 def load_player_data(apps, schema_editor):
@@ -10,8 +9,8 @@ def load_player_data(apps, schema_editor):
 
     print("Migrate Individual Player Data.")
 
-    leaders = read_json('main/data/2018-19/player_leaders.json')  # type: pd.DataFrame
-    player_summary = read_json('main/data/player_summary.json')  # type: pd.DataFrame
+    leaders = pd.read_json('main/data/2018-19/player_leaders.json')  # type: pd.DataFrame
+    player_summary = pd.read_json('main/data/player_summary.json')  # type: pd.DataFrame
 
     for data in player_summary.itertuples(index=False):
         filtered_rank = leaders[leaders.PLAYER_ID == data.PERSON_ID].RANK.values
