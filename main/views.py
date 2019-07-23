@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import Player, Team, Game
+from .models import Player, Team, Game, PlayerSeasonStats
 
 
 # ==============================================================================
@@ -63,14 +63,31 @@ def players(request, player_id: str):
     """
     try:
         player = Player.objects.get(player_id=player_id)
+        stats = PlayerSeasonStats.objects.filter(player__player_id=player_id)
     except Player.DoesNotExist:
-        return redirect('main:index')
+        return redirect('main:player_list')
 
     context = {
         'title': player.get_full_name(),
         'player': player,
+        'data': stats
     }
     return render(request, 'main/players.html', context)
+
+
+def player_games(request, player_id: str, season: str):
+    """Individual player season game log page.
+    """
+    try:
+        player = Player.objects.get(player_id=player_id)
+    except Player.DoesNotExist:
+        return redirect('main:player_list')
+
+    context = {
+        'title': player.get_full_name(),
+        'player': player
+    }
+    return render(request, 'main/player_games.html', context)
 
 
 def player_list(request):
