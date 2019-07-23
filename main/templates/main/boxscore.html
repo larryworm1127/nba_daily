@@ -18,16 +18,16 @@
               <th class="bg-primary text-lg-center">Q2</th>
               <th class="bg-primary text-lg-center">Q3</th>
               <th class="bg-primary text-lg-center">Q4</th>
-              {% if game.teamgamelog_set.all.0.pts_ot1 and game.teamgamelog_set.all.1.pts_ot1 %}
+              {% if game.teamgamelog_set.all.0.pts_ot1 or game.teamgamelog_set.all.1.pts_ot1 %}
                 <th class="bg-primary text-lg-center">OT1</th>
               {% endif %}
-              {% if game.teamgamelog_set.all.0.pts_ot2 and game.teamgamelog_set.all.1.pts_ot2 %}
+              {% if game.teamgamelog_set.all.0.pts_ot2 or game.teamgamelog_set.all.1.pts_ot2 %}
                 <th class="bg-primary text-lg-center">OT2</th>
               {% endif %}
-              {% if game.teamgamelog_set.all.0.pts_ot3 and game.teamgamelog_set.all.1.pts_ot3 %}
+              {% if game.teamgamelog_set.all.0.pts_ot3 or game.teamgamelog_set.all.1.pts_ot3 %}
                 <th class="bg-primary text-lg-center">OT3</th>
               {% endif %}
-              {% if game.teamgamelog_set.all.0.pts_ot4 and game.teamgamelog_set.all.1.pts_ot4 %}
+              {% if game.teamgamelog_set.all.0.pts_ot4 or game.teamgamelog_set.all.1.pts_ot4 %}
                 <th class="bg-primary text-lg-center">OT4</th>
               {% endif %}
               <th class="bg-primary text-lg-center">TOTAL</th>
