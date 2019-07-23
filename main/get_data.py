@@ -204,8 +204,6 @@ class CollectData:
 
         with open('data/game_list.json', 'w+') as f:
             dump(list(games), f)
-            
-            logging.info('Retrieving game list data')
 
     def get_box_score(self) -> None:
         """Retrieve individual game player box score data using API.
@@ -295,7 +293,6 @@ if __name__ == '__main__':
     inst.get_team_game_log()
     inst.get_player_season_stats()
     inst.get_team_season_stats()
-
 
     inst.get_game_list()
     inst.get_box_score()
