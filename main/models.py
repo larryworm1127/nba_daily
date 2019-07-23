@@ -49,18 +49,18 @@ class Team(models.Model):
         """
         return f"images/{self.team_abb}.png"
 
-    @classmethod
-    def get_east_standing(cls) -> List[Team]:
+    @staticmethod
+    def get_east_standing() -> List[Team]:
         """Return the East conference teams in standing order.
         """
-        result = [team for team in cls.objects.all() if team.team_conf == 'East']
+        result = [team for team in Team.objects.all() if team.team_conf == 'East']
         return sorted(result, key=lambda t: t.conf_rank)
 
-    @classmethod
-    def get_west_standing(cls) -> List[Team]:
+    @staticmethod
+    def get_west_standing() -> List[Team]:
         """Return the West conference teams in standing order.
         """
-        result = [team for team in cls.objects.all() if team.team_conf == 'West']
+        result = [team for team in Team.objects.all() if team.team_conf == 'West']
         return sorted(result, key=lambda t: t.conf_rank)
 
 
@@ -141,7 +141,7 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         dnp_players = {
-            Player.objects.filter(player_id=player_id)[0]: reason
+            Player.objects.get(player_id=player_id): reason
             for player_id, reason in inst.decode(self.dnp_players).items()
             if len(Player.objects.filter(player_id=player_id)) > 0
         }
@@ -153,7 +153,7 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         inactive_player = [
-            Player.objects.filter(player_id=player_id)[0]
+            Player.objects.get(player_id=player_id)
             for player_id in inst.decode(self.inactive_players)
             if len(Player.objects.filter(player_id=player_id)) > 0
         ]
@@ -240,7 +240,7 @@ class TeamGameLog(GameLog):
         """Return a list of player game log object in order of display.
         """
         num_players = len(self.playergamelog_set.all())
-        return [self.playergamelog_set.filter(order=index)[0] for index in range(num_players)
+        return [self.playergamelog_set.get(order=index) for index in range(num_players)
                 if len(self.playergamelog_set.filter(order=index)) > 0]
 
 
