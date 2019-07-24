@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <br>
+        <h4>{{ team.get_full_name }}</h4>
+        <img class="team-logo-lg" alt="team-logo" src="{% static team.get_logo_path %}">
+
+        <h4>{{ team.season_year }}</h4>
+        <ul class="list-unstyled">
+          <li><b>W-L Record:</b> <a href="{% url 'main:standing' %}">{{ team.wins }} - {{ team.losses }}</a></li>
+          <li><b>Conference:</b> {{ team.team_conf }}</li>
+          <li><b>Divison:</b> {{ team.team_div }}</li>
+          <li><b>NBA Debut:</b> {{ team.nba_debut }}</li>
+          <li><b>Max Year:</b> {{ team.max_year }}</li>
+        </ul>
+      </div>
+    </div>
+    <br>
+
+    {% block content %}
+    {% endblock %}
+  </div>
+{% endblock %}

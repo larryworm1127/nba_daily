@@ -129,26 +129,27 @@ class Player(models.Model):
 class SeasonStats(models.Model):
     """Season stats template model.
     """
-    minutes = models.IntegerField()
-    points = models.IntegerField()
-    offense_reb = models.IntegerField()
-    defense_reb = models.IntegerField()
-    rebounds = models.IntegerField()
-    assists = models.IntegerField()
-    steals = models.IntegerField()
-    blocks = models.IntegerField()
-    turnovers = models.IntegerField()
-    fouls = models.IntegerField()
-    fg_made = models.IntegerField()
-    fg_attempt = models.IntegerField()
+    season = models.CharField(max_length=10)
+    minutes = models.FloatField()
+    points = models.FloatField()
+    offense_reb = models.FloatField()
+    defense_reb = models.FloatField()
+    rebounds = models.FloatField()
+    assists = models.FloatField()
+    steals = models.FloatField()
+    blocks = models.FloatField()
+    turnovers = models.FloatField()
+    fouls = models.FloatField()
+    fg_made = models.FloatField()
+    fg_attempt = models.FloatField()
     fg_percent = models.FloatField()
-    fg3_made = models.IntegerField()
-    fg3_attempt = models.IntegerField()
+    fg3_made = models.FloatField()
+    fg3_attempt = models.FloatField()
     fg3_percent = models.FloatField()
-    ft_made = models.IntegerField()
-    ft_attempt = models.IntegerField()
+    ft_made = models.FloatField()
+    ft_attempt = models.FloatField()
     ft_percent = models.FloatField()
-    plus_minus = models.IntegerField()
+    plus_minus = models.FloatField()
 
     class Meta:
         abstract = True
@@ -158,15 +159,29 @@ class TeamSeasonStats(SeasonStats):
     """Individual team season stats model.
     """
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    wins = models.IntegerField()
+    losses = models.IntegerField()
+    win_percent = models.FloatField()
+
+    def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.team.get_full_name()
 
 
 class PlayerSeasonStats(SeasonStats):
     """Individual player season stats model.
     """
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE)
     games_played = models.IntegerField()
     double_double = models.IntegerField()
     triple_double = models.IntegerField()
+
+    def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.player.get_full_name()
 
 
 # ==============================================================================

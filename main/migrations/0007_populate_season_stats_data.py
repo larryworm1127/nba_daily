@@ -4,17 +4,22 @@ import pandas as pd
 from django.db import migrations
 
 
+# TODO: gotta change these 2
 def load_team_data(apps, schema_editor):
     Team = apps.get_model('main', 'Team')
     TeamSeasonStats = apps.get_model('main', 'TeamSeasonStats')
 
     print("Migrate Individual Team Season Stats Data.")
 
-    data = pd.read_json('../main/data/2018-19/team_stats.json')  # type: pd.DataFrame
+    data = pd.read_json('main/data/2018-19/team_stats.json').round(3)  # type: pd.DataFrame
     for team_data in data.itertuples(index=False):
 
         TeamSeasonStats(
             team=Team.objects.get(team_id=team_data.TEAM_ID),
+            season='2018-19',
+            wins=team_data.W,
+            losses=team_data.L,
+            win_percent=round(team_data.W_PCT, 3),
             minutes=team_data.MIN,
             points=team_data.PTS,
             offense_reb=team_data.OREB,
@@ -40,11 +45,12 @@ def load_team_data(apps, schema_editor):
 
 def load_player_data(apps, schema_editor):
     Player = apps.get_model('main', 'Player')
+    Team = apps.get_model('main', 'Team')
     PlayerSeasonStats = apps.get_model('main', 'PlayerSeasonStats')
 
     print("Migrate Individual Player Season Stats Data.")
 
-    data = pd.read_json('../main/data/2018-19/player_stats.json')  # type: pd.DataFrame
+    data = pd.read_json('main/data/2018-19/player_stats.json').round(3)  # type: pd.DataFrame
     for player_data in data.itertuples(index=False):
         try:
             player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
@@ -53,6 +59,8 @@ def load_player_data(apps, schema_editor):
 
         PlayerSeasonStats(
             player=player_obj,
+            curr_team=Team.objects.get(team_id=player_data.TEAM_ID),
+            season='2018-19',
             games_played=player_data.GP,
             minutes=player_data.MIN,
             points=player_data.PTS,

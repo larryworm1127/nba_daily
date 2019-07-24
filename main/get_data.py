@@ -5,6 +5,7 @@
 """
 import logging
 import os
+import sys
 import time
 
 import pandas as pd
@@ -32,12 +33,16 @@ class CollectData:
 
         # Configure logger
         self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
 
-        format_handler = logging.Formatter(
+        formatter = logging.Formatter(
             fmt='%(asctime)s %(levelname)s %(message)s',
             datefmt='%Y/%m/%d %I:%M:%S'
         )
-        self.logger.addHandler(format_handler)
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(formatter)
+
+        self.logger.addHandler(handler)
 
     def get_team_list(self) -> None:
         """Retrieve team list data using API.
@@ -56,7 +61,7 @@ class CollectData:
         """
         self.logger.info('Retrieving player list data')
 
-        player_list = player.PlayerList(season=self.season).info()[['PERSON_ID']]
+        player_list = player.PlayerList(season=self.season).info()[['PERSON_ID', 'ROSTERSTATUS']]
         player_list.to_json(f'data/{self.season}/player_list.json')
 
     def get_player_league_leader(self) -> None:
@@ -88,7 +93,7 @@ class CollectData:
             data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()  # type: pd.DataFrame
             team_summ = team_summ.append(data, ignore_index=True)
 
-            time.sleep(1)
+            time.sleep(0.5)
 
         # Remove data columns that won't be needed
         team_summ = team_summ.drop(columns=[
@@ -103,7 +108,7 @@ class CollectData:
     def get_player_summary(self) -> None:
         """Retrieve individual player summary data using API.
         """
-        players = pd.read_json('data/2018-19/player_list.json')  # type: pd.DataFrame
+        players = pd.read_json(f'data/{self.season}/player_list.json')  # type: pd.DataFrame
 
         # Collect data and add them to the main data frame
         player_summ = pd.DataFrame()
@@ -162,17 +167,47 @@ class CollectData:
         season:
             the season to get the player stats from.
         """
-        self.logger.info('Retrieve player season stats data.')
+        players = pd.read_json(f'data/{self.season}/player_list.json')  # type: pd.DataFrame
 
-        data = league.PlayerStats(season=self.season).overall()  # type: pd.DataFrame
-        data = data.drop(columns=[
-            'CFID',
-            'CFPARAMS',
-            'TEAM_ABBREVIATION',
-            'PLAYER_NAME'
-            'AGE'
-        ])
-        data.to_json(f'data/{self.season}/player_stats.json')
+        reg_season = pd.DataFrame()
+        reg_season_total = pd.DataFrame()
+        post_season = pd.DataFrame()
+        post_season_total = pd.DataFrame()
+        for player_data in players.itertuples(index=False):
+            self.logger.info(f'Retrieving player season stats data for {player_data.PERSON_ID}')
+
+            if player_data.ROSTERSTATUS == 0:
+                continue
+
+            data = player.PlayerCareer(player_data.PERSON_ID)
+            reg_season = reg_season.append(data.regular_season_totals().drop(columns=[
+                'TEAM_ABBREVIATION',
+                'LEAGUE_ID',
+                'SEASON_ID',
+                'PLAYER_AGE'
+            ]), ignore_index=True)
+
+            reg_season_total = reg_season_total.append(data.regular_season_career_totals().drop(columns=[
+                'LEAGUE_ID',
+            ]), ignore_index=True)
+
+            post_season = post_season.append(data.post_season_totals().drop(columns=[
+                'TEAM_ABBREVIATION',
+                'LEAGUE_ID',
+                'SEASON_ID',
+                'PLAYER_AGE'
+            ]), ignore_index=True)
+
+            post_season_total = post_season_total.append(data.post_season_career_totals().drop(columns=[
+                'LEAGUE_ID'
+            ]), ignore_index=True)
+
+            time.sleep(0.5)
+
+        reg_season.to_json('data/player_regular_season_stats.json')
+        reg_season_total.to_json('data/player_regular_season_total.json')
+        post_season.to_json('data/player_post_season_stats.json')
+        post_season_total.to_json('data/player_post_season_total.json')
 
     def get_team_game_log(self) -> None:
         """Retrieve individual team game log data using API.
@@ -191,7 +226,7 @@ class CollectData:
             data = team.TeamGameLogs(team_id, season=self.season).info()  # type: pd.DataFrame
             all_game_log = all_game_log.append(data, ignore_index=True)
 
-            time.sleep(1)
+            time.sleep(0.5)
 
         all_game_log.to_json(f'data/{self.season}/team_game_log.json')
 
@@ -208,8 +243,7 @@ class CollectData:
         data = data.drop(columns=[
             'CFID',
             'CFPARAMS',
-            'TEAM_NAME'
-            'AGE'
+            'TEAM_NAME',
         ])
         data.to_json(f'data/{self.season}/team_stats.json')
 
@@ -226,7 +260,7 @@ class CollectData:
                                   player_or_team=Player_or_Team.Team).overall()  # type: pd.DataFrame
         games = {data.GAME_ID for data in game_log.itertuples(index=False)}
 
-        with open('data/game_list.json', 'w+') as f:
+        with open(f'data/{self.season}/game_list.json', 'w+') as f:
             dump(list(games), f)
 
     def get_box_score(self) -> None:
@@ -236,7 +270,7 @@ class CollectData:
         season:
             the season in which the games are played.
         """
-        with open('data/game_list.json') as f:
+        with open(f'data/{self.season}/game_list.json') as f:
             games = load(f)
 
         for game_id in games:
@@ -245,7 +279,7 @@ class CollectData:
             data = game.Boxscore(game_id, season=self.season).player_stats()
             data.to_json(f'data/{self.season}/boxscore/{game_id}.json')
 
-            time.sleep(1)
+            # time.sleep(0.5)
 
         assert len(os.listdir(f'data/{self.season}/boxscore')) == 1230
 
@@ -256,9 +290,9 @@ class CollectData:
         season:
             the season in which the games are played.
         """
-        with open('data/game_list.json') as f:
+        with open(f'data/{self.season}/game_list.json') as f:
             games = load(f)
-        
+
         for game_id in games:
             self.logger.info(f'Retrieving box score summary data for {game_id}')
 
@@ -310,17 +344,17 @@ class CollectData:
 if __name__ == '__main__':
     inst = CollectData('2018-19')
 
-    inst.get_team_list()
-    inst.get_player_list()
-    inst.get_player_league_leader()
+    # inst.get_team_list()
+    # inst.get_player_list()
+    # inst.get_player_league_leader()
 
-    inst.get_team_summary()
-    inst.get_player_summary()
+    # inst.get_team_summary()
+    # inst.get_player_summary()
 
-    inst.get_player_game_log()
-    inst.get_team_game_log()
-    inst.get_player_season_stats()
-    inst.get_team_season_stats()
+    # inst.get_player_game_log()
+    # inst.get_team_game_log()
+    # inst.get_player_season_stats()
+    # inst.get_team_season_stats()
 
     inst.get_game_list()
     inst.get_box_score()
