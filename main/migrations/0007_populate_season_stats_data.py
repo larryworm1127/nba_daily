@@ -4,7 +4,6 @@ import pandas as pd
 from django.db import migrations
 
 
-# TODO: gotta change these 2
 def load_team_data(apps, schema_editor):
     Team = apps.get_model('main', 'Team')
     TeamSeasonStats = apps.get_model('main', 'TeamSeasonStats')
@@ -50,18 +49,24 @@ def load_player_data(apps, schema_editor):
 
     print("Migrate Individual Player Season Stats Data.")
 
-    data = pd.read_json('main/data/2018-19/player_stats.json').round(3)  # type: pd.DataFrame
+    data = pd.read_json('main/data/player_regular_season_stats.json').round(3)  # type: pd.DataFrame
     for player_data in data.itertuples(index=False):
         try:
             player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
         except Player.DoesNotExist:
             continue
 
+        try:
+            team_obj = Team.objects.get(team_id=player_data.TEAM_ID)
+        except Team.DoesNotExist:
+            team_obj = Team.objects.get(team_id=player_obj.team.team_id)
+
         PlayerSeasonStats(
             player=player_obj,
-            curr_team=Team.objects.get(team_id=player_data.TEAM_ID),
+            curr_team=team_obj,
             season='2018-19',
             games_played=player_data.GP,
+            games_started=player_data.GS,
             minutes=player_data.MIN,
             points=player_data.PTS,
             offense_reb=player_data.OREB,
@@ -81,9 +86,9 @@ def load_player_data(apps, schema_editor):
             ft_made=player_data.FTM,
             ft_attempt=player_data.FTA,
             ft_percent=player_data.FT_PCT,
-            plus_minus=player_data.PLUS_MINUS,
-            double_double=player_data.DD2,
-            triple_double=player_data.TD3
+            plus_minus=0,
+            double_double=0,
+            triple_double=0
         ).save()
 
 

@@ -181,9 +181,7 @@ class CollectData:
 
             data = player.PlayerCareer(player_data.PERSON_ID)
             reg_season = reg_season.append(data.regular_season_totals().drop(columns=[
-                'TEAM_ABBREVIATION',
                 'LEAGUE_ID',
-                'SEASON_ID',
                 'PLAYER_AGE'
             ]), ignore_index=True)
 
@@ -194,7 +192,6 @@ class CollectData:
             post_season = post_season.append(data.post_season_totals().drop(columns=[
                 'TEAM_ABBREVIATION',
                 'LEAGUE_ID',
-                'SEASON_ID',
                 'PLAYER_AGE'
             ]), ignore_index=True)
 

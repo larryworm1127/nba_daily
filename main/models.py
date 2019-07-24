@@ -8,6 +8,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict, List
 
+from django.core.validators import MaxValueValidator
 from django.db import models
 from simplejson.decoder import JSONDecoder
 
@@ -142,13 +143,13 @@ class SeasonStats(models.Model):
     fouls = models.FloatField()
     fg_made = models.FloatField()
     fg_attempt = models.FloatField()
-    fg_percent = models.FloatField()
+    fg_percent = models.FloatField(validators=[MaxValueValidator(1)])
     fg3_made = models.FloatField()
     fg3_attempt = models.FloatField()
-    fg3_percent = models.FloatField()
+    fg3_percent = models.FloatField(validators=[MaxValueValidator(1)])
     ft_made = models.FloatField()
     ft_attempt = models.FloatField()
-    ft_percent = models.FloatField()
+    ft_percent = models.FloatField(validators=[MaxValueValidator(1)])
     plus_minus = models.FloatField()
 
     class Meta:
@@ -174,9 +175,10 @@ class PlayerSeasonStats(SeasonStats):
     """
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     curr_team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    games_played = models.IntegerField()
-    double_double = models.IntegerField()
-    triple_double = models.IntegerField()
+    games_played = models.IntegerField(validators=[MaxValueValidator(82)])
+    games_started = models.IntegerField(validators=[MaxValueValidator(82)])
+    double_double = models.IntegerField(validators=[MaxValueValidator(82)])
+    triple_double = models.IntegerField(validators=[MaxValueValidator(82)])
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
@@ -269,13 +271,13 @@ class GameLog(models.Model):
     fouls = models.IntegerField()
     fg_made = models.IntegerField()
     fg_attempt = models.IntegerField()
-    fg_percent = models.FloatField()
+    fg_percent = models.FloatField(validators=[MaxValueValidator(1)])
     fg3_made = models.IntegerField()
     fg3_attempt = models.IntegerField()
-    fg3_percent = models.FloatField()
+    fg3_percent = models.FloatField(validators=[MaxValueValidator(1)])
     ft_made = models.IntegerField()
     ft_attempt = models.IntegerField()
-    ft_percent = models.FloatField()
+    ft_percent = models.FloatField(validators=[MaxValueValidator(1)])
     result = models.CharField(max_length=1)
 
     class Meta:
