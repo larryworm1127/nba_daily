@@ -243,8 +243,7 @@ class CollectData:
         data = data.drop(columns=[
             'CFID',
             'CFPARAMS',
-            'TEAM_NAME'
-            'AGE'
+            'TEAM_NAME',
         ])
         data.to_json(f'data/{self.season}/team_stats.json')
 
@@ -261,7 +260,7 @@ class CollectData:
                                   player_or_team=Player_or_Team.Team).overall()  # type: pd.DataFrame
         games = {data.GAME_ID for data in game_log.itertuples(index=False)}
 
-        with open('data/game_list.json', 'w+') as f:
+        with open(f'data/{self.season}/game_list.json', 'w+') as f:
             dump(list(games), f)
 
     def get_box_score(self) -> None:
@@ -271,7 +270,7 @@ class CollectData:
         season:
             the season in which the games are played.
         """
-        with open('data/game_list.json') as f:
+        with open(f'data/{self.season}/game_list.json') as f:
             games = load(f)
 
         for game_id in games:
@@ -280,7 +279,7 @@ class CollectData:
             data = game.Boxscore(game_id, season=self.season).player_stats()
             data.to_json(f'data/{self.season}/boxscore/{game_id}.json')
 
-            time.sleep(0.5)
+            # time.sleep(0.5)
 
         assert len(os.listdir(f'data/{self.season}/boxscore')) == 1230
 
@@ -291,7 +290,7 @@ class CollectData:
         season:
             the season in which the games are played.
         """
-        with open('data/game_list.json') as f:
+        with open(f'data/{self.season}/game_list.json') as f:
             games = load(f)
 
         for game_id in games:
@@ -346,16 +345,16 @@ if __name__ == '__main__':
     inst = CollectData('2018-19')
 
     # inst.get_team_list()
-    inst.get_player_list()
+    # inst.get_player_list()
     # inst.get_player_league_leader()
 
     # inst.get_team_summary()
-    inst.get_player_summary()
+    # inst.get_player_summary()
 
-    inst.get_player_game_log()
-    inst.get_team_game_log()
-    inst.get_player_season_stats()
-    inst.get_team_season_stats()
+    # inst.get_player_game_log()
+    # inst.get_team_game_log()
+    # inst.get_player_season_stats()
+    # inst.get_team_season_stats()
 
     inst.get_game_list()
     inst.get_box_score()
