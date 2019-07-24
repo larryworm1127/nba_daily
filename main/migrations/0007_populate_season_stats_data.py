@@ -11,7 +11,7 @@ def load_team_data(apps, schema_editor):
 
     print("Migrate Individual Team Season Stats Data.")
 
-    data = pd.read_json('../main/data/2018-19/team_stats.json')  # type: pd.DataFrame
+    data = pd.read_json('main/data/2018-19/team_stats.json').round(3)  # type: pd.DataFrame
     for team_data in data.itertuples(index=False):
 
         TeamSeasonStats(
@@ -19,7 +19,7 @@ def load_team_data(apps, schema_editor):
             season='2018-19',
             wins=team_data.W,
             losses=team_data.L,
-            win_percent=team_data.W_PCT,
+            win_percent=round(team_data.W_PCT, 3),
             minutes=team_data.MIN,
             points=team_data.PTS,
             offense_reb=team_data.OREB,
@@ -50,7 +50,7 @@ def load_player_data(apps, schema_editor):
 
     print("Migrate Individual Player Season Stats Data.")
 
-    data = pd.read_json('../main/data/2018-19/player_stats.json')  # type: pd.DataFrame
+    data = pd.read_json('main/data/2018-19/player_stats.json').round(3)  # type: pd.DataFrame
     for player_data in data.itertuples(index=False):
         try:
             player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)

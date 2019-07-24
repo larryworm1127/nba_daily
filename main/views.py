@@ -118,12 +118,14 @@ def teams(request, team_id: str):
     """
     try:
         team = Team.objects.get(team_id=team_id)
+        stats = TeamSeasonStats.objects.filter(team__team_id=team_id)
     except Team.DoesNotExist:
         return redirect('main:team_list')
 
     context = {
         'title': team.get_full_name(),
         'team': team,
+        'data': stats
     }
     return render(request, 'main/teams.html', context)
 
@@ -133,14 +135,12 @@ def team_games(request, team_id: str, season: str):
     """
     try:
         team = Team.objects.get(team_id=team_id)
-        stats = TeamSeasonStats.objects.filter(team__team_id=team_id)
     except Team.DoesNotExist:
         return redirect('main:team_list')
 
     context = {
         'title': team.get_full_name(),
-        'team': team,
-        'data': stats
+        'team': team
     }
     return render(request, 'main/team_games.html', context)
 

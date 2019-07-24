@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b74e93c8925149484e7bb430b991a0d0baa73eda61ea29319c5a937c656bc2b9"
+            "sha256": "c20956d8c5e5f86bd5eb9a660a3c67a03ad93910ddbefadf5bc5228d1fb02a9f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -132,7 +132,7 @@
         },
         "nba-py": {
             "editable": true,
-            "git": "git://github.com/larryworm1127/nba_py.git",
+            "git": "https://github.com/larryworm1127/nba_py.git",
             "ref": "a668d5eabf1b5260d732d69b138bb7b4bac1b920"
         },
         "numpy": {

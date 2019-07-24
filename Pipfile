@@ -29,7 +29,7 @@ whitenoise = "==4.1.2"
 Django = "==2.2.3"
 Jinja2 = "==2.10.1"
 MarkupSafe = "==1.1.1"
-nba_py = {editable = true,git = "git://github.com/larryworm1127/nba_py.git",ref = "a668d5eabf1b5260d732d69b138bb7b4bac1b920"}
+nba_py = {editable = true,git = "https://github.com/larryworm1127/nba_py.git"}
 
 [requires]
 python_version = "3.7"
