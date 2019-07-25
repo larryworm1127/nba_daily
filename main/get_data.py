@@ -350,9 +350,9 @@ if __name__ == '__main__':
 
     # inst.get_player_game_log()
     # inst.get_team_game_log()
-    # inst.get_player_season_stats()
+    inst.get_player_season_stats()
     # inst.get_team_season_stats()
 
-    inst.get_game_list()
-    inst.get_box_score()
-    inst.get_box_score_summary()
+    # inst.get_game_list()
+    # inst.get_box_score()
+    # inst.get_box_score_summary()

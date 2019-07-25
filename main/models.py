@@ -130,7 +130,6 @@ class Player(models.Model):
 class SeasonStats(models.Model):
     """Season stats template model.
     """
-    season = models.CharField(max_length=10)
     minutes = models.FloatField()
     points = models.FloatField()
     offense_reb = models.FloatField()
@@ -150,7 +149,6 @@ class SeasonStats(models.Model):
     ft_made = models.FloatField()
     ft_attempt = models.FloatField()
     ft_percent = models.FloatField(validators=[MaxValueValidator(1)])
-    plus_minus = models.FloatField()
 
     class Meta:
         abstract = True
@@ -159,6 +157,7 @@ class SeasonStats(models.Model):
 class TeamSeasonStats(SeasonStats):
     """Individual team season stats model.
     """
+    season = models.CharField(max_length=10)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     wins = models.IntegerField()
     losses = models.IntegerField()
@@ -170,15 +169,39 @@ class TeamSeasonStats(SeasonStats):
         return self.team.get_full_name()
 
 
-class PlayerSeasonStats(SeasonStats):
-    """Individual player season stats model.
+class PlayerTotalStats(SeasonStats):
+    """Individual player career total stats model.
     """
+    SEASON_TYPE = [
+        ('REG', 'Regular'),
+        ('POST', 'Post')
+    ]
+
+    season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    games_played = models.IntegerField()
+    games_started = models.IntegerField()
+
+    def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return self.player.get_full_name()
+
+
+class PlayerSeasonStats(SeasonStats):
+    """Individual player season total stats model.
+    """
+    SEASON_TYPE = [
+        ('REG', 'Regular'),
+        ('POST', 'POST')
+    ]
+
+    season = models.CharField(max_length=10)
+    season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
     curr_team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
     games_played = models.IntegerField(validators=[MaxValueValidator(82)])
     games_started = models.IntegerField(validators=[MaxValueValidator(82)])
-    double_double = models.IntegerField(validators=[MaxValueValidator(82)])
-    triple_double = models.IntegerField(validators=[MaxValueValidator(82)])
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.

@@ -4,7 +4,6 @@
 @author: Larry Shi
 """
 import re
-
 from datetime import date, datetime
 
 from hypothesis import given
@@ -12,7 +11,6 @@ from hypothesis.extra.django import TestCase
 from hypothesis.strategies import from_regex, dates
 
 from .models import Player, Team
-
 
 # Constants
 NAME_REGEX = re.compile(r'[a-zA-Z]{2,15}')
@@ -22,6 +20,7 @@ ABB_REGEX = re.compile(r'[a-zA-Z]{3}')
 class PlayerModelTest(TestCase):
     """Test class for <Player> model.
     """
+
     @classmethod
     def setUpTestData(cls):
         """Setup data for testing.
