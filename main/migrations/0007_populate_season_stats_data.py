@@ -18,7 +18,7 @@ def load_team_data(apps, schema_editor):
             season='2018-19',
             wins=team_data.W,
             losses=team_data.L,
-            win_percent=round(team_data.W_PCT, 3),
+            win_percent=team_data.W_PCT,
             minutes=team_data.MIN,
             points=team_data.PTS,
             offense_reb=team_data.OREB,
@@ -38,7 +38,6 @@ def load_team_data(apps, schema_editor):
             ft_made=team_data.FTM,
             ft_attempt=team_data.FTA,
             ft_percent=team_data.FT_PCT,
-            plus_minus=team_data.PLUS_MINUS
         ).save()
 
 
@@ -46,6 +45,7 @@ def load_player_data(apps, schema_editor):
     Player = apps.get_model('main', 'Player')
     Team = apps.get_model('main', 'Team')
     PlayerSeasonStats = apps.get_model('main', 'PlayerSeasonStats')
+    PlayerTotalStats = apps.get_model('main', 'PlayerTotalStats')
 
     print("Migrate Individual Player Season Stats Data.")
 
@@ -64,7 +64,8 @@ def load_player_data(apps, schema_editor):
         PlayerSeasonStats(
             player=player_obj,
             curr_team=team_obj,
-            season='2018-19',
+            season=player_data.SEASON_ID,
+            season_type='Regular',
             games_played=player_data.GP,
             games_started=player_data.GS,
             minutes=player_data.MIN,
@@ -86,9 +87,107 @@ def load_player_data(apps, schema_editor):
             ft_made=player_data.FTM,
             ft_attempt=player_data.FTA,
             ft_percent=player_data.FT_PCT,
-            plus_minus=0,
-            double_double=0,
-            triple_double=0
+        ).save()
+
+    data = pd.read_json('main/data/player_post_season_stats.json').round(3)  # type: pd.DataFrame
+    for player_data in data.itertuples(index=False):
+        try:
+            player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
+        except Player.DoesNotExist:
+            continue
+
+        PlayerSeasonStats(
+            player=player_obj,
+            curr_team=Team.objects.get(team_id=player_data.TEAM_ID),
+            season=player_data.SEASON_ID,
+            season_type='Post',
+            games_played=player_data.GP,
+            games_started=player_data.GS,
+            minutes=player_data.MIN,
+            points=player_data.PTS,
+            offense_reb=player_data.OREB,
+            defense_reb=player_data.DREB,
+            rebounds=player_data.REB,
+            assists=player_data.AST,
+            steals=player_data.STL,
+            blocks=player_data.BLK,
+            turnovers=player_data.TOV,
+            fouls=player_data.PF,
+            fg_made=player_data.FGM,
+            fg_attempt=player_data.FGA,
+            fg_percent=player_data.FG_PCT,
+            fg3_made=player_data.FG3M,
+            fg3_attempt=player_data.FG3A,
+            fg3_percent=player_data.FG3_PCT,
+            ft_made=player_data.FTM,
+            ft_attempt=player_data.FTA,
+            ft_percent=player_data.FT_PCT,
+        ).save()
+
+    data = pd.read_json('main/data/player_regular_season_total.json').round(3)  # type: pd.DataFrame
+    for player_data in data.itertuples(index=False):
+        try:
+            player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
+        except Player.DoesNotExist:
+            continue
+
+        PlayerTotalStats(
+            player=player_obj,
+            season_type='Regular',
+            games_played=player_data.GP,
+            games_started=player_data.GS,
+            minutes=player_data.MIN,
+            points=player_data.PTS,
+            offense_reb=player_data.OREB,
+            defense_reb=player_data.DREB,
+            rebounds=player_data.REB,
+            assists=player_data.AST,
+            steals=player_data.STL,
+            blocks=player_data.BLK,
+            turnovers=player_data.TOV,
+            fouls=player_data.PF,
+            fg_made=player_data.FGM,
+            fg_attempt=player_data.FGA,
+            fg_percent=player_data.FG_PCT,
+            fg3_made=player_data.FG3M,
+            fg3_attempt=player_data.FG3A,
+            fg3_percent=player_data.FG3_PCT,
+            ft_made=player_data.FTM,
+            ft_attempt=player_data.FTA,
+            ft_percent=player_data.FT_PCT,
+        ).save()
+
+    data = pd.read_json('main/data/player_post_season_total.json').round(3)  # type: pd.DataFrame
+    for player_data in data.itertuples(index=False):
+        try:
+            player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
+        except Player.DoesNotExist:
+            continue
+
+        PlayerTotalStats(
+            player=player_obj,
+            season_type='Post',
+            games_played=player_data.GP,
+            games_started=player_data.GS,
+            minutes=player_data.MIN,
+            points=player_data.PTS,
+            offense_reb=player_data.OREB,
+            defense_reb=player_data.DREB,
+            rebounds=player_data.REB,
+            assists=player_data.AST,
+            steals=player_data.STL,
+            blocks=player_data.BLK,
+            turnovers=player_data.TOV,
+            fouls=player_data.PF,
+            fg_made=player_data.FGM,
+            fg_attempt=player_data.FGA,
+            fg_percent=player_data.FG_PCT,
+            fg3_made=player_data.FG3M,
+            fg3_attempt=player_data.FG3A,
+            fg3_percent=player_data.FG3_PCT,
+            ft_made=player_data.FTM,
+            ft_attempt=player_data.FTA,
+            ft_percent=player_data.FT_PCT,
         ).save()
 
 

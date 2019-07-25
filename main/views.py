@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import Player, Team, Game, PlayerSeasonStats, TeamSeasonStats
+from .models import Player, Team, Game, PlayerSeasonStats, TeamSeasonStats, PlayerTotalStats
 
 
 # ==============================================================================
@@ -63,14 +63,20 @@ def players(request, player_id: str):
     """
     try:
         player = Player.objects.get(player_id=player_id)
-        stats = PlayerSeasonStats.objects.filter(player__player_id=player_id)
+        reg_season = PlayerSeasonStats.objects.filter(player__player_id=player_id, season_type='Regular')
+        post_season = PlayerSeasonStats.objects.filter(player__player_id=player_id, season_type='Post')
+        reg_total = PlayerTotalStats.objects.filter(player__player_id=player_id, season_type='Regular')
+        post_total = PlayerTotalStats.objects.filter(player__player_id=player_id, season_type='Post')
     except Player.DoesNotExist:
         return redirect('main:player_list')
 
     context = {
         'title': player.get_full_name(),
         'player': player,
-        'data': stats
+        'reg_season': reg_season,
+        'post_season': post_season,
+        'reg_total': reg_total,
+        'post_total': post_total
     }
     return render(request, 'main/players.html', context)
 
