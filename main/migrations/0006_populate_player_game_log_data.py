@@ -13,7 +13,6 @@ def load_data(apps, schema_editor):
     print("Migrate Individual Player Game Log Data.")
 
     game_log = pd.read_json('main/data/2018-19/player_game_log.json', dtype={'GAME_ID': str})  # type: pd.DataFrame
-
     for data in game_log.itertuples(index=False):
         try:
             player_obj = Players.objects.get(player_id=data.PLAYER_ID)
