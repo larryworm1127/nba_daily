@@ -10,7 +10,7 @@ def load_team_data(apps, schema_editor):
 
     print("Migrate Individual Team Season Stats Data.")
 
-    data = pd.read_json('../main/data/2018-19/team_stats.json').round(3)  # type: pd.DataFrame
+    data = pd.read_json('main/data/2018-19/team_stats.json').round(3)  # type: pd.DataFrame
     for team_data in data.itertuples(index=False):
 
         TeamSeasonStats(
@@ -49,7 +49,7 @@ def load_player_data(apps, schema_editor):
 
     print("Migrate Individual Player Season Stats Data.")
 
-    data = pd.read_json('../main/data/player_regular_season_stats.json').round(3)  # type: pd.DataFrame
+    data = pd.read_json('main/data/player_regular_season_stats.json').round(3)  # type: pd.DataFrame
     for player_data in data.itertuples(index=False):
         try:
             player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
@@ -89,7 +89,7 @@ def load_player_data(apps, schema_editor):
             ft_percent=player_data.FT_PCT,
         ).save()
 
-    data = pd.read_json('../main/data/player_post_season_stats.json').round(3)  # type: pd.DataFrame
+    data = pd.read_json('main/data/player_post_season_stats.json').round(3)  # type: pd.DataFrame
     for player_data in data.itertuples(index=False):
         try:
             player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
@@ -124,7 +124,7 @@ def load_player_data(apps, schema_editor):
             ft_percent=player_data.FT_PCT,
         ).save()
 
-    data = pd.read_json('../main/data/player_regular_season_total.json').round(3)  # type: pd.DataFrame
+    data = pd.read_json('main/data/player_regular_season_total.json').round(3)  # type: pd.DataFrame
     for player_data in data.itertuples(index=False):
         try:
             player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
@@ -157,7 +157,7 @@ def load_player_data(apps, schema_editor):
             ft_percent=player_data.FT_PCT,
         ).save()
 
-    data = pd.read_json('../main/data/player_post_season_total.json').round(3)  # type: pd.DataFrame
+    data = pd.read_json('main/data/player_post_season_total.json').round(3)  # type: pd.DataFrame
     for player_data in data.itertuples(index=False):
         try:
             player_obj = Player.objects.get(player_id=player_data.PLAYER_ID)
