@@ -74,10 +74,7 @@ def players(request, player_id: str):
     context = {
         'title': player.get_full_name(),
         'player': player,
-        'reg_season': reg_season,
-        'post_season': post_season,
-        'reg_total': reg_total,
-        'post_total': post_total
+        'data': [(reg_season, reg_total), (post_season, post_total)],
     }
     return render(request, 'main/players.html', context)
 
