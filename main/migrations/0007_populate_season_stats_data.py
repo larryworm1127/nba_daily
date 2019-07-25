@@ -198,6 +198,9 @@ def undo(apps, schema_editor):
     PlayerSeasonStats = apps.get_model('main', 'PlayerSeasonStats')
     PlayerSeasonStats.objects.all().delete()
 
+    PlayerTotalStats = apps.get_model('main', 'PlayerTotalStats')
+    PlayerTotalStats.objects.all().delete()
+
 
 class Migration(migrations.Migration):
 

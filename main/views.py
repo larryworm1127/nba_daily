@@ -65,18 +65,16 @@ def players(request, player_id: str):
         player = Player.objects.get(player_id=player_id)
         reg_season = PlayerSeasonStats.objects.filter(player__player_id=player_id, season_type='Regular')
         post_season = PlayerSeasonStats.objects.filter(player__player_id=player_id, season_type='Post')
-        reg_total = PlayerTotalStats.objects.filter(player__player_id=player_id, season_type='Regular')
-        post_total = PlayerTotalStats.objects.filter(player__player_id=player_id, season_type='Post')
+        reg_total = PlayerTotalStats.objects.get(player__player_id=player_id, season_type='Regular')
+        post_total = PlayerTotalStats.objects.filter(player__player_id=player_id, season_type='Post').first()
     except Player.DoesNotExist:
         return redirect('main:player_list')
 
+    print(reg_total, post_total)
     context = {
         'title': player.get_full_name(),
         'player': player,
-        'reg_season': reg_season,
-        'post_season': post_season,
-        'reg_total': reg_total,
-        'post_total': post_total
+        'data': [(reg_season, reg_total), (post_season, post_total)],
     }
     return render(request, 'main/players.html', context)
 

@@ -5,28 +5,28 @@
 {% block content %}
 
   <h4>Regular Season </h4>
-  <table class="team-games-datatable table table-sm">
+  <table class="team-games-datatable table table-sm text-lg-center">
     <thead class="thead-inverse">
       <tr class="bg-warning text-white">
         <th class="text-lg-center">DATE</th>
         <th class="bg-primary text-lg-center">MATCH</th>
-        <th class="bg-primary">W/L</th>
-        <th class="bg-primary">MIN</th>
-        <th class="bg-primary">PTS</th>
-        <th class="bg-primary">REB</th>
-        <th class="bg-primary">AST</th>
-        <th class="bg-primary boxscore-column-width">FG</th>
-        <th class="bg-primary">FG%</th>
-        <th class="bg-primary boxscore-column-width">3P</th>
-        <th class="bg-primary">3P%</th>
-        <th class="bg-primary boxscore-column-width">FT</th>
-        <th class="bg-primary">FT%</th>
-        <th class="bg-primary">OREB</th>
-        <th class="bg-primary">DREB</th>
-        <th class="bg-primary">STL</th>
-        <th class="bg-primary">BLK</th>
-        <th class="bg-primary">TOV</th>
-        <th class="bg-primary">PF</th>
+        <th class="bg-primary text-lg-center">W/L</th>
+        <th class="bg-primary text-lg-center">MIN</th>
+        <th class="bg-primary text-lg-center">PTS</th>
+        <th class="bg-primary text-lg-center">REB</th>
+        <th class="bg-primary text-lg-center">AST</th>
+        <th class="bg-primary text-lg-center">FG</th>
+        <th class="bg-primary text-lg-center">FG%</th>
+        <th class="bg-primary text-lg-center">3P</th>
+        <th class="bg-primary text-lg-center">3P%</th>
+        <th class="bg-primary text-lg-center">FT</th>
+        <th class="bg-primary text-lg-center">FT%</th>
+        <th class="bg-primary text-lg-center">OREB</th>
+        <th class="bg-primary text-lg-center">DREB</th>
+        <th class="bg-primary text-lg-center">STL</th>
+        <th class="bg-primary text-lg-center">BLK</th>
+        <th class="bg-primary text-lg-center">TOV</th>
+        <th class="bg-primary text-lg-center">PF</th>
       </tr>
     </thead>
     <tbody>
@@ -39,11 +39,11 @@
           <td>{{ game.points }}</td>
           <td>{{ game.rebounds }}</td>
           <td>{{ game.assists }}</td>
-          <td>{{ game.fg_made }}-{{ game.fg_attempt }}</td>
+          <td>{{ game.fg_made }} - {{ game.fg_attempt }}</td>
           <td>{{ game.fg_percent|multiply:100 }}</td>
-          <td>{{ game.fg3_made }}-{{ game.fg3_attempt }}</td>
+          <td>{{ game.fg3_made }} - {{ game.fg3_attempt }}</td>
           <td>{{ game.fg3_percent|multiply:100 }}</td>
-          <td>{{ game.ft_made }}-{{ game.ft_attempt }}</td>
+          <td>{{ game.ft_made }} - {{ game.ft_attempt }}</td>
           <td>{{ game.ft_percent|multiply:100 }}</td>
           <td>{{ game.offense_reb }}</td>
           <td>{{ game.defense_reb }}</td>
