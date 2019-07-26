@@ -24,6 +24,20 @@ def load_team_data(apps, schema_editor):
             max_year=team.MAX_YEAR
         ).save()
 
+    # Create a dummy team for players who switched teams midyear
+    Team(
+        team_id=0,
+        team_abb='TOT',
+        team_conf='None',
+        team_div='None',
+        team_city='None',
+        team_name='None',
+        wins=82,
+        losses=0,
+        nba_debut='1950',
+        max_year='2018-19'
+    ).save()
+
 
 def undo(apps, schema_editor):
     Team = apps.get_model("main", "Team")

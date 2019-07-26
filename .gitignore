@@ -107,4 +107,3 @@ venv.bak/
 db.sqlite3-journal
 nba_cache.sqlite
 staticfiles/
-util_tags.py

@@ -10,8 +10,23 @@
       <thead class="thead-inverse">
         <tr class="bg-primary text-white">
           <th class="text-lg-center">TEAM</th>
-          <th class="bg-primary text-lg-center boxscore-column-width">W-L</th>
+          <th class="bg-primary text-lg-center">W-L</th>
           <th class="bg-primary text-lg-center">WIN%</th>
+          <th class="bg-primary text-lg-center">PTS</th>
+          <th class="bg-primary text-lg-center">REB</th>
+          <th class="bg-primary text-lg-center">AST</th>
+          <th class="bg-primary text-lg-center">FG</th>
+          <th class="bg-primary text-lg-center">FG%</th>
+          <th class="bg-primary text-lg-center">3P</th>
+          <th class="bg-primary text-lg-center">3P%</th>
+          <th class="bg-primary text-lg-center">FT</th>
+          <th class="bg-primary text-lg-center">FT%</th>
+          <th class="bg-primary text-lg-center">OREB</th>
+          <th class="bg-primary text-lg-center">DREB</th>
+          <th class="bg-primary text-lg-center">STL</th>
+          <th class="bg-primary text-lg-center">BLK</th>
+          <th class="bg-primary text-lg-center">TOV</th>
+          <th class="bg-primary text-lg-center">PF</th>
         </tr>
       </thead>
       <tbody>
@@ -20,8 +35,23 @@
             <th class="text-lg-center">
               <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }}</a>
             </th>
-            <td class="text-lg-center">{{ team.wins }}-{{ team.losses }}</td>
+            <td class="text-lg-center">{{ team.wins }} - {{ team.losses }}</td>
             <td class="text-lg-center">{{ team.wins|divide:82|multiply:100 }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.points }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.rebounds }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.assists }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.fg_made }} - {{ team.teamseasonstats_set.all.first.fg_attempt }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.fg_percent|multiply:100 }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.fg3_made }} - {{ team.teamseasonstats_set.all.first.fg3_attempt }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.fg3_percent|multiply:100 }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.ft_made }} - {{ team.teamseasonstats_set.all.first.ft_attempt }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.ft_percent|multiply:100 }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.offense_reb }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.defense_reb }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.steals }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.blocks }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.turnovers }}</td>
+            <td class="text-lg-center">{{ team.teamseasonstats_set.all.first.fouls }}</td>
           </tr>
         {% endfor %}
       </tbody>

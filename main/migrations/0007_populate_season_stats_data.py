@@ -56,14 +56,9 @@ def load_player_data(apps, schema_editor):
         except Player.DoesNotExist:
             continue
 
-        try:
-            team_obj = Team.objects.get(team_id=player_data.TEAM_ID)
-        except Team.DoesNotExist:
-            team_obj = Team.objects.get(team_id=player_obj.team.team_id)
-
         PlayerSeasonStats(
             player=player_obj,
-            curr_team=team_obj,
+            curr_team=Team.objects.get(team_id=player_data.TEAM_ID),
             season=player_data.SEASON_ID,
             season_type='Regular',
             games_played=player_data.GP,
