@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load math_tags %}
+{% load util_tags %}
 
 {% block body %}
   <div class="container">
@@ -18,32 +19,25 @@
               <th class="bg-primary text-lg-center">Q2</th>
               <th class="bg-primary text-lg-center">Q3</th>
               <th class="bg-primary text-lg-center">Q4</th>
-              {% if game.teamgamelog_set.all.0.pts_ot1 or game.teamgamelog_set.all.1.pts_ot1 %}
-                <th class="bg-primary text-lg-center">OT1</th>
-              {% endif %}
-              {% if game.teamgamelog_set.all.0.pts_ot2 or game.teamgamelog_set.all.1.pts_ot2 %}
-                <th class="bg-primary text-lg-center">OT2</th>
-              {% endif %}
-              {% if game.teamgamelog_set.all.0.pts_ot3 or game.teamgamelog_set.all.1.pts_ot3 %}
-                <th class="bg-primary text-lg-center">OT3</th>
-              {% endif %}
-              {% if game.teamgamelog_set.all.0.pts_ot4 or game.teamgamelog_set.all.1.pts_ot4 %}
-                <th class="bg-primary text-lg-center">OT4</th>
-              {% endif %}
+              {% for period in overtime %}
+                <th class="bg-primary text-lg-center">OT{{ period }}</th>
+              {% endfor %}
               <th class="bg-primary text-lg-center">TOTAL</th>
             </tr>
           </thead>
           <tbody>
 
-            {% for tstats in game.teamgamelog_set.all %}
+            {% for tstats in game.team_game_log.all %}
               <tr>
                 {% if tstats.result == 'W' and tstats.team == game.home_team %}
                   <th class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">&nbsp{{ tstats.team.team_abb }}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">
+                    &nbsp{{ tstats.team.team_abb }}
                   </th>
                 {% else %}
                   <td class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">&nbsp{{ tstats.team.team_abb }}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">
+                    &nbsp{{ tstats.team.team_abb }}
                   </td>
                 {% endif %}
 
@@ -51,16 +45,16 @@
                 <td class="text-lg-center">{{ tstats.pts_q2 }}</td>
                 <td class="text-lg-center">{{ tstats.pts_q3 }}</td>
                 <td class="text-lg-center">{{ tstats.pts_q4 }}</td>
-                {% if tstats.pts_ot1 %}
+                {% if overtime.stop >= 2 %}
                   <td class="text-lg-center">{{ tstats.pts_ot1 }}</td>
                 {% endif %}
-                {% if tstats.pts_ot2 %}
+                {% if overtime.stop >= 3 %}
                   <td class="text-lg-center">{{ tstats.pts_ot2 }}</td>
                 {% endif %}
-                {% if tstats.pts_ot3 %}
+                {% if overtime.stop >= 4 %}
                   <td class="text-lg-center">{{ tstats.pts_ot3 }}</td>
                 {% endif %}
-                {% if tstats.pts_ot4 %}
+                {% if overtime.stop >= 5 %}
                   <td class="text-lg-center">{{ tstats.pts_ot4 }}</td>
                 {% endif %}
 
@@ -78,7 +72,7 @@
     <br>
 
     {# Boxscore Tables #}
-    {% for tstats in game.teamgamelog_set.all %}
+    {% for tstats in game.team_game_log.all %}
       <table class="boxscores-datatable table table-sm">
         <h4>
           <a class="nounderline dark-grey" href="{% url 'main:teams' tstats.team.team_id %}">

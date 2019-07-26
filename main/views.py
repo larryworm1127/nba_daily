@@ -172,6 +172,7 @@ def box_score(request, game_id: str):
     context = {
         'title': 'Boxscore',
         'game': game,
+        'overtime': range(1, game.overtime() + 1)
     }
     return render(request, 'main/boxscore.html', context)
 

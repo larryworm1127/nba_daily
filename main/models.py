@@ -128,8 +128,19 @@ class Player(models.Model):
 
         TODO: change the season to something more dynamic
         """
-        print(self.playerseasonstats_set.filter(season_type='Regular', season='2018-19'))
-        return self.playerseasonstats_set.filter(season_type='Regular', season='2018-19')[0]
+        try:
+            result = self.season_stats.get(
+                season_type='Regular',
+                season='2018-19'
+            )
+        except PlayerSeasonStats.MultipleObjectsReturned:
+            result = self.season_stats.get(
+                season_type='Regular',
+                season='2018-19',
+                curr_team__team_id=0
+            )
+
+        return result
 
 
 # ==============================================================================
@@ -166,7 +177,7 @@ class TeamSeasonStats(SeasonStats):
     """Individual team season stats model.
     """
     season = models.CharField(max_length=10)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='season_stats')
     wins = models.IntegerField()
     losses = models.IntegerField()
     win_percent = models.FloatField()
@@ -207,7 +218,7 @@ class PlayerSeasonStats(SeasonStats):
     season = models.CharField(max_length=10)
     season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
     curr_team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_stats')
     games_played = models.IntegerField(validators=[MaxValueValidator(82)])
     games_started = models.IntegerField(validators=[MaxValueValidator(82)])
 
@@ -269,12 +280,29 @@ class Game(models.Model):
     def home_team_game_log(self) -> TeamGameLog:
         """Return the home team game log object.
         """
-        return self.teamgamelog_set.get(team=self.home_team)
+        return self.team_game_log.get(team=self.home_team)
 
     def away_team_game_log(self) -> TeamGameLog:
         """Return the away team game log object.
         """
-        return self.teamgamelog_set.get(team=self.away_team)
+        return self.team_game_log.get(team=self.away_team)
+
+    def overtime(self) -> int:
+        """Return the number of overtimes played in the game.
+        """
+        home_game_log = self.home_team_game_log()
+        away_game_log = self.away_team_game_log()
+
+        if home_game_log.pts_ot4 > 0 or away_game_log.pts_ot4 > 0:
+            return 4
+        elif home_game_log.pts_ot3 > 0 or away_game_log.pts_ot3 > 0:
+            return 3
+        elif home_game_log.pts_ot2 > 0 or away_game_log.pts_ot2 > 0:
+            return 2
+        elif home_game_log.pts_ot1 > 0 or away_game_log.pts_ot1 > 0:
+            return 1
+
+        return 0
 
 
 # ==============================================================================
@@ -318,7 +346,8 @@ class GameLog(models.Model):
 class TeamGameLog(GameLog):
     """Individual team game log model.
     """
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='team_game_log')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team_game_log')
     curr_wins = models.IntegerField()
     curr_losses = models.IntegerField()
     pts_q1 = models.IntegerField()
@@ -339,22 +368,22 @@ class TeamGameLog(GameLog):
         """Return the plus-minus of the team in that game.
         """
         opp_team = self.game.away_team if self.game.home_team == self.team else self.game.home_team
-        opp_score = self.game.teamgamelog_set.get(team=opp_team).points
+        opp_score = self.game.team_game_log.get(team=opp_team).points
         return self.points - opp_score
 
     def get_player_game_logs(self) -> List[PlayerGameLog]:
         """Return a list of player game log object in order of display.
         """
-        num_players = self.playergamelog_set.all().count()
-        return [self.playergamelog_set.get(order=index) for index in range(num_players)
-                if self.playergamelog_set.filter(order=index).count() > 0]
+        num_players = self.player_game_log.all().count()
+        return [self.player_game_log.get(order=index) for index in range(num_players)
+                if self.player_game_log.filter(order=index).count() > 0]
 
 
 class PlayerGameLog(GameLog):
     """Individual player game log model.
     """
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    team_game_log = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE)
+    team_game_log = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE, related_name='player_game_log')
     order = models.IntegerField()
     plus_minus = models.IntegerField()
 

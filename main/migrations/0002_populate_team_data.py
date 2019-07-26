@@ -9,7 +9,7 @@ def load_team_data(apps, schema_editor):
 
     print("Migrate Individual Team Data.")
 
-    data = pd.read_json('main/data/team_summary.json')  # type: pd.DataFrame
+    data = pd.read_json('../main/data/team_summary.json')  # type: pd.DataFrame
     for team in data.itertuples(index=False):
         Team(
             team_id=team.TEAM_ID,
