@@ -12,7 +12,7 @@ def load_data(apps, schema_editor):
 
     print("Migrate Individual Player Game Log Data.")
 
-    game_log = pd.read_json('../main/data/2018-19/player_game_log.json', dtype={'GAME_ID': str})  # type: pd.DataFrame
+    game_log = pd.read_json('main/data/2018-19/player_game_log.json', dtype={'GAME_ID': str})  # type: pd.DataFrame
     for data in game_log.itertuples(index=False):
         try:
             player_obj = Players.objects.get(player_id=data.PLAYER_ID)
@@ -53,7 +53,7 @@ def load_data(apps, schema_editor):
 
 
 def get_player_order(player_obj, game_id):
-    boxscore = pd.read_json(f'../main/data/2018-19/boxscore/{game_id}.json')
+    boxscore = pd.read_json(f'main/data/2018-19/boxscore/{game_id}.json')
     player_team = boxscore[boxscore.PLAYER_ID == player_obj.player_id]['TEAM_ID'].values[0]
     opp_count = len(boxscore[boxscore.TEAM_ID != player_team])
 
