@@ -1,5 +1,8 @@
 {% extends "layout.html" %}
 
+{% load math_tags %}
+{% load util_tags %}
+
 {% block body %}
   <div class="container">
     <br>
@@ -9,6 +12,24 @@
           <th class="bg-primary text-lg-center">RANK</th>
           <th class="text-lg-center">PLAYER</th>
           <th class="bg-primary text-lg-center">TEAM</th>
+          <th class="bg-primary text-lg-center">GP</th>
+          <th class="bg-primary text-lg-center">GS</th>
+          <th class="bg-primary text-lg-center">MIN</th>
+          <th class="bg-primary text-lg-center">PTS</th>
+          <th class="bg-primary text-lg-center">REB</th>
+          <th class="bg-primary text-lg-center">AST</th>
+          <th class="bg-primary text-lg-center">FG</th>
+          <th class="bg-primary text-lg-center">FG%</th>
+          <th class="bg-primary text-lg-center">3P</th>
+          <th class="bg-primary text-lg-center">3P%</th>
+          <th class="bg-primary text-lg-center">FT</th>
+          <th class="bg-primary text-lg-center">FT%</th>
+          <th class="bg-primary text-lg-center">OREB</th>
+          <th class="bg-primary text-lg-center">DREB</th>
+          <th class="bg-primary text-lg-center">STL</th>
+          <th class="bg-primary text-lg-center">BLK</th>
+          <th class="bg-primary text-lg-center">TOV</th>
+          <th class="bg-primary text-lg-center">PF</th>
         </tr>
       </thead>
       <tbody>
@@ -16,13 +37,30 @@
           <tr>
             <td class="text-lg-center">{{ player.rank }}</td>
             <th>
-              <a class="nounderline"
-                 href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
+              <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
             </th>
             <th class="text-lg-center">
-              <a class="nounderline dark-grey"
-                 href="{% url 'main:teams' player.team.team_id %}">{{ player.team.team_abb }} </a>
+              <a class="nounderline dark-grey" href="{% url 'main:teams' player.team.team_id %}">{{ player.team.team_abb }} </a>
             </th>
+            {% set player_stats = player.get_latest_stats %}
+            <td>{{ player_stats.games_played }}</td>
+            <td>{{ player_stats.games_started }}</td>
+            <td>{{ player_stats.minutes }}</td>
+            <td>{{ player_stats.points }}</td>
+            <td>{{ player_stats.rebounds }}</td>
+            <td>{{ player_stats.assists }}</td>
+            <td>{{ player_stats.fg_made }} - {{ player_stats.fg_attempt }}</td>
+            <td>{{ player_stats.fg_percent|multiply:100 }}</td>
+            <td>{{ player_stats.fg3_made }} - {{ player_stats.fg3_attempt }}</td>
+            <td>{{ player_stats.fg3_percent|multiply:100 }}</td>
+            <td>{{ player_stats.ft_made }} - {{ player_stats.ft_attempt }}</td>
+            <td>{{ player_stats.ft_percent|multiply:100 }}</td>
+            <td>{{ player_stats.offense_reb }}</td>
+            <td>{{ player_stats.defense_reb }}</td>
+            <td>{{ player_stats.steals }}</td>
+            <td>{{ player_stats.blocks }}</td>
+            <td>{{ player_stats.turnovers }}</td>
+            <td>{{ player_stats.fouls }}</td>
           </tr>
         {% endfor %}
       </tbody>

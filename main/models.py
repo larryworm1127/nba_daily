@@ -123,6 +123,14 @@ class Player(models.Model):
         """
         return str(PLAYER_PHOTO_LINK.render(player_id=self.player_id))
 
+    def get_latest_stats(self) -> PlayerSeasonStats:
+        """Return the latest player season stats object.
+
+        TODO: change the season to something more dynamic
+        """
+        print(self.playerseasonstats_set.filter(season_type='Regular', season='2018-19'))
+        return self.playerseasonstats_set.filter(season_type='Regular', season='2018-19')[0]
+
 
 # ==============================================================================
 # Season Stats Models

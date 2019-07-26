@@ -70,7 +70,6 @@ def players(request, player_id: str):
     except Player.DoesNotExist:
         return redirect('main:player_list')
 
-    print(reg_total, post_total)
     context = {
         'title': player.get_full_name(),
         'player': player,
