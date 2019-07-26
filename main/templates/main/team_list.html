@@ -31,7 +31,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for team in teams %}
+        {% for team in team_list %}
           <tr>
             <th class="text-lg-center">
               <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }}</a>

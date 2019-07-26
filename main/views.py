@@ -7,12 +7,13 @@
 from datetime import datetime, timedelta
 
 from dateutil import parser
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.shortcuts import render, redirect
+from django.views import generic
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import Player, Team, Game, PlayerSeasonStats, TeamSeasonStats, PlayerTotalStats
+from .models import Player, Team, Game, PlayerSeasonStats, TeamSeasonStats, PlayerTotalStats, TeamGameLog
 
 
 # ==============================================================================
@@ -94,24 +95,17 @@ def player_games(request, player_id: str, season: str):
     return render(request, 'main/player_games.html', context)
 
 
-def player_list(request):
+class PlayerListView(generic.ListView):
     """Player list page.
     """
-    player_obj = Player.objects.all()
-    ranked_players = []
-    unranked_players = []
-    for player in player_obj:
-        if player.rank < 1:
-            unranked_players.append(player)
-        else:
-            ranked_players.append(player)
+    model = Player
+    # paginate_by = 30
+    extra_context = {'title': 'Player List'}
 
-    context = {
-        'title': "Player List",
-        'ranked_players': sorted(ranked_players, key=lambda p: p.rank),
-        'unranked_players': unranked_players
-    }
-    return render(request, 'main/player_list.html', context)
+    def get_queryset(self):
+        """Return the query set to be displayed in template.
+        """
+        return Player.objects.order_by('first_name')
 
 
 # ==============================================================================
@@ -149,14 +143,16 @@ def team_games(request, team_id: str, season: str):
     return render(request, 'main/team_games.html', context)
 
 
-def team_list(request):
+class TeamListView(generic.ListView):
     """Team list page.
     """
-    context = {
-        'title': "Team List",
-        'teams': Team.objects.filter(~Q(team_id=0))
-    }
-    return render(request, 'main/team_list.html', context)
+    model = Team
+    extra_context = {'title': 'Team List'}
+
+    def get_queryset(self) -> QuerySet:
+        """Return the query set to be displayed in template.
+        """
+        return Team.objects.filter(~Q(team_id=0))
 
 
 # ==============================================================================

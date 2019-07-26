@@ -6,10 +6,9 @@
 {% block body %}
   <div class="container stats-table-extended">
     <br>
-    <table class="player-list-table table table-sm">
+    <table class="player-list-table table table-sm text-lg-center">
       <thead class="thead-inverse">
         <tr class="bg-primary text-white">
-          <th class="bg-primary text-lg-center">RANK</th>
           <th class="text-lg-center">PLAYER</th>
           <th class="bg-primary text-lg-center">TEAM</th>
           <th class="bg-primary text-lg-center">GP</th>
@@ -33,9 +32,8 @@
         </tr>
       </thead>
       <tbody>
-        {% for player in ranked_players %}
+        {% for player in player_list %}
           <tr>
-            <td class="text-lg-center">{{ player.rank }}</td>
             <th>
               <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
             </th>
@@ -61,27 +59,6 @@
             <td>{{ player_stats.blocks }}</td>
             <td>{{ player_stats.turnovers }}</td>
             <td>{{ player_stats.fouls }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <table class="player-list-table table table-sm">
-      <thead class="thead-inverse">
-        <tr class="bg-primary text-white">
-          <th class="text-lg-center">PLAYER</th>
-          <th class="bg-primary text-lg-center">TEAM</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for player in unranked_players %}
-          <tr>
-            <th>
-              <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
-            </th>
-            <th class="text-lg-center">
-              <a class="nounderline dark-grey" href="{% url 'main:teams' player.team.team_id %}">{{ player.team.team_abb }} </a>
-            </th>
           </tr>
         {% endfor %}
       </tbody>
