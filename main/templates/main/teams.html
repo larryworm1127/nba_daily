@@ -5,7 +5,7 @@
 {% block content %}
 
   <h4>Career Regular Season</h4>
-  <table class="seasons-datatable table table-sm">
+  <table class="seasons-datatable table table-sm text-lg-center">
     <thead class="thead-inverse">
       <tr class="bg-primary text-white">
         <th class="text-lg-center">SEASON</th>
@@ -39,26 +39,26 @@
               {{ season_stats.season }}
             </a>
           </th>
-          <td class="text-lg-center">{{ season_stats.wins }}</td>
-          <td class="text-lg-center">{{ season_stats.losses }}</td>
-          <td class="text-lg-center">{{ season_stats.win_percent }}</td>
-          <td class="text-lg-center">{{ season_stats.minutes }}</td>
-          <td class="text-lg-center">{{ season_stats.points }}</td>
-          <td class="text-lg-center">{{ season_stats.rebounds }}</td>
-          <td class="text-lg-center">{{ season_stats.assists }}</td>
-          <td class="text-lg-center">{{ season_stats.fg_made }}-{{ season_stats.fg_attempt }}</td>
-          <td class="text-lg-center">{{ season_stats.fg_percent|multiply:100 }}</td>
-          <td class="text-lg-center">{{ season_stats.fg3_made }}-{{ season_stats.fg3_attempt }}</td>
-          <td class="text-lg-center">{{ season_stats.fg3_percent|multiply:100 }}</td>
-          <td class="text-lg-center">{{ season_stats.ft_made }}-{{ season_stats.ft_attempt }}</td>
-          <td class="text-lg-center">{{ season_stats.ft_percent|multiply:100 }}</td>
-          <td class="text-lg-center">{{ season_stats.offense_reb }}</td>
-          <td class="text-lg-center">{{ season_stats.defense_reb }}</td>
-          <td class="text-lg-center">{{ season_stats.steals }}</td>
-          <td class="text-lg-center">{{ season_stats.blocks }}</td>
-          <td class="text-lg-center">{{ season_stats.turnovers }}</td>
-          <td class="text-lg-center">{{ season_stats.fouls }}</td>
-          <td class="text-lg-center">{{ season_stats.plus_minus }}</td>
+          <td>{{ season_stats.wins }}</td>
+          <td>{{ season_stats.losses }}</td>
+          <td>{{ season_stats.win_percent }}</td>
+          <td>{{ season_stats.minutes }}</td>
+          <td>{{ season_stats.points }}</td>
+          <td>{{ season_stats.rebounds }}</td>
+          <td>{{ season_stats.assists }}</td>
+          <td>{{ season_stats.fg_made }}-{{ season_stats.fg_attempt }}</td>
+          <td>{{ season_stats.fg_percent|multiply:100 }}</td>
+          <td>{{ season_stats.fg3_made }}-{{ season_stats.fg3_attempt }}</td>
+          <td>{{ season_stats.fg3_percent|multiply:100 }}</td>
+          <td>{{ season_stats.ft_made }}-{{ season_stats.ft_attempt }}</td>
+          <td>{{ season_stats.ft_percent|multiply:100 }}</td>
+          <td>{{ season_stats.offense_reb }}</td>
+          <td>{{ season_stats.defense_reb }}</td>
+          <td>{{ season_stats.steals }}</td>
+          <td>{{ season_stats.blocks }}</td>
+          <td>{{ season_stats.turnovers }}</td>
+          <td>{{ season_stats.fouls }}</td>
+          <td>{{ season_stats.plus_minus }}</td>
         </tr>
       {% endfor %}
     </tbody>

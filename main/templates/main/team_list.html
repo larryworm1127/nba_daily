@@ -36,7 +36,7 @@
             <th class="text-lg-center">
               <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }}</a>
             </th>
-            {% set team_stats = team.teamseasonstats_set.all.first %}
+            {% set team_stats = team.team_game_log.all.first %}
             <td class="text-lg-center">{{ team.wins }} - {{ team.losses }}</td>
             <td class="text-lg-center">{{ team.wins|divide:82|multiply:100 }}</td>
             <td class="text-lg-center">{{ team_stats.points }}</td>

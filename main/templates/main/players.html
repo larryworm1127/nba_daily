@@ -41,9 +41,13 @@
                 </a>
               </th>
               <th class="text-lg-center">
-                <a class="nounderline text-lg-center dark-grey" href="{% url 'main:teams' season_stats.curr_team.team_id %}">
+                {% if not season_stats.curr_team.team_id == 0 %}
+                  <a class="nounderline text-lg-center dark-grey" href="{% url 'main:teams' season_stats.curr_team.team_id %}">
+                    {{ season_stats.curr_team.team_abb }}
+                  </a>
+                {% else %}
                   {{ season_stats.curr_team.team_abb }}
-                </a>
+                {% endif %}
               </th>
               <td>{{ season_stats.games_played }}</td>
               <td>{{ season_stats.games_started }}</td>

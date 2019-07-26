@@ -7,6 +7,7 @@
 from datetime import datetime, timedelta
 
 from dateutil import parser
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 
@@ -116,7 +117,7 @@ def player_list(request):
 # ==============================================================================
 # Teams views
 # ==============================================================================
-def teams(request, team_id: str):
+def teams(request, team_id: int):
     """Individual team stats page.
     """
     try:
@@ -153,7 +154,7 @@ def team_list(request):
     """
     context = {
         'title': "Team List",
-        'teams': Team.objects.all()
+        'teams': Team.objects.filter(~Q(team_id=0))
     }
     return render(request, 'main/team_list.html', context)
 
