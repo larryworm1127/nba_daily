@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% block title %}Player List{% endblock %}
+
 {% load math_tags %}
 {% load util_tags %}
 
@@ -35,10 +37,10 @@
         {% for player in player_list %}
           <tr>
             <th>
-              <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.first_name }} {{ player.last_name }}</a>
+              <a class="nounderline" href="{{ player.get_absolute_url }}">{{ player.first_name }} {{ player.last_name }}</a>
             </th>
             <th class="text-lg-center">
-              <a class="nounderline dark-grey" href="{% url 'main:teams' player.team.team_id %}">{{ player.team.team_abb }} </a>
+              <a class="nounderline dark-grey" href="{{ player.team.get_absolute_url }}">{{ player.team.team_abb }} </a>
             </th>
             {% set player_stats = player.get_latest_stats %}
             <td>{{ player_stats.games_played }}</td>

@@ -7,13 +7,13 @@
 from datetime import datetime, timedelta
 
 from dateutil import parser
-from django.db.models import Q, QuerySet
-from django.shortcuts import render, redirect
+from django.db.models import Q
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import Player, Team, Game, PlayerSeasonStats, TeamSeasonStats, PlayerTotalStats, TeamGameLog
+from .models import Player, Team, Game, PlayerSeasonStats, PlayerTotalStats
 
 
 # ==============================================================================
@@ -80,19 +80,13 @@ def players(request, player_id: str):
     return render(request, 'main/players.html', context)
 
 
-def player_games(request, player_id: str, season: str):
+class PlayerGamesDetailView(generic.DetailView):
     """Individual player season game log page.
     """
-    try:
-        player = Player.objects.get(player_id=player_id)
-    except Player.DoesNotExist:
-        return redirect('main:player_list')
-
-    context = {
-        'title': player.get_full_name(),
-        'player': player
-    }
-    return render(request, 'main/player_games.html', context)
+    model = Player
+    slug_field = 'player_id'
+    slug_url_kwarg = 'player_id'
+    template_name = 'main/player_games.html'
 
 
 class PlayerListView(generic.ListView):
@@ -100,78 +94,53 @@ class PlayerListView(generic.ListView):
     """
     model = Player
     # paginate_by = 30
-    extra_context = {'title': 'Player List'}
-
-    def get_queryset(self):
-        """Return the query set to be displayed in template.
-        """
-        return Player.objects.order_by('first_name')
+    queryset = Player.objects.order_by('first_name')
 
 
 # ==============================================================================
 # Teams views
 # ==============================================================================
-def teams(request, team_id: int):
-    """Individual team stats page.
+class TeamDetailView(generic.DetailView):
+    """Individual team detail page.
     """
-    try:
-        team = Team.objects.get(team_id=team_id)
-        stats = TeamSeasonStats.objects.filter(team__team_id=team_id)
-    except Team.DoesNotExist:
-        return redirect('main:team_list')
-
-    context = {
-        'title': team.get_full_name(),
-        'team': team,
-        'data': stats
-    }
-    return render(request, 'main/teams.html', context)
+    model = Team
+    slug_field = 'team_id'
+    slug_url_kwarg = 'team_id'
 
 
-def team_games(request, team_id: str, season: str):
+class TeamGamesDetailView(generic.DetailView):
     """Individual team season game log page.
     """
-    try:
-        team = Team.objects.get(team_id=team_id)
-    except Team.DoesNotExist:
-        return redirect('main:team_list')
-
-    context = {
-        'title': team.get_full_name(),
-        'team': team
-    }
-    return render(request, 'main/team_games.html', context)
+    model = Team
+    slug_field = 'team_id'
+    slug_url_kwarg = 'team_id'
+    template_name = 'main/team_games.html'
 
 
 class TeamListView(generic.ListView):
     """Team list page.
     """
     model = Team
-    extra_context = {'title': 'Team List'}
-
-    def get_queryset(self) -> QuerySet:
-        """Return the query set to be displayed in template.
-        """
-        return Team.objects.filter(~Q(team_id=0))
+    queryset = Team.objects.filter(~Q(team_id=0))
 
 
 # ==============================================================================
 # Games views
 # ==============================================================================
-def box_score(request, game_id: str):
+class GameDetailView(generic.DetailView):
     """Single game box score page.
     """
-    try:
-        game = Game.objects.get(game_id=game_id)
-    except Game.DoesNotExist:
-        return redirect('main:index')
+    model = Game
+    slug_field = 'game_id'
+    slug_url_kwarg = 'game_id'
 
-    context = {
-        'title': 'Boxscore',
-        'game': game,
-        'overtime': range(1, game.overtime() + 1)
-    }
-    return render(request, 'main/boxscore.html', context)
+    def get_context_data(self, **kwargs):
+        """Return the updated context data.
+        """
+        context = super(GameDetailView, self).get_context_data(**kwargs)
+        game = get_object_or_404(Game, game_id=self.kwargs['game_id'])
+        context['overtime'] = range(1, game.overtime() + 1)
+        return context
 
 
 # ==============================================================================
@@ -183,7 +152,5 @@ def standing(request):
     context = {
         'title': 'Standing',
         'headers': [('bg-danger', 'East Conference'), ('bg-primary', 'West Conference')],
-        'east_conf_standing': Team.get_east_standing(),
-        'west_conf_standing': Team.get_west_standing()
     }
     return render(request, 'main/standing.html', context)

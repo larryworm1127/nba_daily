@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% block title %}Boxscore{% endblock %}
+
 {% load static %}
 {% load math_tags %}
 {% load util_tags %}
@@ -107,7 +109,7 @@
           {% for pstats in tstats.get_player_game_logs %}
             <tr>
               <th>
-                <a class="nounderline" href="{% url 'main:players' pstats.player.player_id %}">{{ pstats.player.get_full_name }}</a>
+                <a class="nounderline" href="{{ pstats.player.get_absolute_url }}">{{ pstats.player.get_full_name }}</a>
               </th>
               <td class="text-lg-center">{{ pstats.minutes }}</td>
               <td>{{ pstats.points }}</td>
@@ -134,7 +136,7 @@
             {% if player.team == tstats.team %}
               <tr>
                 <th>
-                  <a class="nounderline" href="{% url 'main:players' player.player_id %}">{{ player.get_full_name }}</a><br/>
+                  <a class="nounderline" href="{{ player.get_absolute_url }}">{{ player.get_full_name }}</a><br/>
                   {{ reason }}
                 </th>
                 <td class="text-lg-center">0</td>
@@ -165,7 +167,7 @@
             <td>{{ tstats.points }}</td>
             <td>{{ tstats.rebounds }}</td>
             <td>{{ tstats.assists }}</td>
-            <td class="boxscore-column-width">{{ tstats.fg_made }}-{{ tstats.fg_attempt }}</td>
+            <td>{{ tstats.fg_made }}-{{ tstats.fg_attempt }}</td>
             <td>{{ tstats.fg_percent|multiply:100 }}</td>
             <td>{{ tstats.fg3_made }}-{{ tstats.fg3_attempt }}</td>
             <td>{{ tstats.fg3_percent|multiply:100 }}</td>
@@ -201,7 +203,7 @@
             <tbody>
               {% for player in game.get_inactive_players %}
                 <tr>
-                  <th><a class="nounderline dark-grey" href="{% url 'main:players' player.player_id %}">{{ player.get_full_name }}</a></th>
+                  <th><a class="nounderline dark-grey" href="{{ player.get_absolute_url }}">{{ player.get_full_name }}</a></th>
                   <td class="text-lg-center">{{ player.team.team_abb }}</td>
                   <td class="text-lg-center">{{ player.jersey }}</td>
                 </tr>

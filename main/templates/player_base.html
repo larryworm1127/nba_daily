@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% block title %}{{ player.get_full_name }}{% endblock %}
+
 {% load static %}
 
 {% block body %}
@@ -10,8 +12,7 @@
         <h4>{{ player.get_full_name }} #{{ player.jersey }} {{ player.position }}</h4>
         <h4>
           <img class="team-logo-sm" alt="team-logo" src="{% static player.team.get_logo_path %}">
-          <a class="nounderline dark-grey"
-             href="{% url 'main:teams' player.team.team_id %}">{{ player.team.get_full_name }}</a>
+          <a class="nounderline dark-grey" href="{{ player.team.get_absolute_url }}">{{ player.team.get_full_name }}</a>
         </h4>
         <img class="player-headshot" alt="player-image" src={{ player.get_photo_url }}>
         <ul class="list-unstyled">

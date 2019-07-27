@@ -32,7 +32,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for season_stats in data %}
+      {% for season_stats in team.season_stats.all %}
         <tr>
           <th class="text-lg-center">
             <a class="nounderline" href="{% url 'main:team_games' team.team_id '2018-19' %}">

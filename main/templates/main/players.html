@@ -42,7 +42,7 @@
               </th>
               <th class="text-lg-center">
                 {% if not season_stats.curr_team.team_id == 0 %}
-                  <a class="nounderline text-lg-center dark-grey" href="{% url 'main:teams' season_stats.curr_team.team_id %}">
+                  <a class="nounderline text-lg-center dark-grey" href="{{ season_stats.curr_team.get_absolute_url }}">
                     {{ season_stats.curr_team.team_abb }}
                   </a>
                 {% else %}
