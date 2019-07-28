@@ -10,6 +10,7 @@ from typing import Dict, List
 
 from django.core.validators import MaxValueValidator
 from django.db import models
+from django.urls import reverse
 from simplejson.decoder import JSONDecoder
 
 from . import PLAYER_PHOTO_LINK
@@ -50,19 +51,10 @@ class Team(models.Model):
         """
         return f"images/{self.team_abb}.png"
 
-    @staticmethod
-    def get_east_standing() -> List[Team]:
-        """Return the East conference teams in standing order.
+    def get_absolute_url(self):
+        """Returns the url to access a particular player instance.
         """
-        result = [team for team in Team.objects.all() if team.team_conf == 'East']
-        return sorted(result, key=lambda t: t.conf_rank)
-
-    @staticmethod
-    def get_west_standing() -> List[Team]:
-        """Return the West conference teams in standing order.
-        """
-        result = [team for team in Team.objects.all() if team.team_conf == 'West']
-        return sorted(result, key=lambda t: t.conf_rank)
+        return reverse('main:teams', args=[self.team_id])
 
 
 class TeamStanding(models.Model):
@@ -141,6 +133,11 @@ class Player(models.Model):
             )
 
         return result
+
+    def get_absolute_url(self):
+        """Returns the url to access a particular player instance.
+        """
+        return reverse('main:players', args=[self.player_id])
 
 
 # ==============================================================================
@@ -303,6 +300,11 @@ class Game(models.Model):
             return 1
 
         return 0
+
+    def get_absolute_url(self):
+        """Returns the url to access a particular player instance.
+        """
+        return reverse('main:boxscore', args=[self.game_id])
 
 
 # ==============================================================================

@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% block title %}{{ title }}{% endblock %}
+
 {% load static %}
 
 {% block body %}
@@ -18,7 +20,7 @@
 
         <div class="list-group">
           {% for game in games %}
-            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{% url 'main:boxscore' game.game_id %}">
+            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{{ game.get_absolute_url }}">
               <div class="row">
                 {% if game.away_team_game_log.result == 'W' %}
                   <div class="col-xs-4">

@@ -30,27 +30,27 @@
       </tr>
     </thead>
     <tbody>
-      {% for game in team.teamgamelog_set.all %}
+      {% for game_log in team.team_game_log.all %}
         <tr>
-          <th class="text-lg-center">{{ game.game.game_date }}</th>
-          <th class="text-lg-center"><a class="nounderline" href="{% url 'main:boxscore' game.game.game_id %}">{{ game.matchup }}</a></th>
-          <td>{{ game.result }}</td>
-          <td>{{ game.minutes }}</td>
-          <td>{{ game.points }}</td>
-          <td>{{ game.rebounds }}</td>
-          <td>{{ game.assists }}</td>
-          <td>{{ game.fg_made }} - {{ game.fg_attempt }}</td>
-          <td>{{ game.fg_percent|multiply:100 }}</td>
-          <td>{{ game.fg3_made }} - {{ game.fg3_attempt }}</td>
-          <td>{{ game.fg3_percent|multiply:100 }}</td>
-          <td>{{ game.ft_made }} - {{ game.ft_attempt }}</td>
-          <td>{{ game.ft_percent|multiply:100 }}</td>
-          <td>{{ game.offense_reb }}</td>
-          <td>{{ game.defense_reb }}</td>
-          <td>{{ game.steals }}</td>
-          <td>{{ game.blocks }}</td>
-          <td>{{ game.turnovers }}</td>
-          <td>{{ game.fouls }}</td>
+          <th class="text-lg-center">{{ game_log.game.game_date }}</th>
+          <th class="text-lg-center"><a class="nounderline" href="{% url 'main:boxscore' game_log.game.game_id %}">{{ game_log.matchup }}</a></th>
+          <td>{{ game_log.result }}</td>
+          <td>{{ game_log.minutes }}</td>
+          <td>{{ game_log.points }}</td>
+          <td>{{ game_log.rebounds }}</td>
+          <td>{{ game_log.assists }}</td>
+          <td>{{ game_log.fg_made }} - {{ game_log.fg_attempt }}</td>
+          <td>{{ game_log.fg_percent|multiply:100 }}</td>
+          <td>{{ game_log.fg3_made }} - {{ game_log.fg3_attempt }}</td>
+          <td>{{ game_log.fg3_percent|multiply:100 }}</td>
+          <td>{{ game_log.ft_made }} - {{ game_log.ft_attempt }}</td>
+          <td>{{ game_log.ft_percent|multiply:100 }}</td>
+          <td>{{ game_log.offense_reb }}</td>
+          <td>{{ game_log.defense_reb }}</td>
+          <td>{{ game_log.steals }}</td>
+          <td>{{ game_log.blocks }}</td>
+          <td>{{ game_log.turnovers }}</td>
+          <td>{{ game_log.fouls }}</td>
         </tr>
       {% endfor %}
     </tbody>

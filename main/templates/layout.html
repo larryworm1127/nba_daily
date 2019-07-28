@@ -2,7 +2,7 @@
 <head>
   {% load static %}
 
-  <title>NBA Daily - {{ title }}</title>
+  <title>NBA Daily - {% block title %}{% endblock %}</title>
   <!-- Bootstrap -->
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
 

@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% block title %}Team List{% endblock %}
+
 {% load math_tags %}
 {% load util_tags %}
 
@@ -34,7 +36,7 @@
         {% for team in team_list %}
           <tr>
             <th class="text-lg-center">
-              <a class="nounderline dark-grey" href="{% url 'main:teams' team.team_id %}">{{ team.team_abb }}</a>
+              <a class="nounderline dark-grey" href="{{ team.get_absolute_url }}">{{ team.team_abb }}</a>
             </th>
             {% set team_stats = team.team_game_log.all.first %}
             <td class="text-lg-center">{{ team.wins }} - {{ team.losses }}</td>

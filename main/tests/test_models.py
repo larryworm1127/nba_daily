@@ -1,4 +1,4 @@
-"""Main App Test Module
+"""Main App Model Test Module
 
 @date: 06/02/2019
 @author: Larry Shi
@@ -10,7 +10,7 @@ from hypothesis import given
 from hypothesis.extra.django import TestCase
 from hypothesis.strategies import from_regex, dates
 
-from .models import Player, Team
+from main.models import Player, Team
 
 # Constants
 NAME_REGEX = re.compile(r'[a-zA-Z]{2,15}')
@@ -23,8 +23,6 @@ class PlayerModelTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Setup data for testing.
-        """
         Player.objects.create(
             team=Team.objects.filter(team_abb='ATL')[0],
             first_name='a',
@@ -46,8 +44,6 @@ class PlayerModelTest(TestCase):
 
     @given(from_regex(NAME_REGEX, fullmatch=True), from_regex(NAME_REGEX, fullmatch=True))
     def test_get_full_name(self, first_name: str, last_name: str):
-        """Test <get_full_name> method in Player model.
-        """
         player = Player.objects.get(player_id=1)
         player.first_name = first_name
         player.last_name = last_name
@@ -56,8 +52,6 @@ class PlayerModelTest(TestCase):
 
     @given(dates(min_value=date(1980, 1, 1), max_value=date(2000, 12, 31)))
     def test_get_age(self, birth_date: date):
-        """Test <get_age> method in Player model.
-        """
         player = Player.objects.get(player_id=1)
         player.birth_date = str(birth_date)
         expected_age = datetime.today().year - birth_date.year
@@ -70,8 +64,6 @@ class TeamModelTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Setup data for testing.
-        """
         Team.objects.create(
             team_id='01',
             team_abb='ATL',
@@ -87,8 +79,6 @@ class TeamModelTest(TestCase):
 
     @given(from_regex(NAME_REGEX, fullmatch=True), from_regex(NAME_REGEX, fullmatch=True))
     def test_get_full_name(self, team_city: str, team_name: str):
-        """Test <get_full_name> method in Team model.
-        """
         team = Team.objects.get(id=1)
         team.team_city = team_city
         team.team_name = team_name
@@ -97,8 +87,6 @@ class TeamModelTest(TestCase):
 
     @given(from_regex(ABB_REGEX, fullmatch=True))
     def test_get_logo_path(self, team_abb: str):
-        """Test <get_logo_path> method in Team model.
-        """
         team = Team.objects.get(id=1)
         team.team_abb = team_abb
         expected_logo_path = f"images/{team_abb}.png"

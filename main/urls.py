@@ -19,18 +19,18 @@ urlpatterns = [
 urlpatterns += [
     path('players/', views.PlayerListView.as_view(), name='player_list'),
     path('players/<int:player_id>/', views.players, name='players'),
-    path('players/<int:player_id>/<str:season>', views.player_games, name='player_games')
+    path('players/<int:player_id>/<str:season>', views.PlayerGamesDetailView.as_view(), name='player_games')
 ]
 
 # Teams pages URL
 urlpatterns += [
     path('teams/', views.TeamListView.as_view(), name='team_list'),
-    path('teams/<int:team_id>/', views.teams, name='teams'),
-    path('teams/<int:team_id>/<str:season>', views.team_games, name='team_games'),
+    path('teams/<int:team_id>/', views.TeamDetailView.as_view(), name='teams'),
+    path('teams/<int:team_id>/<str:season>', views.TeamGamesDetailView.as_view(), name='team_games'),
     path('standing/', views.standing, name='standing')
 ]
 
 # Games page URL
 urlpatterns += [
-    path('games/<str:game_id>', views.box_score, name='boxscore'),
+    path('games/<str:game_id>', views.GameDetailView.as_view(), name='boxscore'),
 ]
