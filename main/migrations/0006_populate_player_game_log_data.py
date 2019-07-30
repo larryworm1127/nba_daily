@@ -2,6 +2,7 @@
 
 import pandas as pd
 from django.db import migrations
+from simplejson import load
 
 
 def load_data(apps, schema_editor):
@@ -53,7 +54,10 @@ def load_data(apps, schema_editor):
 
 
 def get_player_order(player_obj, game_id):
-    boxscore = pd.read_json(f'main/data/2018-19/boxscore/{game_id}.json')
+    with open(f'main/data/2018-19/boxscore/{game_id}.json') as f:
+        data = load(f)
+
+    boxscore = pd.read_json(data['PLAYER_DATA'])
     player_team = boxscore[boxscore.PLAYER_ID == player_obj.player_id]['TEAM_ID'].values[0]
     opp_count = len(boxscore[boxscore.TEAM_ID != player_team])
 

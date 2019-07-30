@@ -13,14 +13,11 @@ def load_game_data(apps, schema_editor):
 
     print("Migrate Individual Game Data.")
 
-    with open('main/data/2018-19/game_list.json') as f:
-        games = load(f)
-
-    for game_id in games:
-        with open(f'main/data/2018-19/boxscore_summary/{game_id}.json') as f:
+    for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
+        with open(f'main/data/2018-19/boxscore/{game_id}.json') as f:
             boxscore_summary = load(f)
 
-        boxscore = read_json(f'main/data/2018-19/boxscore/{game_id}.json')
+        boxscore = read_json(boxscore_summary['PLAYER_DATA'])
         game_summary = read_json(boxscore_summary['GAME_SUMMARY'])
         inactive_data = read_json(boxscore_summary['INACTIVE_PLAYER'])
 

@@ -244,57 +244,18 @@ class CollectData:
         ])
         data.to_json(f'data/{self.season}/team_stats.json')
 
-    def get_game_list(self) -> None:
-        """Retrieve game list data from team game log.
+    def get_boxscore_summary(self) -> None:
+        """Retrieve individual game boxscore data using API.
 
         === Attributes ===
         season:
             the season in which the games are played.
         """
-        self.logger.info('Retrieving game list data')
+        for game_id in [f'0021800{"%04d" % index}' for index in range(1, 1231)]:
+            self.logger.info(f'Retrieving boxscore data for {game_id}')
 
-        game_log = league.GameLog(season=self.season,
-                                  player_or_team=Player_or_Team.Team).overall()  # type: pd.DataFrame
-        games = {data.GAME_ID for data in game_log.itertuples(index=False)}
-
-        with open(f'data/{self.season}/game_list.json', 'w+') as f:
-            dump(list(games), f)
-
-    def get_box_score(self) -> None:
-        """Retrieve individual game player box score data using API.
-
-        === Attributes ===
-        season:
-            the season in which the games are played.
-        """
-        with open(f'data/{self.season}/game_list.json') as f:
-            games = load(f)
-
-        for game_id in games:
-            self.logger.info(f'Retrieving box score data for {game_id}')
-
-            data = game.Boxscore(game_id, season=self.season).player_stats()
-            data.to_json(f'data/{self.season}/boxscore/{game_id}.json')
-
-            # time.sleep(0.5)
-
-        assert len(os.listdir(f'data/{self.season}/boxscore')) == 1230
-
-    def get_box_score_summary(self) -> None:
-        """Retrieve individual game box score summary data using API.
-
-        === Attributes ===
-        season:
-            the season in which the games are played.
-        """
-        with open(f'data/{self.season}/game_list.json') as f:
-            games = load(f)
-
-        for game_id in games:
-            self.logger.info(f'Retrieving box score summary data for {game_id}')
-
-            data = game.BoxscoreSummary(game_id, season=self.season)
-            game_summary = data.game_summary().drop(columns=[
+            summary = game.BoxscoreSummary(game_id, season=self.season)
+            game_summary = summary.game_summary().drop(columns=[
                 'GAME_SEQUENCE',
                 'SEASON',
                 'LIVE_PERIOD_TIME_BCAST',
@@ -306,7 +267,7 @@ class CollectData:
                 'GAMECODE'
             ]).to_json()
 
-            line_score = data.line_score().drop(columns=[
+            line_score = summary.line_score().drop(columns=[
                 'GAME_DATE_EST',
                 'GAME_SEQUENCE',
                 'TEAM_ABBREVIATION',
@@ -315,7 +276,7 @@ class CollectData:
                 'PTS',
             ]).to_json()
 
-            inactive_player = data.inactive_players().drop(columns=[
+            inactive_player = summary.inactive_players().drop(columns=[
                 'FIRST_NAME',
                 'LAST_NAME',
                 'JERSEY_NUM',
@@ -325,17 +286,26 @@ class CollectData:
                 'TEAM_ABBREVIATION'
             ]).to_json()
 
-            with open(f'data/{self.season}/boxscore_summary/{game_id}.json', 'w+') as f:
+            player_data = game.Boxscore(game_id, season=self.season).player_stats().drop(columns=[
+                'TEAM_ABBREVIATION',
+                'TEAM_CITY',
+                'PLAYER_NAME',
+                'START_POSITION',
+                'GAME_ID'
+            ]).to_json()
+
+            with open(f'data/{self.season}/boxscore/{game_id}.json', 'w+') as f:
                 result = {
                     'GAME_SUMMARY': game_summary,
                     'LINE_SCORE': line_score,
-                    'INACTIVE_PLAYER': inactive_player
+                    'INACTIVE_PLAYER': inactive_player,
+                    'PLAYER_DATA': player_data
                 }
                 dump(result, f)
 
             time.sleep(0.5)
 
-        assert len(os.listdir(f'data/{self.season}/boxscore_summary')) == 1230
+        assert len(os.listdir(f'data/{self.season}/boxscore')) == 1230
 
 
 if __name__ == '__main__':
@@ -350,9 +320,7 @@ if __name__ == '__main__':
 
     # inst.get_player_game_log()
     # inst.get_team_game_log()
-    inst.get_player_season_stats()
+    # inst.get_player_season_stats()
     # inst.get_team_season_stats()
 
-    # inst.get_game_list()
-    # inst.get_box_score()
-    # inst.get_box_score_summary()
+    inst.get_boxscore_summary()

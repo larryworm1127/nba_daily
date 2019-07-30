@@ -93,7 +93,6 @@ class Player(models.Model):
     school = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
     season_exp = models.IntegerField()
-    rank = models.IntegerField()
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
@@ -301,10 +300,15 @@ class Game(models.Model):
 
         return 0
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Returns the url to access a particular player instance.
         """
         return reverse('main:boxscore', args=[self.game_id])
+
+    def get_score_page_url(self) -> str:
+        """Returns the url to scores page of a particular date.
+        """
+        return reverse('main:score', args=[self.game_date])
 
 
 # ==============================================================================
