@@ -39,7 +39,6 @@ class PlayerModelTest(TestCase):
             school='UCLA',
             country='USA',
             season_exp=1,
-            rank=1
         )
 
     @given(from_regex(NAME_REGEX, fullmatch=True), from_regex(NAME_REGEX, fullmatch=True))
