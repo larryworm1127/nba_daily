@@ -30,10 +30,14 @@
       </tr>
     </thead>
     <tbody>
-      {% for game_log in team.team_game_log.all %}
+      {% for game_log in team.team_game_log.all.iterator %}
         <tr>
-          <th class="text-lg-center">{{ game_log.game.game_date }}</th>
-          <th class="text-lg-center"><a class="nounderline" href="{% url 'main:boxscore' game_log.game.game_id %}">{{ game_log.matchup }}</a></th>
+          <th class="text-lg-center">
+            <a class="nounderline dark-grey" href="{{ game_log.game.get_score_page_url }}">{{ game_log.game.game_date }}</a>
+          </th>
+          <th class="text-lg-center">
+            <a class="nounderline" href="{% url 'main:boxscore' game_log.game.game_id %}">{{ game_log.matchup }}</a>
+          </th>
           <td>{{ game_log.result }}</td>
           <td>{{ game_log.minutes }}</td>
           <td>{{ game_log.points }}</td>

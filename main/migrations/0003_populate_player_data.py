@@ -32,8 +32,7 @@ def load_player_data(apps, schema_editor):
             weight=int(data.WEIGHT),
             school=school,
             country=data.COUNTRY,
-            season_exp=data.SEASON_EXP,
-            rank=player_rank
+            season_exp=data.SEASON_EXP
         ).save()
 
 
