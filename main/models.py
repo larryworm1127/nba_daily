@@ -120,18 +120,16 @@ class Player(models.Model):
         TODO: change the season to something more dynamic
         """
         try:
-            result = self.season_stats.get(
+            return self.season_stats.get(
                 season_type='Regular',
                 season='2018-19'
             )
         except PlayerSeasonStats.MultipleObjectsReturned:
-            result = self.season_stats.get(
+            return self.season_stats.get(
                 season_type='Regular',
                 season='2018-19',
                 curr_team__team_id=0
             )
-
-        return result
 
     def get_absolute_url(self):
         """Returns the url to access a particular player instance.

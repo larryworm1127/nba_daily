@@ -42,8 +42,11 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
     if request.method == 'POST':
         form = DateForm(request.POST)
         date_input = parser.parse(form.data.get('date'))
-        if form.is_valid():
-            return redirect('main:score', date=date_input)
+
+        if not form.is_valid():
+            pass
+
+        return redirect('main:score', date=date_input)
 
     context = {
         'title': title,
