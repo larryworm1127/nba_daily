@@ -308,6 +308,18 @@ class Game(models.Model):
         """
         return reverse('main:score', args=[self.game_date])
 
+    @staticmethod
+    def get_closest_game_date(curr_date: datetime.date) -> datetime.date:
+        """Return the closest date with games.
+
+        === Attributes ===
+        curr_date:
+            the current date to search from.
+        """
+        game_dates = [datetime.strptime(game.game_date, "%b %d, %Y").date()
+                      for game in Game.objects.all().iterator()]
+        return min(game_dates, key=lambda date: abs(date - curr_date))
+
 
 # ==============================================================================
 # Game Log Data Models

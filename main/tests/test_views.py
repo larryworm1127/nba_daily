@@ -57,7 +57,7 @@ class TeamListViewTest(TestCase):
         """
         response = self.client.get(reverse('main:team_list'))
         self.assertEqual(response.status_code, 200)
-        self.assertFalse('is_paginated' in response.context)
+        self.assertTrue('is_paginated' in response.context)
         self.assertTrue(response.context['is_paginated'] is False)
         self.assertTrue(len(response.context['team_list']) == 30)
 
@@ -131,6 +131,6 @@ class PlayerListViewTest(TestCase):
         """
         response = self.client.get(reverse('main:player_list'))
         self.assertEqual(response.status_code, 200)
-        self.assertFalse('is_paginated' in response.context)
+        self.assertTrue('is_paginated' in response.context)
         self.assertTrue(response.context['is_paginated'] is False)
         self.assertTrue(len(response.context['player_list']) == 30)

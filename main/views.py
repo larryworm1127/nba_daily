@@ -22,13 +22,14 @@ from .models import Player, Team, Game, PlayerSeasonStats, PlayerTotalStats
 def index(request):
     """Index page (with daily game scores).
     """
-    return render_score_page(request, 'main/index.html', datetime.today(), 'Home')
+    date = Game.get_closest_game_date(datetime.today().date())
+    return render_score_page(request, 'main/index.html', date, 'Home')
 
 
 def score(request, date: str):
     """Scores page.
     """
-    date_obj = parser.parse(date)
+    date_obj = parser.parse(date).date()
     return render_score_page(request, 'main/score.html', date_obj, date)
 
 
@@ -41,12 +42,13 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
     # Validate date input
     if request.method == 'POST':
         form = DateForm(request.POST)
-        date_input = parser.parse(form.data.get('date'))
+        date_input = parser.parse(form.data.get('date')).date()
 
         if not form.is_valid():
-            pass
+            closest_date = Game.get_closest_game_date(date_input)
+            return redirect('main:score', date=closest_date.strftime("%m-%d-%Y"))
 
-        return redirect('main:score', date=date_input)
+        return redirect('main:score', date=date_input.strftime("%m-%d-%Y"))
 
     context = {
         'title': title,
