@@ -70,10 +70,10 @@ class PlayerListViewTest(TestCase):
     def setUpTestData(cls):
         """Setup data for testing.
         """
-        # Create teams for tests
+        # Create teams/players for tests
         num_teams = 30
         for team_id in range(num_teams):
-            Team.objects.create(
+            team = Team(
                 team_id=team_id,
                 team_abb='TOT',
                 team_conf='N/A',
@@ -86,11 +86,8 @@ class PlayerListViewTest(TestCase):
                 max_year='2018-19'
             )
 
-        # Create players for tests
-        num_players = 30
-        for player_id in range(num_players):
             Player.objects.create(
-                team=Team.objects.get(team_id=num_teams),
+                team=team,
                 first_name='N/A',
                 last_name='N/A',
                 birth_date='2000-01-01',
@@ -106,6 +103,7 @@ class PlayerListViewTest(TestCase):
                 country='N/A',
                 season_exp=1,
             )
+            
 
     # def test_view_url_exists_at_desired_location(self):
     #     """Test if the view has the correct URL.
