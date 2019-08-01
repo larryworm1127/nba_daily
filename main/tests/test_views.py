@@ -91,10 +91,10 @@ class PlayerListViewTest(TestCase):
                 first_name='N/A',
                 last_name='N/A',
                 birth_date='2000-01-01',
-                player_id=player_id,
+                player_id=team_id,
                 draft_year='2019',
                 draft_round='1',
-                draft_number=str(player_id),
+                draft_number=str(team_id),
                 position='Forward',
                 jersey=0,
                 height='7-0',
@@ -103,7 +103,6 @@ class PlayerListViewTest(TestCase):
                 country='N/A',
                 season_exp=1,
             )
-            
 
     # def test_view_url_exists_at_desired_location(self):
     #     """Test if the view has the correct URL.
