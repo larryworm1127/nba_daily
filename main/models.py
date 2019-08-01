@@ -120,18 +120,16 @@ class Player(models.Model):
         TODO: change the season to something more dynamic
         """
         try:
-            result = self.season_stats.get(
+            return self.season_stats.get(
                 season_type='Regular',
                 season='2018-19'
             )
         except PlayerSeasonStats.MultipleObjectsReturned:
-            result = self.season_stats.get(
+            return self.season_stats.get(
                 season_type='Regular',
                 season='2018-19',
                 curr_team__team_id=0
             )
-
-        return result
 
     def get_absolute_url(self):
         """Returns the url to access a particular player instance.
@@ -309,6 +307,18 @@ class Game(models.Model):
         """Returns the url to scores page of a particular date.
         """
         return reverse('main:score', args=[self.game_date])
+
+    @staticmethod
+    def get_closest_game_date(curr_date: datetime.date) -> datetime.date:
+        """Return the closest date with games.
+
+        === Attributes ===
+        curr_date:
+            the current date to search from.
+        """
+        game_dates = [datetime.strptime(game.game_date, "%b %d, %Y").date()
+                      for game in Game.objects.all().iterator()]
+        return min(game_dates, key=lambda date: abs(date - curr_date))
 
 
 # ==============================================================================

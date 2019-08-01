@@ -4,7 +4,7 @@
 
 {% block content %}
 
-  <h4>Career Regular Season</h4>
+  <h4>Current Regular Season</h4>
   <table class="seasons-datatable table table-sm text-lg-center">
     <thead class="thead-inverse">
       <tr class="bg-primary text-white">
@@ -46,11 +46,11 @@
           <td>{{ season_stats.points }}</td>
           <td>{{ season_stats.rebounds }}</td>
           <td>{{ season_stats.assists }}</td>
-          <td>{{ season_stats.fg_made }}-{{ season_stats.fg_attempt }}</td>
+          <td>{{ season_stats.fg_made }} - {{ season_stats.fg_attempt }}</td>
           <td>{{ season_stats.fg_percent|multiply:100 }}</td>
-          <td>{{ season_stats.fg3_made }}-{{ season_stats.fg3_attempt }}</td>
+          <td>{{ season_stats.fg3_made }} - {{ season_stats.fg3_attempt }}</td>
           <td>{{ season_stats.fg3_percent|multiply:100 }}</td>
-          <td>{{ season_stats.ft_made }}-{{ season_stats.ft_attempt }}</td>
+          <td>{{ season_stats.ft_made }} - {{ season_stats.ft_attempt }}</td>
           <td>{{ season_stats.ft_percent|multiply:100 }}</td>
           <td>{{ season_stats.offense_reb }}</td>
           <td>{{ season_stats.defense_reb }}</td>
@@ -63,5 +63,41 @@
       {% endfor %}
     </tbody>
   </table>
+  <br>
+
+  <h4>Team Roster</h4>
+  <table class="seasons-datatable table table-sm text-lg-center">
+    <thead class="thead-inverse">
+      <tr class="bg-primary text-white">
+        <th class="text-lg-center">Player</th>
+        <th class="bg-danger text-lg-center">Position</th>
+        <th class="bg-danger text-lg-center">Jersey Number</th>
+        <th class="bg-danger text-lg-center">Height</th>
+        <th class="bg-danger text-lg-center">Weight</th>
+        <th class="bg-danger text-lg-center">Years Pro</th>
+        <th class="bg-danger text-lg-center">Country</th>
+        <th class="bg-danger text-lg-center">Draft Pick</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for player in team.player_set.all %}
+        <tr>
+          <th><a class="nounderline" href="{{ player.get_absolute_url }}">{{ player.get_full_name }}</a></th>
+          <td>{{ player.position }}</td>
+          <td>{{ player.jersey }}</td>
+          <td>{{ player.height }}</td>
+          <td>{{ player.weight }}</td>
+          <td>{{ player.season_exp }}</td>
+          <td>{{ player.country }}</td>
+          {% if player.draft_year != 'Undrafted' %}
+            <td>{{ player.draft_year }} / Round: {{ player.draft_round }} / Pick: {{ player.draft_number }}</td>
+          {% else %}
+            <td>{{ player.draft_round }}</td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
 
 {% endblock %}
