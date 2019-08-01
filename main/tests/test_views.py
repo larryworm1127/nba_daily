@@ -66,43 +66,43 @@ class PlayerListViewTest(TestCase):
     """Test class for <PlayerListView> generic view.
     """
 
-    @classmethod
-    def setUpTestData(cls):
-        """Setup data for testing.
-        """
-        # Create teams/players for tests
-        num_teams = 30
-        for team_id in range(num_teams):
-            team = Team(
-                team_id=team_id,
-                team_abb='TOT',
-                team_conf='N/A',
-                team_div='N/A',
-                team_city='N/A',
-                team_name='N/A',
-                wins=82,
-                losses=0,
-                nba_debut='1950',
-                max_year='2018-19'
-            )
-
-            Player.objects.create(
-                team=team,
-                first_name='N/A',
-                last_name='N/A',
-                birth_date='2000-01-01',
-                player_id=team_id,
-                draft_year='2019',
-                draft_round='1',
-                draft_number=str(team_id),
-                position='Forward',
-                jersey=0,
-                height='7-0',
-                weight=270,
-                school='N/A',
-                country='N/A',
-                season_exp=1,
-            )
+    # @classmethod
+    # def setUpTestData(cls):
+    #     """Setup data for testing.
+    #     """
+    #     # Create teams/players for tests
+    #     num_teams = 30
+    #     for team_id in range(num_teams):
+    #         team = Team(
+    #             team_id=team_id,
+    #             team_abb='TOT',
+    #             team_conf='N/A',
+    #             team_div='N/A',
+    #             team_city='N/A',
+    #             team_name='N/A',
+    #             wins=82,
+    #             losses=0,
+    #             nba_debut='1950',
+    #             max_year='2018-19'
+    #         )
+    #
+    #         Player.objects.create(
+    #             team=team,
+    #             first_name='N/A',
+    #             last_name='N/A',
+    #             birth_date='2000-01-01',
+    #             player_id=team_id,
+    #             draft_year='2019',
+    #             draft_round='1',
+    #             draft_number=str(team_id),
+    #             position='Forward',
+    #             jersey=0,
+    #             height='7-0',
+    #             weight=270,
+    #             school='N/A',
+    #             country='N/A',
+    #             season_exp=1,
+    #         )
 
     # def test_view_url_exists_at_desired_location(self):
     #     """Test if the view has the correct URL.
