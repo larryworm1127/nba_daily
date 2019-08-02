@@ -30,6 +30,7 @@ Django = "==2.2.3"
 Jinja2 = "==2.10.1"
 MarkupSafe = "==1.1.1"
 nba_py = {editable = true,git = "https://github.com/larryworm1127/nba_py.git"}
+django-datatables-view = "*"
 
 [requires]
 python_version = "3.7"

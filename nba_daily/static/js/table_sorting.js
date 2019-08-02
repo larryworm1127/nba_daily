@@ -38,9 +38,9 @@ $(document).ready(function () {
             $(".player-games-datatable").wrap("<div class='table-responsive'></div>");
         },
 
-        paging: false,
-        "bFilter": false,
-        "bInfo": false,
+        paging: true,
+        "bFilter": true,
+        "bInfo": true,
         /* Disable initial sort */
         "aaSorting": [],
         "aoColumns": [
@@ -161,25 +161,6 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    $('.coach-datatable').DataTable({
-        "drawCallback": function (settings) {
-            $(".coach-datatable").wrap("<div class='table-responsive'></div>");
-        },
-
-        paging: false,
-        "bFilter": false,
-        "bInfo": false,
-        /* Disable initial sort */
-        "aaSorting": [],
-        "aoColumns": [
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["desc", "asc"]}
-        ]
-    });
-});
-
-$(document).ready(function () {
     $('.standings-datatable').DataTable({
         "drawCallback": function (settings) {
             $(".standings-datatable").wrap("<div class='table-responsive'></div>");
@@ -252,9 +233,10 @@ $(document).ready(function () {
             $(".player-list-table").wrap("<div class='table-responsive'></div>");
         },
 
-        paging: false,
-        "bFilter": false,
-        "bInfo": false,
+        paging: true,
+        pageLength: 50,
+        "bFilter": true,
+        "bInfo": true,
         /* Disable initial sort */
         "aaSorting": [],
         "aoColumns": [
@@ -289,7 +271,7 @@ $(document).ready(function () {
         },
 
         paging: false,
-        "bFilter": false,
+        "bFilter": true,
         "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],

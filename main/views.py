@@ -22,7 +22,7 @@ from .models import Player, Team, Game, PlayerSeasonStats, PlayerTotalStats
 def index(request):
     """Index page (with daily game scores).
     """
-    date = Game.get_closest_game_date(datetime.today().date())
+    date = datetime.today().date()
     return render_score_page(request, 'main/index.html', date, 'Home')
 
 
@@ -44,11 +44,8 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
         form = DateForm(request.POST)
         date_input = parser.parse(form.data.get('date')).date()
 
-        if not form.is_valid():
-            closest_date = Game.get_closest_game_date(date_input)
-            return redirect('main:score', date=closest_date.strftime("%m-%d-%Y"))
-
-        return redirect('main:score', date=date_input.strftime("%m-%d-%Y"))
+        if form.is_valid():
+            return redirect('main:score', date=date_input.strftime("%m-%d-%Y"))
 
     context = {
         'title': title,
@@ -57,7 +54,8 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
         'tomorrow_display': (date + timedelta(1)).strftime("%b %d, %Y"),
         'yesterday': (date - timedelta(1)).strftime("%m-%d-%Y"),
         'yesterday_display': (date - timedelta(1)).strftime("%b %d, %Y"),
-        'games': games
+        'games': games,
+        'closest_date': Game.get_closest_game_date(date).strftime("%m-%d-%Y")
     }
     return render(request, page, context)
 
@@ -98,7 +96,6 @@ class PlayerListView(generic.ListView):
     """Player list page.
     """
     model = Player
-    # paginate_by = 30
     queryset = Player.objects.order_by('first_name')
 
 

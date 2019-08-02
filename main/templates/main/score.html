@@ -19,55 +19,62 @@
         </form>
 
         <div class="list-group">
-          {% for game in games %}
-            <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{{ game.get_absolute_url }}">
-              <div class="row">
-                {% if game.away_team_game_log.result == 'W' %}
-                  <div class="col-xs-4">
-                    <b class="winning-team">
+          {% if games.count > 0 %}
+            {% for game in games %}
+              <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{{ game.get_absolute_url }}">
+                <div class="row">
+                  {% if game.away_team_game_log.result == 'W' %}
+                    <div class="col-xs-4">
+                      <b class="winning-team">
+                        <img class="team-logo" alt="away-logo" src="{% static game.away_team.get_logo_path %}">
+                          {{ game.away_team.team_abb }} {{ game.away_team_game_log.points }}
+                      </b>
+                      <br>
+                      {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
+                    </div>
+
+                    <div class="col-xs-4">
+                      <div class="final-text">Final</div>
+                      <div class="broadcaster">{{ game.broadcaster }}</div>
+                    </div>
+
+                    <div class="col-xs-4">
+                      <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
+                        {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}
+                      <br>
+                      {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
+                    </div>
+
+                  {% else %}
+                    <div class="col-xs-4">
                       <img class="team-logo" alt="away-logo" src="{% static game.away_team.get_logo_path %}">
                         {{ game.away_team.team_abb }} {{ game.away_team_game_log.points }}
-                    </b>
-                    <br>
-                    {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
-                  </div>
+                      <br>
+                      {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
+                    </div>
 
-                  <div class="col-xs-4">
-                    <div class="final-text">Final</div>
-                    <div class="broadcaster">{{ game.broadcaster }}</div>
-                  </div>
+                    <div class="col-xs-4">
+                      <div class="final-text">Final</div>
+                      <div class="broadcaster">{{ game.broadcaster }}</div>
+                    </div>
 
-                  <div class="col-xs-4">
-                    <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
-                      {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}
-                    <br>
-                    {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
-                  </div>
+                    <div class="col-xs-4">
+                      <b class="winning-team">
+                        <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
+                          {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}</b>
+                      <br>
+                      {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
+                    </div>
+                  {% endif %}
+                </div>
+              </a>
+            {% endfor %}
 
-                {% else %}
-                  <div class="col-xs-4">
-                    <img class="team-logo" alt="away-logo" src="{% static game.away_team.get_logo_path %}">
-                      {{ game.away_team.team_abb }} {{ game.away_team_game_log.points }}
-                    <br>
-                    {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
-                  </div>
-
-                  <div class="col-xs-4">
-                    <div class="final-text">Final</div>
-                    <div class="broadcaster">{{ game.broadcaster }}</div>
-                  </div>
-
-                  <div class="col-xs-4">
-                    <b class="winning-team">
-                      <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
-                        {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}</b>
-                    <br>
-                    {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
-                  </div>
-                {% endif %}
-              </div>
-            </a>
-          {% endfor %}
+          {% else %}
+            <h4 class="text-lg-center">No games scheduled on this date</h4>
+            <br>
+            <a class="btn btn-primary btn-mds" href="{% url 'main:score' closest_date %}">Go To Most Recent Game</a>
+          {% endif %}
         </div>
 
       </div>
