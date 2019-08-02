@@ -49,11 +49,7 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
 
     context = {
         'title': title,
-        'today_display': date.strftime("%b %d, %Y"),
-        'tomorrow': (date + timedelta(1)).strftime("%m-%d-%Y"),
-        'tomorrow_display': (date + timedelta(1)).strftime("%b %d, %Y"),
-        'yesterday': (date - timedelta(1)).strftime("%m-%d-%Y"),
-        'yesterday_display': (date - timedelta(1)).strftime("%b %d, %Y"),
+        'date': date.strftime("%b %d, %Y"),
         'games': games,
         'closest_date': Game.get_closest_game_date(date).strftime("%m-%d-%Y")
     }

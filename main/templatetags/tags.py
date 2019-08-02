@@ -1,9 +1,9 @@
-"""Django Custom Template Tags - Utility
+"""Django Custom Template Tags
 
 === Module Description ===
 This module contains various utility django custom template tags.
 
-Current math tags available:
+Current tags available:
   - arg_method
 
 @date: 07/12/2019
