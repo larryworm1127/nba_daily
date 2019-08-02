@@ -18,13 +18,13 @@ class DateForm(forms.Form):
         input_formats=['%m-%d-%Y'],
     )
 
-    def clean_date(self):
-        """Determine whether the selected date is valid or not.
-        """
-        data = self.cleaned_data['date']
-
-        # Check if there is a game on the selected date
-        if Game.objects.filter(game_date__contains=str(data)).count() == 0:
-            raise ValidationError(_('No games on selected date.'))
-
-        return data
+    # def clean_date(self):
+    #     """Determine whether the selected date is valid or not.
+    #     """
+    #     data = self.cleaned_data['date']
+    #
+    #     # Check if there is a game on the selected date
+    #     if Game.objects.filter(game_date__contains=str(data)).count() == 0:
+    #         raise ValidationError(_('No games on selected date.'))
+    #
+    #     return data
