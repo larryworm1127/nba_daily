@@ -74,7 +74,9 @@
           {% else %}
             <h4 class="text-lg-center">No games scheduled on this date</h4>
             <br>
-            <a class="btn btn-primary btn-mds" href="{% url 'main:score' closest_date %}">Go To Most Recent Game</a>
+            <div style="text-align: center">
+              <a class="btn btn-primary btn-mds" href="{% url 'main:score' closest_date %}">Go To Most Recent Game</a>
+            </div>
           {% endif %}
         </div>
 

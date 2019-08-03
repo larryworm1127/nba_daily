@@ -38,9 +38,9 @@ $(document).ready(function () {
             $(".player-games-datatable").wrap("<div class='table-responsive'></div>");
         },
 
-        paging: true,
-        "bFilter": true,
-        "bInfo": true,
+        paging: false,
+        "bFilter": false,
+        "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],
         "aoColumns": [
@@ -233,10 +233,10 @@ $(document).ready(function () {
             $(".player-list-table").wrap("<div class='table-responsive'></div>");
         },
 
-        paging: true,
+        paging: false,
         pageLength: 50,
-        "bFilter": true,
-        "bInfo": true,
+        "bFilter": false,
+        "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],
         "aoColumns": [
@@ -271,7 +271,7 @@ $(document).ready(function () {
         },
 
         paging: false,
-        "bFilter": true,
+        "bFilter": false,
         "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],
