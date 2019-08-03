@@ -3,6 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% load static %}
+{% load filters %}
 
 {% block body %}
   <div class="container">
@@ -12,10 +13,10 @@
         <br>
         <form id="dateform" method="post" class="form-inline text-lg-center">
           {% csrf_token %}
-          <a href="{% url 'main:score' yesterday %}" class="btn btn-primary btn-mds"><i class="fa fa-caret-left" aria-hidden="true"></i></a> &nbsp;
+          <a href="{% url 'main:score' date|get_date:-1 %}" class="btn btn-primary btn-mds"><i class="fa fa-caret-left" aria-hidden="true"></i></a> &nbsp;
           <label for="datepicker"></label>
-          <input type="text" name="date" id="datepicker" class="form-control form-control-lg" placeholder="&#xf073; &nbsp;{{ today_display }}">
-          &nbsp; <a href="{% url 'main:score' tomorrow %}" class="btn btn-primary btn-md"><i class="fa fa-caret-right" aria-hidden="true"></i></a>
+          <input type="text" name="date" id="datepicker" class="form-control form-control-lg" placeholder="&#xf073; &nbsp;{{ date }}">
+          &nbsp; <a href="{% url 'main:score' date|get_date:1 %}" class="btn btn-primary btn-md"><i class="fa fa-caret-right" aria-hidden="true"></i></a>
         </form>
 
         <div class="list-group">
