@@ -4,7 +4,7 @@
 @author: Larry Shi
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from dateutil import parser
 from django.db.models import Q
