@@ -10,7 +10,6 @@ from typing import Dict, List
 
 from django.core.validators import MaxValueValidator
 from django.db import models
-from django.db.models import QuerySet
 from django.urls import reverse
 from simplejson.decoder import JSONDecoder
 
