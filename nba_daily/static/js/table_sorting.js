@@ -171,20 +171,6 @@ $(document).ready(function () {
         "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],
-        "columnDefs": [
-            {
-                "targets": 2,
-                "orderable": false
-            },
-            {
-                "targets": 4,
-                "orderable": false
-            },
-            {
-                "targets": 5,
-                "orderable": false
-            }
-        ],
         "aoColumns": [
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["asc", "desc"]},

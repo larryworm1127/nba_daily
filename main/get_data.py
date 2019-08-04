@@ -9,7 +9,7 @@ import sys
 import time
 
 import pandas as pd
-from nba_py import game, team, player, league
+from nba_py import game, team, player, league, Scoreboard
 from nba_py.constants import Player_or_Team
 from simplejson import load, dump
 
@@ -54,22 +54,34 @@ class CollectData:
 
     def get_player_list(self) -> None:
         """Retrieve player list data using API.
-
-        === Attributes ===
-        season:
-            the season to get the player list from.
         """
         self.logger.info('Retrieving player list data')
 
         player_list = player.PlayerList(season=self.season).info()[['PERSON_ID', 'ROSTERSTATUS']]
         player_list.to_json(f'data/{self.season}/player_list.json')
 
+    def get_standing_data(self) -> None:
+        """Retrieve season standing data using API.
+        """
+        self.logger.info('Retrieving standing data')
+
+        year = f'20{self.season.split("-")[1]}'
+        data = pd.DataFrame()
+        data = data.append(Scoreboard(month=6, day=1, year=int(year)).east_conf_standings_by_day(), ignore_index=True)
+        data = data.append(Scoreboard(month=6, day=1, year=int(year)).west_conf_standings_by_day(), ignore_index=True)
+
+        data = data.drop(columns=[
+            'TEAM',
+            'LEAGUE_ID',
+            'SEASON_ID',
+            'STANDINGSDATE',
+            'CONFERENCE',
+            'G'
+        ])
+        data.to_json(f'data/{self.season}/standing.json')
+
     def get_player_league_leader(self) -> None:
         """Retrieve player league leader data using API.
-
-        === Attributes ===
-        season:
-            the season to get the league leader data from.
         """
         self.logger.info('Retrieve league leader data')
 
@@ -78,10 +90,6 @@ class CollectData:
 
     def get_team_summary(self) -> None:
         """Retrieve individual team summary data using API.
-
-        === Attributes ===
-        season:
-            the season to get the team summary from.
         """
         teams = pd.read_json('data/team_list.json')  # type: pd.DataFrame
 
@@ -142,10 +150,6 @@ class CollectData:
 
     def get_player_game_log(self) -> None:
         """Retrieve individual player game log data using API.
-
-        === Attributes ===
-        season:
-            the season to get the player game log from.
         """
         self.logger.info('Retrieving player game log data.')
 
@@ -162,10 +166,6 @@ class CollectData:
 
     def get_player_season_stats(self) -> None:
         """Retrieve individual player season stats using API.
-
-        === Attributes ===
-        season:
-            the season to get the player stats from.
         """
         players = pd.read_json(f'data/{self.season}/player_list.json')  # type: pd.DataFrame
 
@@ -208,10 +208,6 @@ class CollectData:
 
     def get_team_game_log(self) -> None:
         """Retrieve individual team game log data using API.
-
-        === Attributes ===
-        season:
-            the season to get the team game log from.
         """
         with open('data/team_list.json') as f:
             teams = load(f)['TEAM_ID'].values()
@@ -229,10 +225,6 @@ class CollectData:
 
     def get_team_season_stats(self) -> None:
         """Retrieve individual team season stats using API.
-
-        === Attributes ===
-        season:
-            the season to get the team stats from.
         """
         self.logger.info('Retrieve team season stats data.')
 
@@ -246,10 +238,6 @@ class CollectData:
 
     def get_boxscore_summary(self) -> None:
         """Retrieve individual game boxscore data using API.
-
-        === Attributes ===
-        season:
-            the season in which the games are played.
         """
         for game_id in [f'0021800{"%04d" % index}' for index in range(1, 1231)]:
             self.logger.info(f'Retrieving boxscore data for {game_id}')
@@ -314,6 +302,7 @@ if __name__ == '__main__':
     # inst.get_team_list()
     # inst.get_player_list()
     # inst.get_player_league_leader()
+    inst.get_standing_data()
 
     # inst.get_team_summary()
     # inst.get_player_summary()
@@ -323,4 +312,4 @@ if __name__ == '__main__':
     # inst.get_player_season_stats()
     # inst.get_team_season_stats()
 
-    inst.get_boxscore_summary()
+    # inst.get_boxscore_summary()
