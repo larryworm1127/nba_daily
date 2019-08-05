@@ -97,6 +97,8 @@ $(document).ready(function () {
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]}
         ]
     });
@@ -155,6 +157,7 @@ $(document).ready(function () {
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]}
         ]
     });
@@ -178,37 +181,6 @@ $(document).ready(function () {
             {"orderSequence": ["asc", "desc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]}
-        ]
-    });
-});
-
-$(document).ready(function () {
-    $('.standings-datatable-sm').DataTable({
-        "drawCallback": function (settings) {
-            $(".standings-datatable-sm").wrap("<div class='table-responsive'></div>");
-        },
-
-        paging: false,
-        "bFilter": false,
-        "bInfo": false,
-        /* Disable initial sort */
-        "aaSorting": [],
-        "columnDefs": [
-            {
-                "targets": 2,
-                "orderable": false
-            },
-            {
-                "targets": 4,
-                "orderable": false
-            },
-        ],
-        "aoColumns": [
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["asc", "desc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["asc", "desc"]},
-            {"orderSequence": ["desc", "asc"]},
         ]
     });
 });
