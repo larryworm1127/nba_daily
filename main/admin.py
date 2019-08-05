@@ -13,7 +13,7 @@ from .models import (
     Game,
     TeamSeasonStats,
     PlayerSeasonStats,
-    TeamStanding
+    Standing
 )
 
 
@@ -56,8 +56,8 @@ class GameAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(TeamStanding)
-class TeamStandingAdmin(admin.ModelAdmin):
+@admin.register(Standing)
+class StandingAdmin(admin.ModelAdmin):
     search_fields = (
         'team__team_name', 'team__team_city', 'team__team_id'
     )

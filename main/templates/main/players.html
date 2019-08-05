@@ -69,7 +69,8 @@
               <td>{{ season_stats.fouls }}</td>
             </tr>
           {% endfor %}
-  
+        </tbody>
+        <tfoot>
           <tr>
             <th class="text-lg-center">Career</th>
             <th></th>
@@ -92,7 +93,7 @@
             <td>{{ total_data.turnovers }}</td>
             <td>{{ total_data.fouls }}</td>
           </tr>
-        </tbody>
+        </tfoot>
       </table>
       <br>
     {% endif %}

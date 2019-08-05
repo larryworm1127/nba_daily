@@ -38,9 +38,9 @@ $(document).ready(function () {
             $(".player-games-datatable").wrap("<div class='table-responsive'></div>");
         },
 
-        paging: true,
-        "bFilter": true,
-        "bInfo": true,
+        paging: false,
+        "bFilter": false,
+        "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],
         "aoColumns": [
@@ -80,6 +80,8 @@ $(document).ready(function () {
         /* Disable initial sort */
         "aaSorting": [],
         "aoColumns": [
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
@@ -155,6 +157,7 @@ $(document).ready(function () {
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]}
         ]
     });
@@ -171,20 +174,6 @@ $(document).ready(function () {
         "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],
-        "columnDefs": [
-            {
-                "targets": 2,
-                "orderable": false
-            },
-            {
-                "targets": 4,
-                "orderable": false
-            },
-            {
-                "targets": 5,
-                "orderable": false
-            }
-        ],
         "aoColumns": [
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["asc", "desc"]},
@@ -197,46 +186,15 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    $('.standings-datatable-sm').DataTable({
-        "drawCallback": function (settings) {
-            $(".standings-datatable-sm").wrap("<div class='table-responsive'></div>");
-        },
-
-        paging: false,
-        "bFilter": false,
-        "bInfo": false,
-        /* Disable initial sort */
-        "aaSorting": [],
-        "columnDefs": [
-            {
-                "targets": 2,
-                "orderable": false
-            },
-            {
-                "targets": 4,
-                "orderable": false
-            },
-        ],
-        "aoColumns": [
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["asc", "desc"]},
-            {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["asc", "desc"]},
-            {"orderSequence": ["desc", "asc"]},
-        ]
-    });
-});
-
-$(document).ready(function () {
     $('.player-list-table').DataTable({
         "drawCallback": function (settings) {
             $(".player-list-table").wrap("<div class='table-responsive'></div>");
         },
 
-        paging: true,
+        paging: false,
         pageLength: 50,
-        "bFilter": true,
-        "bInfo": true,
+        "bFilter": false,
+        "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],
         "aoColumns": [
@@ -271,7 +229,7 @@ $(document).ready(function () {
         },
 
         paging: false,
-        "bFilter": true,
+        "bFilter": false,
         "bInfo": false,
         /* Disable initial sort */
         "aaSorting": [],

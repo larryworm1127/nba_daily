@@ -27,7 +27,7 @@ urlpatterns += [
     path('teams/', views.TeamListView.as_view(), name='team_list'),
     path('teams/<int:team_id>/', views.TeamDetailView.as_view(), name='teams'),
     path('teams/<int:team_id>/<str:season>', views.TeamGamesDetailView.as_view(), name='team_games'),
-    path('standing/', views.standing, name='standing')
+    path('standing/', views.StandingListView.as_view(), name='standing')
 ]
 
 # Games page URL

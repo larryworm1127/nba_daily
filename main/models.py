@@ -57,16 +57,32 @@ class Team(models.Model):
         return reverse('main:teams', args=[self.team_id])
 
 
-class TeamStanding(models.Model):
+class Standing(models.Model):
     """Individual team standing model.
     """
-    team = models.OneToOneField(Team, on_delete=models.CASCADE)
+    team = models.OneToOneField(Team, on_delete=models.CASCADE, related_name='standing')
     wins = models.IntegerField()
     losses = models.IntegerField()
-    home_wins = models.IntegerField()
-    home_losses = models.IntegerField()
-    away_wins = models.IntegerField()
-    away_losses = models.IntegerField()
+    home_record = models.CharField(max_length=5)
+    away_record = models.CharField(max_length=5)
+    win_percent = models.FloatField()
+
+    def __str__(self) -> str:
+        """Return human-readable representation of the object.
+        """
+        return f'{self.team.get_full_name()} {self.get_wins_losses()}'
+
+    @property
+    def seed(self) -> int:
+        """Return the seed of current team.
+        """
+        conf_teams = Standing.objects.filter(team__team_conf=self.team.team_conf).order_by('-win_percent')
+        return list(conf_teams).index(self) + 1
+
+    def get_wins_losses(self) -> str:
+        """Return display wins and losses string.
+        """
+        return f'{self.wins}-{self.losses}'
 
 
 # ==============================================================================
@@ -191,7 +207,7 @@ class PlayerTotalStats(SeasonStats):
     ]
 
     season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='career_stats')
     games_played = models.IntegerField()
     games_started = models.IntegerField()
 
@@ -398,7 +414,7 @@ class TeamGameLog(GameLog):
 class PlayerGameLog(GameLog):
     """Individual player game log model.
     """
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='game_log')
     team_game_log = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE, related_name='player_game_log')
     order = models.IntegerField()
     plus_minus = models.IntegerField()

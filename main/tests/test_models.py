@@ -25,8 +25,21 @@ class PlayerModelTest(TestCase):
     def setUpTestData(cls):
         """Setup data for testing.
         """
+        team = Team.objects.create(
+            team_id='01',
+            team_abb='ATL',
+            team_conf='East',
+            team_div='Atlantic',
+            team_city='Atlanta',
+            team_name='Hawks',
+            wins=10,
+            losses=72,
+            nba_debut=1968,
+            max_year=2019
+        )
+
         Player.objects.create(
-            team=Team.objects.filter(team_abb='ATL')[0],
+            team=team,
             first_name='a',
             last_name='b',
             birth_date='2000-01-01',

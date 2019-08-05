@@ -13,7 +13,7 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import Player, Team, Game, PlayerSeasonStats, PlayerTotalStats
+from .models import Player, Team, Game, PlayerSeasonStats, PlayerTotalStats, Standing
 
 
 # ==============================================================================
@@ -144,11 +144,14 @@ class GameDetailView(generic.DetailView):
 # ==============================================================================
 # Standing views
 # ==============================================================================
-def standing(request):
+class StandingListView(generic.ListView):
     """Season standing page.
     """
-    context = {
-        'title': 'Standing',
-        'headers': [('bg-danger', 'East Conference'), ('bg-primary', 'West Conference')],
+    model = Standing
+    queryset = Standing.objects.order_by('-win_percent')
+    extra_context = {
+        'headers': [
+            ('bg-danger', 'East Conference', 'East'),
+            ('bg-primary', 'West Conference', 'West')
+        ]
     }
-    return render(request, 'main/standing.html', context)
