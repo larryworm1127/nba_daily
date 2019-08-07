@@ -4,14 +4,15 @@
 @author: Larry Shi
 """
 import logging
-import os
+import math
 import sys
 import time
 
 import pandas as pd
+from dateutil import parser
 from nba_py import game, team, player, league, Scoreboard
 from nba_py.constants import Player_or_Team
-from simplejson import load, dump
+from simplejson import load, dump, dumps
 
 
 class CollectData:
@@ -94,24 +95,49 @@ class CollectData:
         teams = pd.read_json('data/team_list.json')  # type: pd.DataFrame
 
         # Collect data and add them to the main data frame
-        team_summ = pd.DataFrame()
+        result = []
         for team_data in teams.itertuples(index=False):
             self.logger.info(f'Retrieving team summary data for {team_data.TEAM_ID}')
 
             data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()  # type: pd.DataFrame
-            team_summ = team_summ.append(data, ignore_index=True)
-
+            data_fixture = {
+                "model": "main.team",
+                "pk": data.TEAM_ID[0],
+                "fields": {
+                    "team_abb": data.TEAM_ABBREVIATION[0],
+                    "team_conf": data.TEAM_CONFERENCE[0],
+                    "team_div": data.TEAM_DIVISION[0],
+                    "team_city": data.TEAM_CITY[0],
+                    "team_name": data.TEAM_NAME[0],
+                    "wins": data.W[0],
+                    "losses": data.L[0],
+                    "nba_debut": data.MIN_YEAR[0],
+                    "max_year": data.MAX_YEAR[0]
+                }
+            }
+            result.append(data_fixture)
             time.sleep(0.5)
 
-        # Remove data columns that won't be needed
-        team_summ = team_summ.drop(columns=[
-            'SEASON_YEAR',
-            'TEAM_CODE',
-            'PCT',
-            'CONF_RANK',
-            'DIV_RANK'
-        ])
-        team_summ.to_json('data/team_summary.json')
+        # Create a dummy team for players who switched teams during the season
+        result.append({
+            "model": "main.team",
+            "pk": 0,
+            "fields": {
+                "team_abb": "TOT",
+                "team_conf": "None",
+                "team_div": "None",
+                "team_city": "None",
+                "team_name": "None",
+                "wins": 82,
+                "losses": 0,
+                "nba_debut": "1950",
+                "max_year": "2018-19"
+            }
+        })
+
+        # Write data to file
+        with open('fixtures/main_team.json', 'w+') as f:
+            dump(result, f)
 
     def get_player_summary(self) -> None:
         """Retrieve individual player summary data using API.
@@ -119,7 +145,7 @@ class CollectData:
         players = pd.read_json(f'data/{self.season}/player_list.json')  # type: pd.DataFrame
 
         # Collect data and add them to the main data frame
-        player_summ = pd.DataFrame()
+        result = []
         for player_data in players.itertuples(index=False):
             self.logger.info(f'Retrieving player summary data for {player_data.PERSON_ID}')
 
@@ -127,26 +153,33 @@ class CollectData:
                 continue
 
             data = player.PlayerSummary(player_data.PERSON_ID).info()  # type: pd.DataFrame
-            player_summ = player_summ.append(data, ignore_index=True)
+            data_fixture = {
+                "model": "main.player",
+                "pk": data.PERSON_ID[0],
+                "fields": {
+                    "team": data.TEAM_ID[0],
+                    "first_name": data.FIRST_NAME[0],
+                    "last_name": data.LAST_NAME[0],
+                    "birth_date": data.BIRTHDATE[0][:10],
+                    "draft_year": data.DRAFT_YEAR[0],
+                    "draft_round": data.DRAFT_ROUND[0],
+                    "draft_number": data.DRAFT_NUMBER,
+                    "position": data.POSITION,
+                    "jersey": 0 if data.JERSEY[0] == '' else int(data.JERSEY[0]),
+                    "height": data.HEIGHT[0],
+                    "weight": int(data.WEIGHT[0]),
+                    "school": "N/A" if data.SCHOOL[0] is None or data.SCHOOL == ' ' else data.SCHOOL[0],
+                    "country": data.COUNTRY[0],
+                    "season_exp": data.SEASON_EXP[0]
+                }
+            }
 
+            result.append(data_fixture)
             time.sleep(0.5)
 
-        # Remove data columns that won't be needed
-        player_summ = player_summ.drop(columns=[
-            'DISPLAY_FIRST_LAST',
-            'DISPLAY_LAST_COMMA_FIRST',
-            'DISPLAY_FI_LAST',
-            'LAST_AFFILIATION',
-            'TEAM_CODE',
-            'PLAYERCODE',
-            'DLEAGUE_FLAG',
-            'NBA_FLAG',
-            'GAMES_PLAYED_FLAG',
-            'TEAM_ABBREVIATION',
-            'TEAM_NAME',
-            'TEAM_CITY'
-        ])
-        player_summ.to_json(f'data/{self.season}/player_summary.json')
+        # Write data to file
+        with open('fixtures/main_player.json', 'w+') as f:
+            dump(result, f)
 
     def get_player_game_log(self) -> None:
         """Retrieve individual player game log data using API.
@@ -228,7 +261,7 @@ class CollectData:
         """
         self.logger.info('Retrieve team season stats data.')
 
-        data = league.TeamStats(season=self.season).overall()
+        data = league.TeamStats(season=self.season).overall()  # type: pd.DataFrame
         data = data.drop(columns=[
             'CFID',
             'CFPARAMS',
@@ -239,61 +272,39 @@ class CollectData:
     def get_boxscore_summary(self) -> None:
         """Retrieve individual game boxscore data using API.
         """
-        for game_id in [f'002180{"%04d" % index}' for index in range(876, 1231)]:
+        result = []
+        for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
             self.logger.info(f'Retrieving boxscore data for {game_id}')
 
+            player_data = game.Boxscore(game_id, season=self.season).player_stats()  # type: pd.DataFrame
             summary = game.BoxscoreSummary(game_id, season=self.season)
-            game_summary = summary.game_summary().drop(columns=[
-                'GAME_SEQUENCE',
-                'SEASON',
-                'LIVE_PERIOD_TIME_BCAST',
-                'LIVE_PC_TIME',
-                'LIVE_PERIOD',
-                'WH_STATUS',
-                'GAME_STATUS_ID',
-                'GAME_STATUS_TEXT',
-                'GAMECODE'
-            ]).to_json()
 
-            line_score = summary.line_score().drop(columns=[
-                'GAME_DATE_EST',
-                'GAME_SEQUENCE',
-                'TEAM_ABBREVIATION',
-                'TEAM_CITY_NAME',
-                'TEAM_NICKNAME',
-                'PTS',
-            ]).to_json()
-
-            inactive_player = summary.inactive_players().drop(columns=[
-                'FIRST_NAME',
-                'LAST_NAME',
-                'JERSEY_NUM',
-                'TEAM_ID',
-                'TEAM_CITY',
-                'TEAM_NAME',
-                'TEAM_ABBREVIATION'
-            ]).to_json()
-
-            player_data = game.Boxscore(game_id, season=self.season).player_stats().drop(columns=[
-                'TEAM_ABBREVIATION',
-                'TEAM_CITY',
-                'PLAYER_NAME',
-                'START_POSITION',
-                'GAME_ID'
-            ]).to_json()
-
-            with open(f'data/{self.season}/boxscore/{game_id}.json', 'w+') as f:
-                result = {
-                    'GAME_SUMMARY': game_summary,
-                    'LINE_SCORE': line_score,
-                    'INACTIVE_PLAYER': inactive_player,
-                    'PLAYER_DATA': player_data
+            dnp_players = {
+                data.PLAYER_ID: data.COMMENT.strip() for data in player_data.itertuples()
+                if math.isnan(data['PF'])
+            }
+            inactive_players = [int(data.PLAYER_ID) for data in summary.inactive_players().itertuples()]
+            broadcaster = summary.game_summary().NATL_TV_BROADCASTER_ABBREVIATION[0]
+            data_fixture = {
+                "model": "main.game",
+                "pk": game_id,
+                "fields": {
+                    "season": "2018-19",
+                    "game_date": parser.parse(summary.game_summary().GAME_DATE_EST[0]).strftime("%b %d, %Y"),
+                    "dnp_players": dumps(dnp_players),
+                    "inactive_players": dumps(inactive_players),
+                    "home_team": summary.game_summary().HOME_TEAM_ID[0],
+                    "away_team": summary.game_summary().VISITOR_TEAM_ID[0],
+                    "broadcaster": broadcaster if not isinstance(broadcaster, float) else ''
                 }
-                dump(result, f)
+            }
 
+            result.append(data_fixture)
             time.sleep(0.5)
 
-        assert len(os.listdir(f'data/{self.season}/boxscore')) == 1230
+        # Write data to file
+        with open('fixtures/main_game.json', 'w+') as f:
+            dump(result, f)
 
 
 if __name__ == '__main__':
