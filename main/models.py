@@ -25,7 +25,7 @@ from . import PLAYER_PHOTO_LINK
 class Team(models.Model):
     """Individual team model.
     """
-    team_id = models.IntegerField()
+    team_id = models.IntegerField(primary_key=True)
     team_abb = models.CharField(max_length=3)
     team_conf = models.CharField(max_length=4)
     team_div = models.CharField(max_length=10)
@@ -67,6 +67,11 @@ class Standing(models.Model):
     away_record = models.CharField(max_length=5)
     win_percent = models.FloatField()
 
+    class Meta:
+        """Standing Property Meta Class.
+        """
+        ordering = ['-win_percent', '-wins', '-home_record', '-away_record']
+
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
@@ -76,7 +81,7 @@ class Standing(models.Model):
     def seed(self) -> int:
         """Return the seed of current team.
         """
-        conf_teams = Standing.objects.filter(team__team_conf=self.team.team_conf).order_by('-win_percent')
+        conf_teams = Standing.objects.filter(team__team_conf=self.team.team_conf)
         return list(conf_teams).index(self) + 1
 
     def get_wins_losses(self) -> str:
@@ -98,7 +103,7 @@ class Player(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     birth_date = models.CharField(max_length=20)
-    player_id = models.IntegerField()
+    player_id = models.IntegerField(primary_key=True)
     draft_year = models.CharField(max_length=20)
     draft_round = models.CharField(max_length=20)
     draft_number = models.CharField(max_length=20)
@@ -109,6 +114,11 @@ class Player(models.Model):
     school = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
     season_exp = models.IntegerField()
+
+    class Meta:
+        """Player Property Meta Class.
+        """
+        ordering = ['last_name', 'first_name']
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
@@ -192,19 +202,29 @@ class TeamSeasonStats(SeasonStats):
     losses = models.IntegerField()
     win_percent = models.FloatField()
 
+    class Meta:
+        """TeamSeasonStats Property Meta Class.
+        """
+        db_table = 'main_team_season_stats'
+
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
         return self.team.get_full_name()
 
 
-class PlayerTotalStats(SeasonStats):
+class PlayerCareerStats(SeasonStats):
     """Individual player career total stats model.
     """
     SEASON_TYPE = [
         ('REG', 'Regular'),
         ('POST', 'Post')
     ]
+
+    class Meta:
+        """PlayerCareerStats Property Meta Class.
+        """
+        db_table = 'main_player_career_stats'
 
     season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='career_stats')
@@ -224,6 +244,12 @@ class PlayerSeasonStats(SeasonStats):
         ('REG', 'Regular'),
         ('POST', 'POST')
     ]
+
+    class Meta:
+        """PlayerSeasonStats Property Meta Class.
+        """
+        db_table = 'main_player_season_stats'
+        ordering = ['-season']
 
     season = models.CharField(max_length=10)
     season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
@@ -249,7 +275,7 @@ class PlayerSeasonStats(SeasonStats):
 class Game(models.Model):
     """Individual game model.
     """
-    game_id = models.CharField(max_length=10)
+    game_id = models.CharField(max_length=10, primary_key=True)
     season = models.CharField(max_length=7)
     game_date = models.CharField(max_length=30)
     dnp_players = models.TextField(blank=True)
@@ -280,9 +306,9 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         inactive_player = [
-            Player.objects.get(player_id=player_id)
+            Player.objects.get(pk=player_id)
             for player_id in inst.decode(self.inactive_players)
-            if Player.objects.filter(player_id=player_id).count() > 0
+            if Player.objects.filter(pk=player_id).count() > 0
         ]
 
         return inactive_player
@@ -391,6 +417,12 @@ class TeamGameLog(GameLog):
     pts_ot3 = models.IntegerField(default=0)
     pts_ot4 = models.IntegerField(default=0)
 
+    class Meta:
+        """TeamGameLog Property Meta Class.
+        """
+        db_table = 'main_team_game_log'
+        ordering = ['-game']
+
     def __str__(self) -> str:
         """Return human-readable representation of the object.
         """
@@ -418,6 +450,12 @@ class PlayerGameLog(GameLog):
     team_game_log = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE, related_name='player_game_log')
     order = models.IntegerField()
     plus_minus = models.IntegerField()
+
+    class Meta:
+        """PlayerGameLog Property Meta Class.
+        """
+        db_table = 'main_player_game_log'
+        ordering = ['-game']
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
