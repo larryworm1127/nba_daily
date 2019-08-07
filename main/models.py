@@ -51,7 +51,7 @@ class Team(models.Model):
         """
         return f"images/{self.team_abb}.png"
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Returns the url to access a particular player instance.
         """
         return reverse('main:teams', args=[self.team_id])
@@ -157,7 +157,7 @@ class Player(models.Model):
                 curr_team__team_id=0
             )
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Returns the url to access a particular player instance.
         """
         return reverse('main:players', args=[self.player_id])
