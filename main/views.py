@@ -13,7 +13,7 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import Player, Team, Game, PlayerSeasonStats, PlayerTotalStats, Standing
+from .models import Player, Team, Game, PlayerSeasonStats, PlayerCareerStats, Standing
 
 
 # ==============================================================================
@@ -59,15 +59,15 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
 # ==============================================================================
 # Players views
 # ==============================================================================
-def players(request, player_id: str):
+def players(request, pk: int):
     """Individual player stats page.
     """
     try:
-        player = Player.objects.get(player_id=player_id)
-        reg_season = PlayerSeasonStats.objects.filter(player__player_id=player_id, season_type='Regular')
-        post_season = PlayerSeasonStats.objects.filter(player__player_id=player_id, season_type='Post')
-        reg_total = PlayerTotalStats.objects.get(player__player_id=player_id, season_type='Regular')
-        post_total = PlayerTotalStats.objects.filter(player__player_id=player_id, season_type='Post').first()
+        player = Player.objects.get(pk=pk)
+        reg_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Regular')
+        post_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Post')
+        reg_total = PlayerCareerStats.objects.get(player=pk, season_type='Regular')
+        post_total = PlayerCareerStats.objects.filter(player=pk, season_type='Post').first()
     except Player.DoesNotExist:
         return redirect('main:player_list')
 
@@ -83,8 +83,6 @@ class PlayerGamesDetailView(generic.DetailView):
     """Individual player season game log page.
     """
     model = Player
-    slug_field = 'player_id'
-    slug_url_kwarg = 'player_id'
     template_name = 'main/player_games.html'
 
 
@@ -92,7 +90,6 @@ class PlayerListView(generic.ListView):
     """Player list page.
     """
     model = Player
-    queryset = Player.objects.order_by('first_name')
 
 
 # ==============================================================================
@@ -102,16 +99,12 @@ class TeamDetailView(generic.DetailView):
     """Individual team detail page.
     """
     model = Team
-    slug_field = 'team_id'
-    slug_url_kwarg = 'team_id'
 
 
 class TeamGamesDetailView(generic.DetailView):
     """Individual team season game log page.
     """
     model = Team
-    slug_field = 'team_id'
-    slug_url_kwarg = 'team_id'
     template_name = 'main/team_games.html'
 
 
@@ -129,14 +122,12 @@ class GameDetailView(generic.DetailView):
     """Single game box score page.
     """
     model = Game
-    slug_field = 'game_id'
-    slug_url_kwarg = 'game_id'
 
     def get_context_data(self, **kwargs):
         """Return the updated context data.
         """
         context = super(GameDetailView, self).get_context_data(**kwargs)
-        game = get_object_or_404(Game, game_id=self.kwargs['game_id'])
+        game = get_object_or_404(Game, pk=self.kwargs['pk'])
         context['overtime'] = range(1, game.overtime() + 1)
         return context
 
@@ -148,7 +139,7 @@ class StandingListView(generic.ListView):
     """Season standing page.
     """
     model = Standing
-    queryset = Standing.objects.order_by('-win_percent')
+    # queryset = Standing.objects.order_by('-win_percent')
     extra_context = {
         'headers': [
             ('bg-danger', 'East Conference', 'East'),

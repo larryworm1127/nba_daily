@@ -239,7 +239,7 @@ class CollectData:
     def get_boxscore_summary(self) -> None:
         """Retrieve individual game boxscore data using API.
         """
-        for game_id in [f'0021800{"%04d" % index}' for index in range(1, 1231)]:
+        for game_id in [f'002180{"%04d" % index}' for index in range(876, 1231)]:
             self.logger.info(f'Retrieving boxscore data for {game_id}')
 
             summary = game.BoxscoreSummary(game_id, season=self.season)
@@ -302,14 +302,14 @@ if __name__ == '__main__':
     # inst.get_team_list()
     # inst.get_player_list()
     # inst.get_player_league_leader()
-    inst.get_standing_data()
-
+    # inst.get_standing_data()
+    #
     # inst.get_team_summary()
     # inst.get_player_summary()
-
+    #
     # inst.get_player_game_log()
     # inst.get_team_game_log()
     # inst.get_player_season_stats()
     # inst.get_team_season_stats()
 
-    # inst.get_boxscore_summary()
+    inst.get_boxscore_summary()

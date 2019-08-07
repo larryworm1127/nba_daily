@@ -60,7 +60,7 @@ class PlayerModelTest(TestCase):
     def test_get_full_name(self, first_name: str, last_name: str):
         """Test <get_full_name> method in Player model.
         """
-        player = Player.objects.get(player_id=1)
+        player = Player.objects.get(pk=1)
         player.first_name = first_name
         player.last_name = last_name
         expected_full_name = f'{first_name} {last_name}'
@@ -70,7 +70,7 @@ class PlayerModelTest(TestCase):
     def test_get_age(self, birth_date: date):
         """Test <get_age> method in Player model.
         """
-        player = Player.objects.get(player_id=1)
+        player = Player.objects.get(pk=1)
         player.birth_date = str(birth_date)
         expected_age = datetime.today().year - birth_date.year
         self.assertEqual(expected_age, player.get_age())
@@ -101,7 +101,7 @@ class TeamModelTest(TestCase):
     def test_get_full_name(self, team_city: str, team_name: str):
         """Test <get_full_name> method in Team model.
         """
-        team = Team.objects.get(id=1)
+        team = Team.objects.get(pk='01')
         team.team_city = team_city
         team.team_name = team_name
         expected_full_name = f'{team_city} {team_name}'
@@ -111,7 +111,7 @@ class TeamModelTest(TestCase):
     def test_get_logo_path(self, team_abb: str):
         """Test <get_logo_path> method in Team model.
         """
-        team = Team.objects.get(id=1)
+        team = Team.objects.get(pk='01')
         team.team_abb = team_abb
         expected_logo_path = f"images/{team_abb}.png"
         self.assertEqual(expected_logo_path, team.get_logo_path())

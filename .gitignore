@@ -109,11 +109,11 @@ nba_cache.sqlite
 staticfiles/
 
 # temp migration files
-main/templatetags/0002_populate_team_data.py
-main/templatetags/0003_populate_player_data.py
-main/templatetags/0004_populate_game_data.py
-main/templatetags/0005_populate_team_game_log_data.py
-main/templatetags/0006_populate_player_game_log_data.py
-main/templatetags/0007_populate_season_stats_data.py
-main/templatetags/0008_populate_standing_data.py
-main/data
+#main/templatetags/0002_populate_team_data.py
+#main/templatetags/0003_populate_player_data.py
+#main/templatetags/0004_populate_game_data.py
+#main/templatetags/0005_populate_team_game_log_data.py
+#main/templatetags/0006_populate_player_game_log_data.py
+#main/templatetags/0007_populate_season_stats_data.py
+#main/templatetags/0008_populate_standing_data.py
+#main/data
