@@ -162,7 +162,6 @@ class StandingListView(generic.ListView):
     """Season standing page.
     """
     model = Standing
-    # queryset = Standing.objects.order_by('-win_percent')
     extra_context = {
         'headers': [
             ('bg-danger', 'East Conference', 'East'),
