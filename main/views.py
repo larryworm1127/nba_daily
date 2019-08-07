@@ -13,7 +13,8 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import Player, Team, Game, PlayerSeasonStats, PlayerCareerStats, Standing
+from .models import (Player, Team, Game, PlayerSeasonStats, PlayerCareerStats,
+                     Standing, TeamGameLog, PlayerGameLog)
 
 
 # ==============================================================================
@@ -62,14 +63,11 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
 def players(request, pk: int):
     """Individual player stats page.
     """
-    try:
-        player = Player.objects.get(pk=pk)
-        reg_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Regular')
-        post_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Post')
-        reg_total = PlayerCareerStats.objects.get(player=pk, season_type='Regular')
-        post_total = PlayerCareerStats.objects.filter(player=pk, season_type='Post').first()
-    except Player.DoesNotExist:
-        return redirect('main:player_list')
+    player = get_object_or_404(Player, pk=pk)
+    reg_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Regular')
+    post_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Post')
+    reg_total = PlayerCareerStats.objects.get(player=pk, season_type='Regular')
+    post_total = PlayerCareerStats.objects.filter(player=pk, season_type='Post').first()
 
     context = {
         'title': player.get_full_name(),
@@ -79,17 +77,30 @@ def players(request, pk: int):
     return render(request, 'main/players.html', context)
 
 
-class PlayerGamesDetailView(generic.DetailView):
+class PlayerGamesListView(generic.ListView):
     """Individual player season game log page.
     """
-    model = Player
+    model = PlayerGameLog
     template_name = 'main/player_games.html'
+
+    def get_queryset(self):
+        """Return desired queryset to be displayed.
+        """
+        return PlayerGameLog.objects.filter(player=self.kwargs['pk'])
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        """Return the updated context data.
+        """
+        context = super(PlayerGamesListView, self).get_context_data(**kwargs)
+        context['player'] = get_object_or_404(Player, pk=self.kwargs['pk'])
+        return context
 
 
 class PlayerListView(generic.ListView):
     """Player list page.
     """
     model = Player
+    paginate_by = 20
 
 
 # ==============================================================================
@@ -101,11 +112,23 @@ class TeamDetailView(generic.DetailView):
     model = Team
 
 
-class TeamGamesDetailView(generic.DetailView):
+class TeamGamesListView(generic.ListView):
     """Individual team season game log page.
     """
-    model = Team
+    model = TeamGameLog
     template_name = 'main/team_games.html'
+
+    def get_queryset(self):
+        """Return desired queryset to be displayed.
+        """
+        return TeamGameLog.objects.filter(team=self.kwargs['pk'])
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        """Return the updated context data.
+        """
+        context = super(TeamGamesListView, self).get_context_data(**kwargs)
+        context['team'] = get_object_or_404(Team, pk=self.kwargs['pk'])
+        return context
 
 
 class TeamListView(generic.ListView):

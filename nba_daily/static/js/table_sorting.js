@@ -191,7 +191,7 @@ $(document).ready(function () {
             $(".player-list-table").wrap("<div class='table-responsive'></div>");
         },
 
-        paging: true,
+        paging: false,
         pageLength: 50,
         "bFilter": false,
         "bInfo": false,
