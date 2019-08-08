@@ -4,7 +4,6 @@
 @author: Larry Shi
 """
 import logging
-import math
 import sys
 import time
 
@@ -50,7 +49,7 @@ class CollectData:
         """
         self.logger.info(f'Retrieving team list data')
 
-        team_list = team.TeamList().info()[['TEAM_ID']]
+        team_list = team.TeamList().info()[['TEAM_ID']][:30]
         team_list.to_json('data/team_list.json')
 
     def get_player_list(self) -> None:
@@ -102,15 +101,15 @@ class CollectData:
             data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()  # type: pd.DataFrame
             data_fixture = {
                 "model": "main.team",
-                "pk": data.TEAM_ID[0],
+                "pk": int(data.TEAM_ID[0]),
                 "fields": {
                     "team_abb": data.TEAM_ABBREVIATION[0],
                     "team_conf": data.TEAM_CONFERENCE[0],
                     "team_div": data.TEAM_DIVISION[0],
                     "team_city": data.TEAM_CITY[0],
                     "team_name": data.TEAM_NAME[0],
-                    "wins": data.W[0],
-                    "losses": data.L[0],
+                    "wins": int(data.W[0]),
+                    "losses": int(data.L[0]),
                     "nba_debut": data.MIN_YEAR[0],
                     "max_year": data.MAX_YEAR[0]
                 }
@@ -136,6 +135,7 @@ class CollectData:
         })
 
         # Write data to file
+        print(result)
         with open('fixtures/main_team.json', 'w+') as f:
             dump(result, f)
 
@@ -155,22 +155,22 @@ class CollectData:
             data = player.PlayerSummary(player_data.PERSON_ID).info()  # type: pd.DataFrame
             data_fixture = {
                 "model": "main.player",
-                "pk": data.PERSON_ID[0],
+                "pk": int(data.PERSON_ID[0]),
                 "fields": {
-                    "team": data.TEAM_ID[0],
+                    "team": int(data.TEAM_ID[0]),
                     "first_name": data.FIRST_NAME[0],
                     "last_name": data.LAST_NAME[0],
                     "birth_date": data.BIRTHDATE[0][:10],
                     "draft_year": data.DRAFT_YEAR[0],
                     "draft_round": data.DRAFT_ROUND[0],
-                    "draft_number": data.DRAFT_NUMBER,
-                    "position": data.POSITION,
+                    "draft_number": data.DRAFT_NUMBER[0],
+                    "position": data.POSITION[0],
                     "jersey": 0 if data.JERSEY[0] == '' else int(data.JERSEY[0]),
                     "height": data.HEIGHT[0],
                     "weight": int(data.WEIGHT[0]),
-                    "school": "N/A" if data.SCHOOL[0] is None or data.SCHOOL == ' ' else data.SCHOOL[0],
+                    "school": "N/A" if data.SCHOOL[0] is None or data.SCHOOL[0] == ' ' else data.SCHOOL[0],
                     "country": data.COUNTRY[0],
-                    "season_exp": data.SEASON_EXP[0]
+                    "season_exp": int(data.SEASON_EXP[0])
                 }
             }
 
@@ -276,26 +276,29 @@ class CollectData:
         for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
             self.logger.info(f'Retrieving boxscore data for {game_id}')
 
+            # API calls
             player_data = game.Boxscore(game_id, season=self.season).player_stats()  # type: pd.DataFrame
-            summary = game.BoxscoreSummary(game_id, season=self.season)
+            boxscore_summary = game.BoxscoreSummary(game_id, season=self.season)
 
-            dnp_players = {
-                data.PLAYER_ID: data.COMMENT.strip() for data in player_data.itertuples()
-                if math.isnan(data['PF'])
-            }
-            inactive_players = [int(data.PLAYER_ID) for data in summary.inactive_players().itertuples()]
-            broadcaster = summary.game_summary().NATL_TV_BROADCASTER_ABBREVIATION[0]
+            # Extract data from API responses
+            game_summary = boxscore_summary.game_summary()  # type: pd.DataFrame
+            broadcaster = game_summary.NATL_TV_BROADCASTER_ABBREVIATION[0]
+            inactive_players = [int(data.PLAYER_ID) for data in boxscore_summary.inactive_players().itertuples()]
+            dnp_players = {data.PLAYER_ID: data.COMMENT.strip() for data in player_data.itertuples()
+                           if len(data.COMMENT) != 0}
+
+            # Create fixture
             data_fixture = {
                 "model": "main.game",
                 "pk": game_id,
                 "fields": {
                     "season": "2018-19",
-                    "game_date": parser.parse(summary.game_summary().GAME_DATE_EST[0]).strftime("%b %d, %Y"),
+                    "game_date": parser.parse(game_summary.GAME_DATE_EST[0]).strftime("%b %d, %Y"),
                     "dnp_players": dumps(dnp_players),
                     "inactive_players": dumps(inactive_players),
-                    "home_team": summary.game_summary().HOME_TEAM_ID[0],
-                    "away_team": summary.game_summary().VISITOR_TEAM_ID[0],
-                    "broadcaster": broadcaster if not isinstance(broadcaster, float) else ''
+                    "home_team": int(game_summary.HOME_TEAM_ID[0]),
+                    "away_team": int(game_summary.VISITOR_TEAM_ID[0]),
+                    "broadcaster": broadcaster if broadcaster is not None else ''
                 }
             }
 
