@@ -438,9 +438,7 @@ class TeamGameLog(GameLog):
     def get_player_game_logs(self) -> List[PlayerGameLog]:
         """Return a list of player game log object in order of display.
         """
-        # num_players = self.player_game_log.all().count()
-        # return [self.player_game_log.get(order=index) for index in range(num_players)
-        #         if self.player_game_log.filter(order=index).count() > 0]
+        # TODO: fix this so that game_log.player.team refers to the team in the game but not player's current team
         return [game_log for game_log in self.game.playergamelog_set.all()
                 if game_log.player.team == self.team]
 

@@ -5,7 +5,6 @@
 """
 import logging
 import sys
-import time
 
 import pandas as pd
 import simplejson as json
@@ -120,6 +119,25 @@ class CollectData:
 
             data = team.TeamGameLogs(team_id, season=self.season).info()
             self.team_game_log = self.team_game_log.append(data, ignore_index=True)
+
+        # Player Season Stats
+        self.player_season_stats = {}
+        self.player_career_stats = {}
+        for player_data in self.player_list.itertuples(index=False):
+            self.logger.info(f'Retrieving player season stats data for {player_data.PERSON_ID}')
+
+            if player_data.ROSTERSTATUS == 0:
+                continue
+
+            data = player.PlayerCareer(player_data.PERSON_ID)
+            self.player_season_stats[player_data.PERSON_ID] = {
+                'Regular': data.regular_season_totals().round(3),
+                'Post': data.post_season_totals().round(3),
+            }
+            self.player_career_stats[player_data.PERSON_ID] = {
+                'Regular': data.regular_season_career_totals().round(3),
+                'Post': data.post_season_career_totals().round(3)
+            }
 
     def get_standing_data(self) -> None:
         """Retrieve season standing data using API.
@@ -280,44 +298,85 @@ class CollectData:
     def get_player_season_stats(self) -> None:
         """Retrieve individual player season stats using API.
         """
-        players = pd.read_json(f'data/{self.season}/player_list.json')  # type: pd.DataFrame
+        result = []
+        for index, player_id, data in enumerate(self.player_season_stats.items()):
+            for season_type in ['Regular', 'Post']:
+                data_fixture = {
+                    "model": "main.playerseasonstats",
+                    "pk": index + 1,
+                    "fields": {
+                        "minutes": data[season_type].MIN,
+                        "points": data[season_type].PTS,
+                        "offense_reb": data[season_type].OREB,
+                        "defense_reb": data[season_type].DREB,
+                        "rebounds": data[season_type].REB,
+                        "assists": data[season_type].AST,
+                        "steals": data[season_type].STL,
+                        "blocks": data[season_type].BLK,
+                        "turnovers": data[season_type].TOV,
+                        "fouls": data[season_type].PF,
+                        "fg_made": data[season_type].FGM,
+                        "fg_attempt": data[season_type].FGA,
+                        "fg_percent": data[season_type].FG_PCT,
+                        "fg3_made": data[season_type].FG3M,
+                        "fg3_attempt": data[season_type].FG3A,
+                        "fg3_percent": data[season_type].FG3_PCT,
+                        "ft_made": data[season_type].FTM,
+                        "ft_attempt": data[season_type].FTA,
+                        "ft_percent": data[season_type].FT_PCT,
+                        "season": data[season_type].SEASON_ID,
+                        "season_type": season_type,
+                        "curr_team": data[season_type].TEAM_ID,
+                        "player": data[season_type].PLAYER_ID,
+                        "games_played": data[season_type].GP,
+                        "games_started": data[season_type].GS
+                    }
+                }
+                result.append(data_fixture)
 
-        reg_season = pd.DataFrame()
-        reg_season_total = pd.DataFrame()
-        post_season = pd.DataFrame()
-        post_season_total = pd.DataFrame()
-        for player_data in players.itertuples(index=False):
-            self.logger.info(f'Retrieving player season stats data for {player_data.PERSON_ID}')
+        # Write data to file
+        with open('fixtures/main_player_season_stats.json', 'w+') as f:
+            json.dump(result, f)
 
-            if player_data.ROSTERSTATUS == 0:
-                continue
+    def get_player_career_stats(self) -> None:
+        """"""
+        result = []
+        for index, player_id, data in enumerate(self.player_career_stats.items()):
+            for season_type in ['Regular', 'Post']:
+                data_fixture = {
+                    "model": "main.playercareerstats",
+                    "pk": index + 1,
+                    "fields": {
+                        "minutes": data[season_type].MIN,
+                        "points": data[season_type].PTS,
+                        "offense_reb": data[season_type].OREB,
+                        "defense_reb": data[season_type].DREB,
+                        "rebounds": data[season_type].REB,
+                        "assists": data[season_type].AST,
+                        "steals": data[season_type].STL,
+                        "blocks": data[season_type].BLK,
+                        "turnovers": data[season_type].TOV,
+                        "fouls": data[season_type].PF,
+                        "fg_made": data[season_type].FGM,
+                        "fg_attempt": data[season_type].FGA,
+                        "fg_percent": data[season_type].FG_PCT,
+                        "fg3_made": data[season_type].FG3M,
+                        "fg3_attempt": data[season_type].FG3A,
+                        "fg3_percent": data[season_type].FG3_PCT,
+                        "ft_made": data[season_type].FTM,
+                        "ft_attempt": data[season_type].FTA,
+                        "ft_percent": data[season_type].FT_PCT,
+                        "season_type": season_type,
+                        "player": data[season_type].PLAYER_ID,
+                        "games_played": data[season_type].GP,
+                        "games_started": data[season_type].GS
+                    }
+                }
+                result.append(data_fixture)
 
-            data = player.PlayerCareer(player_data.PERSON_ID)
-            reg_season = reg_season.append(data.regular_season_totals().drop(columns=[
-                'LEAGUE_ID',
-                'PLAYER_AGE'
-            ]), ignore_index=True)
-
-            reg_season_total = reg_season_total.append(data.regular_season_career_totals().drop(columns=[
-                'LEAGUE_ID',
-            ]), ignore_index=True)
-
-            post_season = post_season.append(data.post_season_totals().drop(columns=[
-                'TEAM_ABBREVIATION',
-                'LEAGUE_ID',
-                'PLAYER_AGE'
-            ]), ignore_index=True)
-
-            post_season_total = post_season_total.append(data.post_season_career_totals().drop(columns=[
-                'LEAGUE_ID'
-            ]), ignore_index=True)
-
-            time.sleep(0.5)
-
-        reg_season.to_json('data/player_regular_season_stats.json')
-        reg_season_total.to_json('data/player_regular_season_total.json')
-        post_season.to_json('data/player_post_season_stats.json')
-        post_season_total.to_json('data/player_post_season_total.json')
+        # Write data to file
+        with open('fixtures/main_player_career_stats.json', 'w+') as f:
+            json.dump(result, f)
 
     def get_team_game_log(self) -> None:
         """Retrieve individual team game log data using API.
