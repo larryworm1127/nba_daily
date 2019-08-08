@@ -8,10 +8,10 @@ import sys
 import time
 
 import pandas as pd
+import simplejson as json
 from dateutil import parser
 from nba_py import game, team, player, league, Scoreboard
 from nba_py.constants import Player_or_Team
-from simplejson import load, dump, dumps
 
 
 class CollectData:
@@ -137,7 +137,7 @@ class CollectData:
         # Write data to file
         print(result)
         with open('fixtures/main_team.json', 'w+') as f:
-            dump(result, f)
+            json.dump(result, f)
 
     def get_player_summary(self) -> None:
         """Retrieve individual player summary data using API.
@@ -179,7 +179,7 @@ class CollectData:
 
         # Write data to file
         with open('fixtures/main_player.json', 'w+') as f:
-            dump(result, f)
+            json.dump(result, f)
 
     def get_player_game_log(self) -> None:
         """Retrieve individual player game log data using API.
@@ -243,7 +243,7 @@ class CollectData:
         """Retrieve individual team game log data using API.
         """
         with open('data/team_list.json') as f:
-            teams = load(f)['TEAM_ID'].values()
+            teams = json.load(f)['TEAM_ID'].values()
 
         all_game_log = pd.DataFrame()
         for team_id in teams:
@@ -262,12 +262,26 @@ class CollectData:
         self.logger.info('Retrieve team season stats data.')
 
         data = league.TeamStats(season=self.season).overall()  # type: pd.DataFrame
-        data = data.drop(columns=[
-            'CFID',
-            'CFPARAMS',
-            'TEAM_NAME',
-        ])
-        data.to_json(f'data/{self.season}/team_stats.json')
+        result = []
+        # for team_data in data.itertuples(index=False):
+        # data_fixture = {
+        #     "model": "main.game",
+        #     "pk": game_id,
+        #     "fields": {
+        #         "season": "2018-19",
+        #         "game_date": parser.parse(game_summary.GAME_DATE_EST[0]).strftime("%b %d, %Y"),
+        #         "dnp_players": dumps(dnp_players),
+        #         "inactive_players": dumps(inactive_players),
+        #         "home_team": int(game_summary.HOME_TEAM_ID[0]),
+        #         "away_team": int(game_summary.VISITOR_TEAM_ID[0]),
+        #         "broadcaster": broadcaster if broadcaster is not None else ''
+        #     }
+        # }
+        # result.append(data_fixture)
+
+        # Write data to file
+        with open('fixtures/main_team_season_stats.json', 'w+') as f:
+            json.dump(result, f)
 
     def get_boxscore_summary(self) -> None:
         """Retrieve individual game boxscore data using API.
@@ -294,8 +308,8 @@ class CollectData:
                 "fields": {
                     "season": "2018-19",
                     "game_date": parser.parse(game_summary.GAME_DATE_EST[0]).strftime("%b %d, %Y"),
-                    "dnp_players": dumps(dnp_players),
-                    "inactive_players": dumps(inactive_players),
+                    "dnp_players": json.dumps(dnp_players),
+                    "inactive_players": json.dumps(inactive_players),
                     "home_team": int(game_summary.HOME_TEAM_ID[0]),
                     "away_team": int(game_summary.VISITOR_TEAM_ID[0]),
                     "broadcaster": broadcaster if broadcaster is not None else ''
@@ -307,7 +321,7 @@ class CollectData:
 
         # Write data to file
         with open('fixtures/main_game.json', 'w+') as f:
-            dump(result, f)
+            json.dump(result, f)
 
 
 if __name__ == '__main__':
