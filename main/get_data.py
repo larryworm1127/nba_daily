@@ -5,6 +5,7 @@
 """
 import logging
 import sys
+import time
 
 import pandas as pd
 import simplejson as json
@@ -69,6 +70,7 @@ class CollectData:
 
             data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()
             self.team_summary = self.team_summary.append(data, ignore_index=True)
+            time.sleep(1)
 
         # Player Summary
         self.player_summary = pd.DataFrame()
@@ -80,6 +82,7 @@ class CollectData:
 
             data = player.PlayerSummary(player_data.PERSON_ID).info()
             self.player_summary = self.player_summary.append(data, ignore_index=True)
+            time.sleep(0.5)
 
         # Player Game Log
         self.logger.info('Retrieving player game log data.')
@@ -111,6 +114,7 @@ class CollectData:
                 'inactive_players': inactive_players,
                 'line_score': line_score
             }
+            time.sleep(0.5)
 
         # Team Game Log
         self.team_game_log = pd.DataFrame()
@@ -119,6 +123,7 @@ class CollectData:
 
             data = team.TeamGameLogs(team_id, season=self.season).info()
             self.team_game_log = self.team_game_log.append(data, ignore_index=True)
+            time.sleep(0.5)
 
         # Player Season Stats
         self.player_season_stats = {}
@@ -138,6 +143,7 @@ class CollectData:
                 'Regular': data.regular_season_career_totals().round(3),
                 'Post': data.post_season_career_totals().round(3)
             }
+            time.sleep(0.5)
 
     def get_standing_data(self) -> None:
         """Retrieve season standing data using API.
@@ -506,17 +512,15 @@ class CollectData:
 if __name__ == '__main__':
     inst = CollectData('2018-19')
 
-    # inst.get_team_list()
-    # inst.get_player_list()
-    # inst.get_player_league_leader()
-    # inst.get_standing_data()
-    #
-    # inst.get_team_summary()
-    # inst.get_player_summary()
-    #
-    # inst.get_player_game_log()
-    # inst.get_team_game_log()
-    # inst.get_player_season_stats()
-    # inst.get_team_season_stats()
+    inst.get_standing_data()
+
+    inst.get_team_summary()
+    inst.get_player_summary()
+
+    inst.get_player_game_log()
+    inst.get_team_game_log()
+    inst.get_player_season_stats()
+    inst.get_player_career_stats()
+    inst.get_team_season_stats()
 
     inst.get_boxscore_summary()
