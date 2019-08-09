@@ -114,7 +114,7 @@ class CollectData:
                 'inactive_players': inactive_players,
                 'line_score': line_score
             }
-            time.sleep(0.5)
+            time.sleep(1)
 
         # Team Game Log
         self.team_game_log = pd.DataFrame()
@@ -203,7 +203,7 @@ class CollectData:
                 "wins": 82,
                 "losses": 0,
                 "nba_debut": "1950",
-                "max_year": "2018-19"
+                "max_year": "2019"
             }
         })
 
