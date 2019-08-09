@@ -4,8 +4,8 @@
   "description": "[![CircleCI](https://circleci.com/gh/larryworm1127/nba_daily.svg?style=svg)](https://circleci.com/gh/larryworm1127/nba_daily)",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development ./project/frontend/src/index.js --output ./project/frontend/static/frontend/main.js",
-    "build": "webpack --mode production ./project/frontend/src/index.js --output ./project/frontend/static/frontend/main.js"
+    "dev": "webpack --mode development ./frontend/src/index.js --output ./frontend/static/frontend/main.js",
+    "build": "webpack --mode production ./frontend/src/index.js --output ./frontend/static/frontend/main.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "weak-key": "^1.0.1",
     "webpack": "^4.39.1",
     "webpack-cli": "^3.3.6"
   }
