@@ -253,7 +253,7 @@ class PlayerSeasonStats(SeasonStats):
 
     season = models.CharField(max_length=10)
     season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
-    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_stats')
     games_played = models.IntegerField(validators=[MaxValueValidator(82)])
     games_started = models.IntegerField(validators=[MaxValueValidator(82)])
@@ -294,9 +294,9 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         dnp_players = {
-            Player.objects.get(player_id=player_id): reason
+            Player.objects.get(pk=player_id): reason
             for player_id, reason in inst.decode(self.dnp_players).items()
-            if Player.objects.filter(player_id=player_id).count() > 0
+            if Player.objects.filter(pk=player_id).count() > 0
         }
 
         return dnp_players
@@ -438,16 +438,15 @@ class TeamGameLog(GameLog):
     def get_player_game_logs(self) -> List[PlayerGameLog]:
         """Return a list of player game log object in order of display.
         """
-        num_players = self.player_game_log.all().count()
-        return [self.player_game_log.get(order=index) for index in range(num_players)
-                if self.player_game_log.filter(order=index).count() > 0]
+        return [game_log for game_log in self.game.playergamelog_set.all()
+                if game_log.curr_team == self.team]
 
 
 class PlayerGameLog(GameLog):
     """Individual player game log model.
     """
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='game_log')
-    team_game_log = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE, related_name='player_game_log')
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
     order = models.IntegerField()
     plus_minus = models.IntegerField()
 
@@ -455,7 +454,7 @@ class PlayerGameLog(GameLog):
         """PlayerGameLog Property Meta Class.
         """
         db_table = 'main_player_game_log'
-        ordering = ['-game']
+        ordering = ['-game', 'order']
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.

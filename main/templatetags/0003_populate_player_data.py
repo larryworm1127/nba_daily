@@ -10,7 +10,6 @@ def load_player_data(apps, schema_editor):
 
     print("Migrate Individual Player Data.")
 
-    leaders = pd.read_json('main/data/2018-19/player_leaders.json')  # type: pd.DataFrame
     player_summary = pd.read_json('main/data/2018-19/player_summary.json')  # type: pd.DataFrame
     for data in player_summary.itertuples(index=False):
         school = "N/A" if data.SCHOOL is None or data.SCHOOL == ' ' else data.SCHOOL
