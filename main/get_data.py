@@ -56,33 +56,33 @@ class CollectData:
         self.player_list = player.PlayerList(season=self.season).info()[['PERSON_ID', 'ROSTERSTATUS']]
 
         # Standing Data
-        self.logger.info('Retrieving standing data')
-        year = int(f'20{self.season.split("-")[1]}')
-        data = pd.DataFrame()
-        data = data.append(Scoreboard(month=6, day=1, year=year).east_conf_standings_by_day(), ignore_index=True)
-        data = data.append(Scoreboard(month=6, day=1, year=year).west_conf_standings_by_day(), ignore_index=True)
-        self.standing_data = data
+        # self.logger.info('Retrieving standing data')
+        # year = int(f'20{self.season.split("-")[1]}')
+        # data = pd.DataFrame()
+        # data = data.append(Scoreboard(month=6, day=1, year=year).east_conf_standings_by_day(), ignore_index=True)
+        # data = data.append(Scoreboard(month=6, day=1, year=year).west_conf_standings_by_day(), ignore_index=True)
+        # self.standing_data = data
 
         # Team Summary
-        self.team_summary = pd.DataFrame()
-        for team_data in self.team_list.itertuples(index=False):
-            self.logger.info(f'Retrieving team summary data for {team_data.TEAM_ID}')
-
-            data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()
-            self.team_summary = self.team_summary.append(data, ignore_index=True)
-            time.sleep(1)
-
-        # Player Summary
-        self.player_summary = pd.DataFrame()
-        for player_data in self.player_list.itertuples(index=False):
-            self.logger.info(f'Retrieving player summary data for {player_data.PERSON_ID}')
-
-            if player_data.ROSTERSTATUS == 0:
-                continue
-
-            data = player.PlayerSummary(player_data.PERSON_ID).info()
-            self.player_summary = self.player_summary.append(data, ignore_index=True)
-            time.sleep(0.5)
+        # self.team_summary = pd.DataFrame()
+        # for team_data in self.team_list.itertuples(index=False):
+        #     self.logger.info(f'Retrieving team summary data for {team_data.TEAM_ID}')
+        #
+        #     data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()
+        #     self.team_summary = self.team_summary.append(data, ignore_index=True)
+        #     time.sleep(1)
+        #
+        # # Player Summary
+        # self.player_summary = pd.DataFrame()
+        # for player_data in self.player_list.itertuples(index=False):
+        #     self.logger.info(f'Retrieving player summary data for {player_data.PERSON_ID}')
+        #
+        #     if player_data.ROSTERSTATUS == 0:
+        #         continue
+        #
+        #     data = player.PlayerSummary(player_data.PERSON_ID).info()
+        #     self.player_summary = self.player_summary.append(data, ignore_index=True)
+        #     time.sleep(0.5)
 
         # Player Game Log
         self.logger.info('Retrieving player game log data.')
@@ -97,31 +97,31 @@ class CollectData:
         self.team_season_stats = league.TeamStats(season=self.season).overall().round(3)
 
         # Boxscore
-        self.boxscore_data = {}
-        for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
-            self.logger.info(f'Retrieving boxscore data for {game_id}')
-
-            player_data = game.Boxscore(game_id, season=self.season).player_stats()
-
-            boxscore_summary = game.BoxscoreSummary(game_id, season=self.season)
-            game_summary = boxscore_summary.game_summary()
-            inactive_players = boxscore_summary.inactive_players()
-            line_score = boxscore_summary.line_score()
-
-            self.boxscore_data[game_id] = {
-                'player_data': player_data,
-                'game_summary': game_summary,
-                'inactive_players': inactive_players,
-                'line_score': line_score
-            }
-            time.sleep(1)
+        # self.boxscore_data = {}
+        # for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
+        #     self.logger.info(f'Retrieving boxscore data for {game_id}')
+        #
+        #     player_data = game.Boxscore(game_id, season=self.season).player_stats()
+        #
+        #     boxscore_summary = game.BoxscoreSummary(game_id, season=self.season)
+        #     game_summary = boxscore_summary.game_summary()
+        #     inactive_players = boxscore_summary.inactive_players()
+        #     line_score = boxscore_summary.line_score()
+        #
+        #     self.boxscore_data[game_id] = {
+        #         'player_data': player_data,
+        #         'game_summary': game_summary,
+        #         'inactive_players': inactive_players,
+        #         'line_score': line_score
+        #     }
+        #     time.sleep(0.5)
 
         # Team Game Log
         self.team_game_log = pd.DataFrame()
-        for team_id in self.team_list:
-            self.logger.info(f'Retrieving team game log data for {team_id}')
+        for team_data in self.team_list.itertuples(index=False):
+            self.logger.info(f'Retrieving team game log data for {team_data.TEAM_ID}')
 
-            data = team.TeamGameLogs(team_id, season=self.season).info()
+            data = team.TeamGameLogs(team_data.TEAM_ID, season=self.season).info()
             self.team_game_log = self.team_game_log.append(data, ignore_index=True)
             time.sleep(0.5)
 
@@ -512,15 +512,15 @@ class CollectData:
 if __name__ == '__main__':
     inst = CollectData('2018-19')
 
-    inst.get_standing_data()
+    # inst.get_standing_data()
 
-    inst.get_team_summary()
-    inst.get_player_summary()
+    # inst.get_team_summary()
+    # inst.get_player_summary()
 
-    inst.get_player_game_log()
-    inst.get_team_game_log()
+    # inst.get_player_game_log()
+    # inst.get_team_game_log()
     inst.get_player_season_stats()
     inst.get_player_career_stats()
-    inst.get_team_season_stats()
+    # inst.get_team_season_stats()
 
-    inst.get_boxscore_summary()
+    # inst.get_boxscore_summary()
