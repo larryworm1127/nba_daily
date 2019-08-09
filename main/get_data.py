@@ -6,12 +6,13 @@
 import logging
 import sys
 import time
+from typing import Dict, Tuple
 
 import pandas as pd
 import simplejson as json
 from dateutil import parser
 from nba_py import game, team, player, league, Scoreboard
-from nba_py.constants import Player_or_Team
+from nba_py.constants import Player_or_Team as Pt
 
 
 class CollectData:
@@ -29,8 +30,6 @@ class CollectData:
     def __init__(self, season: str) -> None:
         """Initializer.
         """
-        self.season = season
-
         # Configure logger
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
@@ -44,90 +43,102 @@ class CollectData:
 
         self.logger.addHandler(handler)
 
-        # ======================================================================
-        # Data Attributes
-        # ======================================================================
-        # Team List
-        self.logger.info(f'Retrieving team list data')
+        # Retrieve initial data
+        self.season = season
         self.team_list = team.TeamList().info()[['TEAM_ID']][:30]
+        self.player_list = player.PlayerList(season=season).info()[['PERSON_ID', 'ROSTERSTATUS']]
 
-        # Player List
-        self.logger.info('Retrieving player list data')
-        self.player_list = player.PlayerList(season=self.season).info()[['PERSON_ID', 'ROSTERSTATUS']]
+    def get_standing_data(self) -> pd.DataFrame:
+        """Retrieve season standing data using API.
+        """
+        self.logger.info('Retrieving standing data')
+        year = int(f'20{self.season.split("-")[1]}')
+        data = pd.DataFrame()
+        data = data.append(Scoreboard(month=6, day=1, year=year).east_conf_standings_by_day(), ignore_index=True)
+        data = data.append(Scoreboard(month=6, day=1, year=year).west_conf_standings_by_day(), ignore_index=True)
+        return data
 
-        # Standing Data
-        # self.logger.info('Retrieving standing data')
-        # year = int(f'20{self.season.split("-")[1]}')
-        # data = pd.DataFrame()
-        # data = data.append(Scoreboard(month=6, day=1, year=year).east_conf_standings_by_day(), ignore_index=True)
-        # data = data.append(Scoreboard(month=6, day=1, year=year).west_conf_standings_by_day(), ignore_index=True)
-        # self.standing_data = data
-
-        # Team Summary
-        # self.team_summary = pd.DataFrame()
-        # for team_data in self.team_list.itertuples(index=False):
-        #     self.logger.info(f'Retrieving team summary data for {team_data.TEAM_ID}')
-        #
-        #     data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()
-        #     self.team_summary = self.team_summary.append(data, ignore_index=True)
-        #     time.sleep(1)
-        #
-        # # Player Summary
-        # self.player_summary = pd.DataFrame()
-        # for player_data in self.player_list.itertuples(index=False):
-        #     self.logger.info(f'Retrieving player summary data for {player_data.PERSON_ID}')
-        #
-        #     if player_data.ROSTERSTATUS == 0:
-        #         continue
-        #
-        #     data = player.PlayerSummary(player_data.PERSON_ID).info()
-        #     self.player_summary = self.player_summary.append(data, ignore_index=True)
-        #     time.sleep(0.5)
-
-        # Player Game Log
-        self.logger.info('Retrieving player game log data.')
-        self.player_game_log = league.GameLog(
-            season=self.season,
-            player_or_team=Player_or_Team.Player
-        ).overall().round(3)
-        self.player_game_log.fillna(0, inplace=True)
-
-        # Team Season Stats
-        self.logger.info('Retrieve team season stats data.')
-        self.team_season_stats = league.TeamStats(season=self.season).overall().round(3)
-
-        # Boxscore
-        # self.boxscore_data = {}
-        # for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
-        #     self.logger.info(f'Retrieving boxscore data for {game_id}')
-        #
-        #     player_data = game.Boxscore(game_id, season=self.season).player_stats()
-        #
-        #     boxscore_summary = game.BoxscoreSummary(game_id, season=self.season)
-        #     game_summary = boxscore_summary.game_summary()
-        #     inactive_players = boxscore_summary.inactive_players()
-        #     line_score = boxscore_summary.line_score()
-        #
-        #     self.boxscore_data[game_id] = {
-        #         'player_data': player_data,
-        #         'game_summary': game_summary,
-        #         'inactive_players': inactive_players,
-        #         'line_score': line_score
-        #     }
-        #     time.sleep(0.5)
-
-        # Team Game Log
-        self.team_game_log = pd.DataFrame()
+    def get_team_summary(self) -> pd.DataFrame:
+        """Retrieve individual team summary data using API.
+        """
+        team_summary = pd.DataFrame()
         for team_data in self.team_list.itertuples(index=False):
-            self.logger.info(f'Retrieving team game log data for {team_data.TEAM_ID}')
+            self.logger.info(f'Retrieving team summary data for {team_data.TEAM_ID}')
 
-            data = team.TeamGameLogs(team_data.TEAM_ID, season=self.season).info()
-            self.team_game_log = self.team_game_log.append(data, ignore_index=True)
+            data = team.TeamSummary(team_data.TEAM_ID, season=self.season).info()
+            team_summary = team_summary.append(data, ignore_index=True)
+            time.sleep(1)
+
+        return team_summary
+
+    def get_player_summary(self) -> pd.DataFrame:
+        """Retrieve individual player summary data using API.
+        """
+        player_summary = pd.DataFrame()
+        for player_data in self.player_list.itertuples(index=False):
+            self.logger.info(f'Retrieving player summary data for {player_data.PERSON_ID}')
+
+            if player_data.ROSTERSTATUS == 0:
+                continue
+
+            data = player.PlayerSummary(player_data.PERSON_ID).info()
+            player_summary = player_summary.append(data, ignore_index=True)
             time.sleep(0.5)
 
-        # Player Season Stats
-        self.player_season_stats = {}
-        self.player_career_stats = {}
+        return player_summary
+
+    def get_player_game_log(self) -> pd.DataFrame:
+        """Retrieve individual player game log data using API.
+        """
+        self.logger.info('Retrieving player game log data.')
+        game_log = league.GameLog(season=self.season, player_or_team=Pt.Player).overall()
+        return game_log.fillna(0, inplace=True).round(3)
+
+    def get_team_season_stats(self) -> pd.DataFrame:
+        """Retrieve individual team season stats using API.
+        """
+        self.logger.info('Retrieve team season stats data.')
+        season_stats = league.TeamStats(season=self.season).overall().round(3)
+        return season_stats
+
+    def get_boxscore_data(self) -> Dict[str, Dict[str, pd.DataFrame]]:
+        """Retrieve individual game boxscore data using API.
+        """
+        boxscore_data = {}
+        for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
+            self.logger.info(f'Retrieving boxscore data for {game_id}')
+
+            boxscore = game.Boxscore(game_id, season=self.season)
+            boxscore_summary = game.BoxscoreSummary(game_id, season=self.season)
+
+            boxscore_data[game_id] = {
+                'player_data': boxscore.player_stats(),
+                'game_summary': boxscore_summary.game_summary(),
+                'inactive_players': boxscore_summary.inactive_players(),
+                'line_score': boxscore_summary.line_score()
+            }
+            time.sleep(0.5)
+
+        return boxscore_data
+
+    def get_team_game_log(self) -> pd.DataFrame:
+        """Retrieve individual team game log data using API.
+        """
+        game_log = pd.DataFrame()
+        for _team in self.team_list.itertuples(index=False):
+            self.logger.info(f'Retrieving team game log data for {_team.TEAM_ID}')
+
+            data = team.TeamGameLogs(_team.TEAM_ID, season=self.season).info()
+            game_log = game_log.append(data, ignore_index=True)
+            time.sleep(0.5)
+
+        return game_log
+
+    def get_player_season_stats(self) -> Tuple[Dict[int, Dict], Dict[int, Dict]]:
+        """Retrieve individual player season stats using API.
+        """
+        season_stats = {}
+        career_stats = {}
         for player_data in self.player_list.itertuples(index=False):
             self.logger.info(f'Retrieving player season stats data for {player_data.PERSON_ID}')
 
@@ -135,18 +146,58 @@ class CollectData:
                 continue
 
             data = player.PlayerCareer(player_data.PERSON_ID)
-            self.player_season_stats[player_data.PERSON_ID] = {
+            season_stats[player_data.PERSON_ID] = {
                 'Regular': data.regular_season_totals().round(3),
                 'Post': data.post_season_totals().round(3),
             }
-            self.player_career_stats[player_data.PERSON_ID] = {
+            career_stats[player_data.PERSON_ID] = {
                 'Regular': data.regular_season_career_totals().round(3),
                 'Post': data.post_season_career_totals().round(3)
             }
             time.sleep(0.5)
 
-    def get_standing_data(self) -> None:
-        """Retrieve season standing data using API.
+        return season_stats, career_stats
+
+
+class FixtureGenerator:
+    """Django Model Fixture Generator Class.
+
+    This class contains methods that automatically generates initial data
+    fixtures for Django models. Each method generates fixture for a single model.
+
+    The generated fixture is in JSON format and stored under the `fixtures`
+    directory with the name of its corresponding model.
+    """
+    standing_data: pd.DataFrame
+    team_summary: pd.DataFrame
+    player_summary: pd.DataFrame
+    player_game_log: pd.DataFrame
+    boxscore_data: Dict[str, Dict[str, pd.DataFrame]]
+    team_game_log: pd.DataFrame
+    team_season_stats: pd.DataFrame
+    player_season_stats: Dict[int, Dict[str, pd.DataFrame]]
+    player_career_stats: Dict[int, Dict[str, pd.DataFrame]]
+
+    def __init__(self, season: str) -> None:
+        """Initializer.
+        """
+        data_inst = CollectData(season)
+
+        # Data Attributes
+        self.standing_data = data_inst.get_standing_data()
+        self.team_summary = data_inst.get_team_summary()
+        self.player_summary = data_inst.get_player_summary()
+        self.player_game_log = data_inst.get_player_game_log()
+        self.boxscore_data = data_inst.get_boxscore_data()
+        self.team_game_log = data_inst.get_team_game_log()
+        self.team_season_stats = data_inst.get_team_season_stats()
+
+        player_career = data_inst.get_player_season_stats()
+        self.player_season_stats = player_career[0]
+        self.player_career_stats = player_career[1]
+
+    def create_standing_fixture(self) -> None:
+        """Creates fixture for <Standing> model.
         """
         result = []
         for team_data in self.standing_data.itertuples():
@@ -168,8 +219,8 @@ class CollectData:
         with open('fixtures/main_standing.json', 'w+') as f:
             json.dump(result, f)
 
-    def get_team_summary(self) -> None:
-        """Retrieve individual team summary data using API.
+    def create_team_fixture(self) -> None:
+        """Creates fixture for <Team> model.
         """
         result = []
         for data in self.team_summary.itertuples(index=False):
@@ -211,8 +262,8 @@ class CollectData:
         with open('fixtures/main_team.json', 'w+') as f:
             json.dump(result, f)
 
-    def get_player_summary(self) -> None:
-        """Retrieve individual player summary data using API.
+    def create_player_fixture(self) -> None:
+        """Creates fixture for <Player> model.
         """
         result = []
         for data in self.player_summary.itertuples(index=False):
@@ -242,8 +293,8 @@ class CollectData:
         with open('fixtures/main_player.json', 'w+') as f:
             json.dump(result, f)
 
-    def get_player_game_log(self) -> None:
-        """Retrieve individual player game log data using API.
+    def create_player_game_log_fixture(self) -> None:
+        """Creates fixture for <PlayerGameLog> model.
         """
         result = []
         for data in self.player_game_log.itertuples():
@@ -301,8 +352,8 @@ class CollectData:
 
         return index
 
-    def get_player_season_stats(self) -> None:
-        """Retrieve individual player season stats using API.
+    def create_player_season_stats_fixture(self) -> None:
+        """Creates fixture for <PlayerSeasonStats> model.
         """
         result = []
         for index, player_id, data in enumerate(self.player_season_stats.items()):
@@ -344,8 +395,9 @@ class CollectData:
         with open('fixtures/main_player_season_stats.json', 'w+') as f:
             json.dump(result, f)
 
-    def get_player_career_stats(self) -> None:
-        """"""
+    def create_player_career_stats_fixture(self) -> None:
+        """Creates fixture for <PlayerCareerStats> model.
+        """
         result = []
         for index, player_id, data in enumerate(self.player_career_stats.items()):
             for season_type in ['Regular', 'Post']:
@@ -384,8 +436,8 @@ class CollectData:
         with open('fixtures/main_player_career_stats.json', 'w+') as f:
             json.dump(result, f)
 
-    def get_team_game_log(self) -> None:
-        """Retrieve individual team game log data using API.
+    def create_team_game_log_fixture(self) -> None:
+        """Creates fixture for <TeamGameLog> model.
         """
         result = []
         for data in self.team_game_log.itertuples():
@@ -436,8 +488,8 @@ class CollectData:
         with open('fixtures/main_team_game_log.json', 'w+') as f:
             json.dump(result, f)
 
-    def get_team_season_stats(self) -> None:
-        """Retrieve individual team season stats using API.
+    def create_team_season_stats_fixture(self) -> None:
+        """Creates fixture for <TeamSeasonStats> model.
         """
         result = []
         for team_data in self.team_season_stats.itertuples():
@@ -477,8 +529,8 @@ class CollectData:
         with open('fixtures/main_team_season_stats.json', 'w+') as f:
             json.dump(result, f)
 
-    def get_boxscore_summary(self) -> None:
-        """Retrieve individual game boxscore data using API.
+    def create_game_fixture(self) -> None:
+        """Creates fixture for <Game> model.
         """
         result = []
         for game_id, data in self.boxscore_data.items():
@@ -510,17 +562,14 @@ class CollectData:
 
 
 if __name__ == '__main__':
-    inst = CollectData('2018-19')
+    inst = FixtureGenerator('2018-19')
 
-    # inst.get_standing_data()
-
-    # inst.get_team_summary()
-    # inst.get_player_summary()
-
-    # inst.get_player_game_log()
-    # inst.get_team_game_log()
-    inst.get_player_season_stats()
-    inst.get_player_career_stats()
-    # inst.get_team_season_stats()
-
-    # inst.get_boxscore_summary()
+    inst.create_standing_fixture()
+    inst.create_team_fixture()
+    inst.create_player_fixture()
+    inst.create_player_game_log_fixture()
+    inst.create_team_game_log_fixture()
+    inst.create_player_season_stats_fixture()
+    inst.create_player_career_stats_fixture()
+    inst.create_team_season_stats_fixture()
+    inst.create_game_fixture()
