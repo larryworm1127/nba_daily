@@ -1,4 +1,7 @@
-"""
+"""Data Retrieval Module
+
+This module calls API to retrieve data from 'stats.nba.com' and creates Django
+model fixture using the data.
 
 @date: 07/07/2019
 @author: Larry Shi
@@ -325,6 +328,7 @@ class FixtureGenerator:
                     "ft_percent": data.FT_PCT,
                     "result": data.WL,
                     "player": data.PLAYER_ID,
+                    "curr_team": data.TEAM_ID,
                     "order": self.get_player_order(data.PLAYER_ID, data.GAME_ID),
                     "plus_minus": data.PLUS_MINUS
                 }
@@ -492,35 +496,35 @@ class FixtureGenerator:
         """Creates fixture for <TeamSeasonStats> model.
         """
         result = []
-        for team_data in self.team_season_stats.itertuples():
+        for data in self.team_season_stats.itertuples():
             data_fixture = {
                 "model": "main.teamseasonstats",
-                "pk": team_data.Index + 1,
+                "pk": data.Index + 1,
                 "fields": {
-                    "minutes": team_data.MIN,
-                    "points": team_data.PTS,
-                    "offense_reb": team_data.OREB,
-                    "defense_reb": team_data.DREB,
-                    "rebounds": team_data.REB,
-                    "assists": team_data.AST,
-                    "steals": team_data.STL,
-                    "blocks": team_data.BLK,
-                    "turnovers": team_data.TOV,
-                    "fouls": team_data.PF,
-                    "fg_made": team_data.FGM,
-                    "fg_attempt": team_data.FGA,
-                    "fg_percent": team_data.FG_PCT,
-                    "fg3_made": team_data.FG3M,
-                    "fg3_attempt": team_data.FG3A,
-                    "fg3_percent": team_data.FG3_PCT,
-                    "ft_made": team_data.FTM,
-                    "ft_attempt": team_data.FTA,
-                    "ft_percent": team_data.FT_PCT,
+                    "minutes": data.MIN,
+                    "points": data.PTS,
+                    "offense_reb": data.OREB,
+                    "defense_reb": data.DREB,
+                    "rebounds": data.REB,
+                    "assists": data.AST,
+                    "steals": data.STL,
+                    "blocks": data.BLK,
+                    "turnovers": data.TOV,
+                    "fouls": data.PF,
+                    "fg_made": data.FGM,
+                    "fg_attempt": data.FGA,
+                    "fg_percent": data.FG_PCT,
+                    "fg3_made": data.FG3M,
+                    "fg3_attempt": data.FG3A,
+                    "fg3_percent": data.FG3_PCT,
+                    "ft_made": data.FTM,
+                    "ft_attempt": data.FTA,
+                    "ft_percent": data.FT_PCT,
                     "season": "2018-19",
-                    "team": team_data.TEAM_ID,
-                    "wins": team_data.W,
-                    "losses": team_data.L,
-                    "win_percent": team_data.W_PCT
+                    "team": data.TEAM_ID,
+                    "wins": data.W,
+                    "losses": data.L,
+                    "win_percent": data.W_PCT
                 }
             }
             result.append(data_fixture)

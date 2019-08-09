@@ -253,7 +253,7 @@ class PlayerSeasonStats(SeasonStats):
 
     season = models.CharField(max_length=10)
     season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
-    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_stats')
     games_played = models.IntegerField(validators=[MaxValueValidator(82)])
     games_started = models.IntegerField(validators=[MaxValueValidator(82)])
@@ -438,16 +438,15 @@ class TeamGameLog(GameLog):
     def get_player_game_logs(self) -> List[PlayerGameLog]:
         """Return a list of player game log object in order of display.
         """
-        # TODO: fix this so that game_log.player.team refers to the team in the game but not player's current team
         return [game_log for game_log in self.game.playergamelog_set.all()
-                if game_log.player.team == self.team]
+                if game_log.curr_team == self.team]
 
 
 class PlayerGameLog(GameLog):
     """Individual player game log model.
     """
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='game_log')
-    # team_game_log = models.ForeignKey(TeamGameLog, on_delete=models.CASCADE, related_name='player_game_log')
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
     order = models.IntegerField()
     plus_minus = models.IntegerField()
 
