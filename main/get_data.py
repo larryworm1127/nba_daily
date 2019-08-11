@@ -94,8 +94,9 @@ class CollectData:
         """Retrieve individual player game log data using API.
         """
         self.logger.info('Retrieving player game log data.')
-        game_log = league.GameLog(season=self.season, player_or_team=Pt.Player).overall()
-        return game_log.fillna(0, inplace=True).round(3)
+        game_log = league.GameLog(season=self.season, player_or_team=Pt.Player).overall().round(3)
+        game_log.fillna(0, inplace=True)
+        return game_log
 
     def get_team_season_stats(self) -> pd.DataFrame:
         """Retrieve individual team season stats using API.
@@ -121,6 +122,20 @@ class CollectData:
                 'line_score': boxscore_summary.line_score()
             }
             time.sleep(0.5)
+
+        # boxscore_data = {}
+        # for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
+        #     self.logger.info(f'Retrieving boxscore data for {game_id}')
+        #
+        #     with open(f'data/{self.season}/boxscore/{game_id}.json') as f:
+        #         data = json.load(f)
+        #
+        #     boxscore_data[game_id] = {
+        #         'player_data': pd.read_json(data['PLAYER_DATA']),
+        #         'game_summary': pd.read_json(data['GAME_SUMMARY']),
+        #         'inactive_players': pd.read_json(data['INACTIVE_PLAYER']),
+        #         'line_score': pd.read_json(data['LINE_SCORE'])
+        #     }
 
         return boxscore_data
 
@@ -169,7 +184,7 @@ class FixtureGenerator:
     fixtures for Django models. Each method generates fixture for a single model.
 
     The generated fixture is in JSON format and stored under the `fixtures`
-    directory with the name of its corresponding model.
+    directory with the name f its corresponding model.
     """
     standing_data: pd.DataFrame
     team_summary: pd.DataFrame
@@ -343,7 +358,7 @@ class FixtureGenerator:
         """Returns the order in which the player appears in boxscore table.
         """
         boxscore = self.boxscore_data[game_id]['player_data']
-        player_team = boxscore[boxscore.PLAYER_ID == player_id].TEAM_ID[0]
+        player_team = boxscore[boxscore.PLAYER_ID == player_id].TEAM_ID.values[0]
         opp_count = len(boxscore[boxscore.TEAM_ID != player_team])
 
         index = 0
@@ -360,40 +375,43 @@ class FixtureGenerator:
         """Creates fixture for <PlayerSeasonStats> model.
         """
         result = []
-        for index, player_id, data in enumerate(self.player_season_stats.items()):
+        index = 0
+        for player_id, data in self.player_season_stats.items():
             for season_type in ['Regular', 'Post']:
-                data_fixture = {
-                    "model": "main.playerseasonstats",
-                    "pk": index + 1,
-                    "fields": {
-                        "minutes": data[season_type].MIN,
-                        "points": data[season_type].PTS,
-                        "offense_reb": data[season_type].OREB,
-                        "defense_reb": data[season_type].DREB,
-                        "rebounds": data[season_type].REB,
-                        "assists": data[season_type].AST,
-                        "steals": data[season_type].STL,
-                        "blocks": data[season_type].BLK,
-                        "turnovers": data[season_type].TOV,
-                        "fouls": data[season_type].PF,
-                        "fg_made": data[season_type].FGM,
-                        "fg_attempt": data[season_type].FGA,
-                        "fg_percent": data[season_type].FG_PCT,
-                        "fg3_made": data[season_type].FG3M,
-                        "fg3_attempt": data[season_type].FG3A,
-                        "fg3_percent": data[season_type].FG3_PCT,
-                        "ft_made": data[season_type].FTM,
-                        "ft_attempt": data[season_type].FTA,
-                        "ft_percent": data[season_type].FT_PCT,
-                        "season": data[season_type].SEASON_ID,
-                        "season_type": season_type,
-                        "curr_team": data[season_type].TEAM_ID,
-                        "player": data[season_type].PLAYER_ID,
-                        "games_played": data[season_type].GP,
-                        "games_started": data[season_type].GS
+                for player_data in data[season_type].itertuples():
+                    data_fixture = {
+                        "model": "main.playerseasonstats",
+                        "pk": index + 1,
+                        "fields": {
+                            "minutes": player_data.MIN,
+                            "points": player_data.PTS,
+                            "offense_reb": player_data.OREB,
+                            "defense_reb": player_data.DREB,
+                            "rebounds": player_data.REB,
+                            "assists": player_data.AST,
+                            "steals": player_data.STL,
+                            "blocks": player_data.BLK,
+                            "turnovers": player_data.TOV,
+                            "fouls": player_data.PF,
+                            "fg_made": player_data.FGM,
+                            "fg_attempt": player_data.FGA,
+                            "fg_percent": player_data.FG_PCT,
+                            "fg3_made": player_data.FG3M,
+                            "fg3_attempt": player_data.FG3A,
+                            "fg3_percent": player_data.FG3_PCT,
+                            "ft_made": player_data.FTM,
+                            "ft_attempt": player_data.FTA,
+                            "ft_percent": player_data.FT_PCT,
+                            "season": player_data.SEASON_ID,
+                            "season_type": season_type,
+                            "curr_team": player_data.TEAM_ID,
+                            "player": player_data.PLAYER_ID,
+                            "games_played": player_data.GP,
+                            "games_started": player_data.GS
+                        }
                     }
-                }
-                result.append(data_fixture)
+                    result.append(data_fixture)
+                    index += 1
 
         # Write data to file
         with open('fixtures/main_player_season_stats.json', 'w+') as f:
@@ -403,38 +421,41 @@ class FixtureGenerator:
         """Creates fixture for <PlayerCareerStats> model.
         """
         result = []
-        for index, player_id, data in enumerate(self.player_career_stats.items()):
+        index = 0
+        for player_id, data in self.player_career_stats.items():
             for season_type in ['Regular', 'Post']:
-                data_fixture = {
-                    "model": "main.playercareerstats",
-                    "pk": index + 1,
-                    "fields": {
-                        "minutes": data[season_type].MIN,
-                        "points": data[season_type].PTS,
-                        "offense_reb": data[season_type].OREB,
-                        "defense_reb": data[season_type].DREB,
-                        "rebounds": data[season_type].REB,
-                        "assists": data[season_type].AST,
-                        "steals": data[season_type].STL,
-                        "blocks": data[season_type].BLK,
-                        "turnovers": data[season_type].TOV,
-                        "fouls": data[season_type].PF,
-                        "fg_made": data[season_type].FGM,
-                        "fg_attempt": data[season_type].FGA,
-                        "fg_percent": data[season_type].FG_PCT,
-                        "fg3_made": data[season_type].FG3M,
-                        "fg3_attempt": data[season_type].FG3A,
-                        "fg3_percent": data[season_type].FG3_PCT,
-                        "ft_made": data[season_type].FTM,
-                        "ft_attempt": data[season_type].FTA,
-                        "ft_percent": data[season_type].FT_PCT,
-                        "season_type": season_type,
-                        "player": data[season_type].PLAYER_ID,
-                        "games_played": data[season_type].GP,
-                        "games_started": data[season_type].GS
+                for player_data in data[season_type].itertuples():
+                    data_fixture = {
+                        "model": "main.playercareerstats",
+                        "pk": index + 1,
+                        "fields": {
+                            "minutes": player_data.MIN,
+                            "points": player_data.PTS,
+                            "offense_reb": player_data.OREB,
+                            "defense_reb": player_data.DREB,
+                            "rebounds": player_data.REB,
+                            "assists": player_data.AST,
+                            "steals": player_data.STL,
+                            "blocks": player_data.BLK,
+                            "turnovers": player_data.TOV,
+                            "fouls": player_data.PF,
+                            "fg_made": player_data.FGM,
+                            "fg_attempt": player_data.FGA,
+                            "fg_percent": player_data.FG_PCT,
+                            "fg3_made": player_data.FG3M,
+                            "fg3_attempt": player_data.FG3A,
+                            "fg3_percent": player_data.FG3_PCT,
+                            "ft_made": player_data.FTM,
+                            "ft_attempt": player_data.FTA,
+                            "ft_percent": player_data.FT_PCT,
+                            "season_type": season_type,
+                            "player": player_data.PLAYER_ID,
+                            "games_played": player_data.GP,
+                            "games_started": player_data.GS
+                        }
                     }
-                }
-                result.append(data_fixture)
+                    result.append(data_fixture)
+                    index += 1
 
         # Write data to file
         with open('fixtures/main_player_career_stats.json', 'w+') as f:
@@ -445,8 +466,8 @@ class FixtureGenerator:
         """
         result = []
         for data in self.team_game_log.itertuples():
-            line_score = self.boxscore_data[data.GAME_ID]['line_score']
-            index = 0 if line_score.TEAM_ID[0] == data.TEAM_ID else 1
+            line_score = self.boxscore_data[data.Game_ID]['line_score']
+            index = 0 if line_score.TEAM_ID[0] == data.Team_ID else 1
             data_fixture = {
                 "model": "main.teamgamelog",
                 "pk": data.Index + 1,
@@ -472,18 +493,18 @@ class FixtureGenerator:
                     "ft_attempt": data.FTA,
                     "ft_percent": data.FT_PCT,
                     "result": data.WL,
-                    "game": data.GAME_ID,
-                    "team": data.TEAM_ID,
+                    "game": data.Game_ID,
+                    "team": data.Team_ID,
                     "curr_wins": data.W,
                     "curr_losses": data.L,
-                    "pts_q1": line_score.PTS_QTR1[index],
-                    "pts_q2": line_score.PTS_QTR2[index],
-                    "pts_q3": line_score.PTS_QTR3[index],
-                    "pts_q4": line_score.PTS_QTR4[index],
-                    "pts_ot1": line_score.PTS_OT1[index],
-                    "pts_ot2": line_score.PTS_OT2[index],
-                    "pts_ot3": line_score.PTS_OT3[index],
-                    "pts_ot4": line_score.PTS_OT4[index]
+                    "pts_q1": int(line_score.PTS_QTR1.values[index]),
+                    "pts_q2": int(line_score.PTS_QTR2.values[index]),
+                    "pts_q3": int(line_score.PTS_QTR3.values[index]),
+                    "pts_q4": int(line_score.PTS_QTR4.values[index]),
+                    "pts_ot1": int(line_score.PTS_OT1.values[index]),
+                    "pts_ot2": int(line_score.PTS_OT2.values[index]),
+                    "pts_ot3": int(line_score.PTS_OT3.values[index]),
+                    "pts_ot4": int(line_score.PTS_OT4.values[index])
                 }
             }
             result.append(data_fixture)
@@ -568,12 +589,12 @@ class FixtureGenerator:
 if __name__ == '__main__':
     inst = FixtureGenerator('2018-19')
 
-    inst.create_standing_fixture()
-    inst.create_team_fixture()
-    inst.create_player_fixture()
-    inst.create_player_game_log_fixture()
-    inst.create_team_game_log_fixture()
-    inst.create_player_season_stats_fixture()
-    inst.create_player_career_stats_fixture()
-    inst.create_team_season_stats_fixture()
-    inst.create_game_fixture()
+    # inst.create_standing_fixture()
+    # inst.create_team_fixture()
+    # inst.create_player_fixture()
+    # inst.create_player_game_log_fixture()
+    # inst.create_team_game_log_fixture()
+    # inst.create_player_season_stats_fixture()
+    # inst.create_player_career_stats_fixture()
+    # inst.create_team_season_stats_fixture()
+    # inst.create_game_fixture()
