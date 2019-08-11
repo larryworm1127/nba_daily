@@ -1,6 +1,7 @@
-"""Data Retrieval Module
+#!/usr/bin/env python
+"""Data Retrieval Script
 
-This module calls API to retrieve data from 'stats.nba.com' and creates Django
+This script calls API to retrieve data from 'stats.nba.com' and creates Django
 model fixture using the data.
 
 @date: 07/07/2019
@@ -10,6 +11,7 @@ import logging
 import subprocess
 import sys
 import time
+from argparse import ArgumentParser
 from typing import Dict, Tuple
 
 import pandas as pd
@@ -238,7 +240,7 @@ class FixtureGenerator:
             result.append(data_fixture)
 
         # Write data to file
-        with open('fixtures/main_standing.json', 'w+') as f:
+        with open('main/fixtures/main_standing.json', 'w+') as f:
             json.dump(result, f)
 
     def create_team_fixture(self) -> None:
@@ -281,7 +283,7 @@ class FixtureGenerator:
         })
 
         # Write data to file
-        with open('fixtures/main_team.json', 'w+') as f:
+        with open('main/fixtures/main_team.json', 'w+') as f:
             json.dump(result, f)
 
     def create_player_fixture(self) -> None:
@@ -312,7 +314,7 @@ class FixtureGenerator:
             result.append(data_fixture)
 
         # Write data to file
-        with open('fixtures/main_player.json', 'w+') as f:
+        with open('main/fixtures/main_player.json', 'w+') as f:
             json.dump(result, f)
 
     def create_player_game_log_fixture(self) -> None:
@@ -358,7 +360,7 @@ class FixtureGenerator:
             result.append(data_fixture)
 
         # Write data to file
-        with open('fixtures/main_player_game_log.json', 'w+') as f:
+        with open('main/fixtures/main_player_game_log.json', 'w+') as f:
             json.dump(result, f)
 
     def get_player_order(self, player_id: int, game_id: str) -> int:
@@ -421,7 +423,7 @@ class FixtureGenerator:
                     index += 1
 
         # Write data to file
-        with open('fixtures/main_player_season_stats.json', 'w+') as f:
+        with open('main/fixtures/main_player_season_stats.json', 'w+') as f:
             json.dump(result, f)
 
     def create_player_career_stats_fixture(self) -> None:
@@ -465,7 +467,7 @@ class FixtureGenerator:
                     index += 1
 
         # Write data to file
-        with open('fixtures/main_player_career_stats.json', 'w+') as f:
+        with open('main/fixtures/main_player_career_stats.json', 'w+') as f:
             json.dump(result, f)
 
     def create_team_game_log_fixture(self) -> None:
@@ -517,7 +519,7 @@ class FixtureGenerator:
             result.append(data_fixture)
 
         # Write data to file
-        with open('fixtures/main_team_game_log.json', 'w+') as f:
+        with open('main/fixtures/main_team_game_log.json', 'w+') as f:
             json.dump(result, f)
 
     def create_team_season_stats_fixture(self) -> None:
@@ -558,7 +560,7 @@ class FixtureGenerator:
             result.append(data_fixture)
 
         # Write data to file
-        with open('fixtures/main_team_season_stats.json', 'w+') as f:
+        with open('main/fixtures/main_team_season_stats.json', 'w+') as f:
             json.dump(result, f)
 
     def create_game_fixture(self) -> None:
@@ -589,39 +591,60 @@ class FixtureGenerator:
             result.append(data_fixture)
 
         # Write data to file
-        with open('fixtures/main_game.json', 'w+') as f:
+        with open('main/fixtures/main_game.json', 'w+') as f:
             json.dump(result, f)
+
+    def run_all(self) -> None:
+        """Runs all methods to create fixtures.
+        """
+        self.create_standing_fixture()
+        self.create_team_fixture()
+        self.create_player_fixture()
+        self.create_player_game_log_fixture()
+        self.create_team_game_log_fixture()
+        self.create_player_season_stats_fixture()
+        self.create_player_career_stats_fixture()
+        self.create_team_season_stats_fixture()
+        self.create_game_fixture()
 
 
 def load_data() -> None:
-    access_parent = 'cd .. &&'
+    """Load data into the database using fixtures.
+    """
     loaddata = 'python manage.py loaddata'
 
     # Clear original data
-    subprocess.run(f'{access_parent} python manage.py migrate main zero', shell=True)
-    subprocess.run(f'{access_parent} python manage.py migrate', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_team.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_game.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_standing.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player_game_log.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_team_game_log.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player_season_stats.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player_career_stats.json', shell=True)
-    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_team_season_stats.json', shell=True)
+    subprocess.run(f'python manage.py migrate main zero', shell=True)
+    subprocess.run(f'python manage.py migrate', shell=True)
+
+    # Load fixtures
+    subprocess.run(f'{loaddata} main/fixtures/main_team.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_player.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_game.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_standing.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_player_game_log.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_team_game_log.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_player_season_stats.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_player_career_stats.json', shell=True)
+    subprocess.run(f'{loaddata} main/fixtures/main_team_season_stats.json', shell=True)
 
 
 if __name__ == '__main__':
-    inst = FixtureGenerator('2018-19')
+    arg_parser = ArgumentParser(description="NBA Daily web app data loader.")
 
-    # inst.create_standing_fixture()
-    # inst.create_team_fixture()
-    # inst.create_player_fixture()
-    # inst.create_player_game_log_fixture()
-    # inst.create_team_game_log_fixture()
-    # inst.create_player_season_stats_fixture()
-    # inst.create_player_career_stats_fixture()
-    # inst.create_team_season_stats_fixture()
-    # inst.create_game_fixture()
+    arg_parser.add_argument('-l', default=False, dest='load_only', action='store_true',
+                            help="Only run load data. (has fixtures already)")
+    arg_parser.add_argument('-g', default=False, dest='get_only', action='store_true',
+                            help="Only run API to get data but not loading them.")
+    args = arg_parser.parse_args()
 
-    load_data()
+    if args.load_only:
+        load_data()
+    elif args.get_only:
+        inst = FixtureGenerator('2018-19')
+        inst.run_all()
+    else:
+        inst = FixtureGenerator('2018-19')
+        inst.run_all()
+
+        load_data()
