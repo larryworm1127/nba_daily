@@ -7,6 +7,7 @@ model fixture using the data.
 @author: Larry Shi
 """
 import logging
+import subprocess
 import sys
 import time
 from typing import Dict, Tuple
@@ -202,6 +203,9 @@ class FixtureGenerator:
         data_inst = CollectData(season)
 
         # Data Attributes
+        self.player_list = data_inst.player_list
+        self.team_list = data_inst.team_list
+
         self.standing_data = data_inst.get_standing_data()
         self.team_summary = data_inst.get_team_summary()
         self.player_summary = data_inst.get_player_summary()
@@ -316,6 +320,9 @@ class FixtureGenerator:
         """
         result = []
         for data in self.player_game_log.itertuples():
+            if self.player_list[self.player_list.PERSON_ID == data.PLAYER_ID].ROSTERSTATUS.values[0] == 0:
+                continue
+
             data_fixture = {
                 "model": "main.playergamelog",
                 "pk": data.Index + 1,
@@ -586,6 +593,24 @@ class FixtureGenerator:
             json.dump(result, f)
 
 
+def load_data() -> None:
+    access_parent = 'cd .. &&'
+    loaddata = 'python manage.py loaddata'
+
+    # Clear original data
+    subprocess.run(f'{access_parent} python manage.py migrate main zero', shell=True)
+    subprocess.run(f'{access_parent} python manage.py migrate', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_team.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_game.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_standing.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player_game_log.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_team_game_log.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player_season_stats.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_player_career_stats.json', shell=True)
+    subprocess.run(f'{access_parent} {loaddata} main/fixtures/main_team_season_stats.json', shell=True)
+
+
 if __name__ == '__main__':
     inst = FixtureGenerator('2018-19')
 
@@ -598,3 +623,5 @@ if __name__ == '__main__':
     # inst.create_player_career_stats_fixture()
     # inst.create_team_season_stats_fixture()
     # inst.create_game_fixture()
+
+    load_data()
