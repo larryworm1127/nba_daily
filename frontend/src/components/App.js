@@ -4,8 +4,8 @@ import DataProvider from "./DataProvider";
 import Table from "./Table";
 
 const App = () => (
-    <DataProvider endpoint="api/teams/"
-                  render={data => <Table data={data}/>}/>
+  <DataProvider endpoint="api/teams/"
+                render={data => <Table data={data}/>}/>
 );
 const wrapper = document.getElementById("app");
 wrapper ? ReactDOM.render(<App/>, wrapper) : null;
