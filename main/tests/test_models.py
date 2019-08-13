@@ -32,8 +32,6 @@ class PlayerModelTest(TestCase):
             team_div='Atlantic',
             team_city='Atlanta',
             team_name='Hawks',
-            wins=10,
-            losses=72,
             nba_debut=1968,
             max_year=2019
         )
@@ -91,8 +89,6 @@ class TeamModelTest(TestCase):
             team_div='Atlantic',
             team_city='Atlanta',
             team_name='Hawks',
-            wins=10,
-            losses=72,
             nba_debut=1968,
             max_year=2019
         )

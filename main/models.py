@@ -31,8 +31,6 @@ class Team(models.Model):
     team_div = models.CharField(max_length=10)
     team_city = models.CharField(max_length=15)
     team_name = models.CharField(max_length=15)
-    wins = models.IntegerField()
-    losses = models.IntegerField()
     nba_debut = models.CharField(max_length=4)
     max_year = models.CharField(max_length=4)
 

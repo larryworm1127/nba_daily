@@ -257,8 +257,6 @@ class FixtureGenerator:
                     "team_div": data.TEAM_DIVISION,
                     "team_city": data.TEAM_CITY,
                     "team_name": data.TEAM_NAME,
-                    "wins": int(data.W),
-                    "losses": int(data.L),
                     "nba_debut": data.MIN_YEAR,
                     "max_year": data.MAX_YEAR
                 }
@@ -275,8 +273,6 @@ class FixtureGenerator:
                 "team_div": "None",
                 "team_city": "None",
                 "team_name": "None",
-                "wins": 82,
-                "losses": 0,
                 "nba_debut": "1950",
                 "max_year": "2019"
             }
