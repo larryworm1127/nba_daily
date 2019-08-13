@@ -11,9 +11,16 @@ from typing import Dict, List
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.urls import reverse
+from jinja2 import Template
 from simplejson.decoder import JSONDecoder
 
-from . import PLAYER_PHOTO_LINK
+# Constants
+PLAYER_PHOTO_LINK = Template(
+    "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/{{ player_id }}.png"
+)
+
+SEASON_TYPE = [('REG', 'Regular'), ('POST', 'Post')]
+GAME_RESULT = [('W', 'Win'), ('L', 'Loss')]
 
 
 # ==============================================================================
@@ -186,6 +193,7 @@ class SeasonStats(models.Model):
     ft_made = models.FloatField()
     ft_attempt = models.FloatField()
     ft_percent = models.FloatField(validators=[MaxValueValidator(1)])
+    season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
 
     class Meta:
         abstract = True
@@ -214,20 +222,14 @@ class TeamSeasonStats(SeasonStats):
 class PlayerCareerStats(SeasonStats):
     """Individual player career total stats model.
     """
-    SEASON_TYPE = [
-        ('REG', 'Regular'),
-        ('POST', 'Post')
-    ]
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='career_stats')
+    games_played = models.IntegerField()
+    games_started = models.IntegerField()
 
     class Meta:
         """PlayerCareerStats Property Meta Class.
         """
         db_table = 'main_player_career_stats'
-
-    season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='career_stats')
-    games_played = models.IntegerField()
-    games_started = models.IntegerField()
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
@@ -238,23 +240,17 @@ class PlayerCareerStats(SeasonStats):
 class PlayerSeasonStats(SeasonStats):
     """Individual player season total stats model.
     """
-    SEASON_TYPE = [
-        ('REG', 'Regular'),
-        ('POST', 'POST')
-    ]
+    season = models.CharField(max_length=10)
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_stats')
+    games_played = models.IntegerField(validators=[MaxValueValidator(82)])
+    games_started = models.IntegerField(validators=[MaxValueValidator(82)])
 
     class Meta:
         """PlayerSeasonStats Property Meta Class.
         """
         db_table = 'main_player_season_stats'
         ordering = ['-season']
-
-    season = models.CharField(max_length=10)
-    season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
-    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_stats')
-    games_played = models.IntegerField(validators=[MaxValueValidator(82)])
-    games_started = models.IntegerField(validators=[MaxValueValidator(82)])
 
     def __str__(self) -> str:
         """Return human-readable representation of the object.
@@ -292,11 +288,9 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         dnp_players = {
-            Player.objects.get(pk=player_id): reason
-            for player_id, reason in inst.decode(self.dnp_players).items()
-            if Player.objects.filter(pk=player_id).count() > 0
+            Player.objects.get(pk=pk): reason for pk, reason in inst.decode(self.dnp_players).items()
+            if Player.objects.filter(pk=pk).count() > 0
         }
-
         return dnp_players
 
     def get_inactive_players(self) -> List[Player]:
@@ -304,11 +298,9 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         inactive_player = [
-            Player.objects.get(pk=player_id)
-            for player_id in inst.decode(self.inactive_players)
-            if Player.objects.filter(pk=player_id).count() > 0
+            Player.objects.get(pk=pk) for pk in inst.decode(self.inactive_players)
+            if Player.objects.filter(pk=pk).count() > 0
         ]
-
         return inactive_player
 
     def home_team_game_log(self) -> TeamGameLog:
@@ -373,6 +365,7 @@ class GameLog(models.Model):
     """Game log template model.
     """
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    season_type = models.CharField(max_length=7, choices=SEASON_TYPE)
     matchup = models.CharField(max_length=11)
     minutes = models.IntegerField()
     points = models.IntegerField()
@@ -393,7 +386,7 @@ class GameLog(models.Model):
     ft_made = models.IntegerField()
     ft_attempt = models.IntegerField()
     ft_percent = models.FloatField(validators=[MaxValueValidator(1)])
-    result = models.CharField(max_length=1)
+    result = models.CharField(max_length=1, choices=GAME_RESULT)
 
     class Meta:
         abstract = True

@@ -26,7 +26,8 @@
       "team": 1610612737,
       "wins": 29,
       "losses": 53,
-      "win_percent": 0.354
+      "win_percent": 0.354,
+      "season_type": "Regular"
     }
   },
   {
@@ -56,7 +57,8 @@
       "team": 1610612738,
       "wins": 49,
       "losses": 33,
-      "win_percent": 0.598
+      "win_percent": 0.598,
+      "season_type": "Regular"
     }
   },
   {
@@ -86,7 +88,8 @@
       "team": 1610612751,
       "wins": 42,
       "losses": 40,
-      "win_percent": 0.512
+      "win_percent": 0.512,
+      "season_type": "Regular"
     }
   },
   {
@@ -116,7 +119,8 @@
       "team": 1610612766,
       "wins": 39,
       "losses": 43,
-      "win_percent": 0.476
+      "win_percent": 0.476,
+      "season_type": "Regular"
     }
   },
   {
@@ -146,7 +150,8 @@
       "team": 1610612741,
       "wins": 22,
       "losses": 60,
-      "win_percent": 0.268
+      "win_percent": 0.268,
+      "season_type": "Regular"
     }
   },
   {
@@ -176,7 +181,8 @@
       "team": 1610612739,
       "wins": 19,
       "losses": 63,
-      "win_percent": 0.232
+      "win_percent": 0.232,
+      "season_type": "Regular"
     }
   },
   {
@@ -206,7 +212,8 @@
       "team": 1610612742,
       "wins": 33,
       "losses": 49,
-      "win_percent": 0.402
+      "win_percent": 0.402,
+      "season_type": "Regular"
     }
   },
   {
@@ -236,7 +243,8 @@
       "team": 1610612743,
       "wins": 54,
       "losses": 28,
-      "win_percent": 0.659
+      "win_percent": 0.659,
+      "season_type": "Regular"
     }
   },
   {
@@ -266,7 +274,8 @@
       "team": 1610612765,
       "wins": 41,
       "losses": 41,
-      "win_percent": 0.5
+      "win_percent": 0.5,
+      "season_type": "Regular"
     }
   },
   {
@@ -296,7 +305,8 @@
       "team": 1610612744,
       "wins": 57,
       "losses": 25,
-      "win_percent": 0.695
+      "win_percent": 0.695,
+      "season_type": "Regular"
     }
   },
   {
@@ -326,7 +336,8 @@
       "team": 1610612745,
       "wins": 53,
       "losses": 29,
-      "win_percent": 0.646
+      "win_percent": 0.646,
+      "season_type": "Regular"
     }
   },
   {
@@ -356,7 +367,8 @@
       "team": 1610612754,
       "wins": 48,
       "losses": 34,
-      "win_percent": 0.585
+      "win_percent": 0.585,
+      "season_type": "Regular"
     }
   },
   {
@@ -386,7 +398,8 @@
       "team": 1610612746,
       "wins": 48,
       "losses": 34,
-      "win_percent": 0.585
+      "win_percent": 0.585,
+      "season_type": "Regular"
     }
   },
   {
@@ -416,7 +429,8 @@
       "team": 1610612747,
       "wins": 37,
       "losses": 45,
-      "win_percent": 0.451
+      "win_percent": 0.451,
+      "season_type": "Regular"
     }
   },
   {
@@ -446,7 +460,8 @@
       "team": 1610612763,
       "wins": 33,
       "losses": 49,
-      "win_percent": 0.402
+      "win_percent": 0.402,
+      "season_type": "Regular"
     }
   },
   {
@@ -476,7 +491,8 @@
       "team": 1610612748,
       "wins": 39,
       "losses": 43,
-      "win_percent": 0.476
+      "win_percent": 0.476,
+      "season_type": "Regular"
     }
   },
   {
@@ -506,7 +522,8 @@
       "team": 1610612749,
       "wins": 60,
       "losses": 22,
-      "win_percent": 0.732
+      "win_percent": 0.732,
+      "season_type": "Regular"
     }
   },
   {
@@ -536,7 +553,8 @@
       "team": 1610612750,
       "wins": 36,
       "losses": 46,
-      "win_percent": 0.439
+      "win_percent": 0.439,
+      "season_type": "Regular"
     }
   },
   {
@@ -566,7 +584,8 @@
       "team": 1610612740,
       "wins": 33,
       "losses": 49,
-      "win_percent": 0.402
+      "win_percent": 0.402,
+      "season_type": "Regular"
     }
   },
   {
@@ -596,7 +615,8 @@
       "team": 1610612752,
       "wins": 17,
       "losses": 65,
-      "win_percent": 0.207
+      "win_percent": 0.207,
+      "season_type": "Regular"
     }
   },
   {
@@ -626,7 +646,8 @@
       "team": 1610612760,
       "wins": 49,
       "losses": 33,
-      "win_percent": 0.598
+      "win_percent": 0.598,
+      "season_type": "Regular"
     }
   },
   {
@@ -656,7 +677,8 @@
       "team": 1610612753,
       "wins": 42,
       "losses": 40,
-      "win_percent": 0.512
+      "win_percent": 0.512,
+      "season_type": "Regular"
     }
   },
   {
@@ -686,7 +708,8 @@
       "team": 1610612755,
       "wins": 51,
       "losses": 31,
-      "win_percent": 0.622
+      "win_percent": 0.622,
+      "season_type": "Regular"
     }
   },
   {
@@ -716,7 +739,8 @@
       "team": 1610612756,
       "wins": 19,
       "losses": 63,
-      "win_percent": 0.232
+      "win_percent": 0.232,
+      "season_type": "Regular"
     }
   },
   {
@@ -746,7 +770,8 @@
       "team": 1610612757,
       "wins": 53,
       "losses": 29,
-      "win_percent": 0.646
+      "win_percent": 0.646,
+      "season_type": "Regular"
     }
   },
   {
@@ -776,7 +801,8 @@
       "team": 1610612758,
       "wins": 39,
       "losses": 43,
-      "win_percent": 0.476
+      "win_percent": 0.476,
+      "season_type": "Regular"
     }
   },
   {
@@ -806,7 +832,8 @@
       "team": 1610612759,
       "wins": 48,
       "losses": 34,
-      "win_percent": 0.585
+      "win_percent": 0.585,
+      "season_type": "Regular"
     }
   },
   {
@@ -836,7 +863,8 @@
       "team": 1610612761,
       "wins": 58,
       "losses": 24,
-      "win_percent": 0.707
+      "win_percent": 0.707,
+      "season_type": "Regular"
     }
   },
   {
@@ -866,7 +894,8 @@
       "team": 1610612762,
       "wins": 50,
       "losses": 32,
-      "win_percent": 0.61
+      "win_percent": 0.61,
+      "season_type": "Regular"
     }
   },
   {
@@ -896,7 +925,8 @@
       "team": 1610612764,
       "wins": 32,
       "losses": 50,
-      "win_percent": 0.39
+      "win_percent": 0.39,
+      "season_type": "Regular"
     }
   }
 ]
