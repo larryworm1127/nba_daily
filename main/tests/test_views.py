@@ -27,8 +27,6 @@ class TeamListViewTest(TestCase):
                 team_div='N/A',
                 team_city='N/A',
                 team_name='N/A',
-                wins=82,
-                losses=0,
                 nba_debut='1950',
                 max_year='2018-19'
             )
@@ -80,8 +78,6 @@ class PlayerListViewTest(TestCase):
                 team_div='N/A',
                 team_city='N/A',
                 team_name='N/A',
-                wins=82,
-                losses=0,
                 nba_debut='1950',
                 max_year='2018-19'
             )

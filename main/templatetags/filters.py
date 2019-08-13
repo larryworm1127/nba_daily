@@ -50,7 +50,7 @@ def multiply(value: Any, arg: Any) -> Optional[Union[int, float]]:
             return 0
 
         return round(value * arg, 1)
-    except ValueError:
+    except (ValueError, TypeError):
         return None
 
 
