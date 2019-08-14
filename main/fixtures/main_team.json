@@ -8,8 +8,6 @@
       "team_div": "Southeast",
       "team_city": "Atlanta",
       "team_name": "Hawks",
-      "wins": 29,
-      "losses": 53,
       "nba_debut": "1949",
       "max_year": "2019"
     }
@@ -23,8 +21,6 @@
       "team_div": "Atlantic",
       "team_city": "Boston",
       "team_name": "Celtics",
-      "wins": 49,
-      "losses": 33,
       "nba_debut": "1946",
       "max_year": "2019"
     }
@@ -38,8 +34,6 @@
       "team_div": "Central",
       "team_city": "Cleveland",
       "team_name": "Cavaliers",
-      "wins": 19,
-      "losses": 63,
       "nba_debut": "1970",
       "max_year": "2019"
     }
@@ -53,8 +47,6 @@
       "team_div": "Southwest",
       "team_city": "New Orleans",
       "team_name": "Pelicans",
-      "wins": 33,
-      "losses": 49,
       "nba_debut": "2002",
       "max_year": "2019"
     }
@@ -68,8 +60,6 @@
       "team_div": "Central",
       "team_city": "Chicago",
       "team_name": "Bulls",
-      "wins": 22,
-      "losses": 60,
       "nba_debut": "1966",
       "max_year": "2019"
     }
@@ -83,8 +73,6 @@
       "team_div": "Southwest",
       "team_city": "Dallas",
       "team_name": "Mavericks",
-      "wins": 33,
-      "losses": 49,
       "nba_debut": "1980",
       "max_year": "2019"
     }
@@ -98,8 +86,6 @@
       "team_div": "Northwest",
       "team_city": "Denver",
       "team_name": "Nuggets",
-      "wins": 54,
-      "losses": 28,
       "nba_debut": "1976",
       "max_year": "2019"
     }
@@ -113,8 +99,6 @@
       "team_div": "Pacific",
       "team_city": "Golden State",
       "team_name": "Warriors",
-      "wins": 57,
-      "losses": 25,
       "nba_debut": "1946",
       "max_year": "2019"
     }
@@ -128,8 +112,6 @@
       "team_div": "Southwest",
       "team_city": "Houston",
       "team_name": "Rockets",
-      "wins": 53,
-      "losses": 29,
       "nba_debut": "1967",
       "max_year": "2019"
     }
@@ -143,8 +125,6 @@
       "team_div": "Pacific",
       "team_city": "LA",
       "team_name": "Clippers",
-      "wins": 48,
-      "losses": 34,
       "nba_debut": "1970",
       "max_year": "2019"
     }
@@ -158,8 +138,6 @@
       "team_div": "Pacific",
       "team_city": "Los Angeles",
       "team_name": "Lakers",
-      "wins": 37,
-      "losses": 45,
       "nba_debut": "1948",
       "max_year": "2019"
     }
@@ -173,8 +151,6 @@
       "team_div": "Southeast",
       "team_city": "Miami",
       "team_name": "Heat",
-      "wins": 39,
-      "losses": 43,
       "nba_debut": "1988",
       "max_year": "2019"
     }
@@ -188,8 +164,6 @@
       "team_div": "Central",
       "team_city": "Milwaukee",
       "team_name": "Bucks",
-      "wins": 60,
-      "losses": 22,
       "nba_debut": "1968",
       "max_year": "2019"
     }
@@ -203,8 +177,6 @@
       "team_div": "Northwest",
       "team_city": "Minnesota",
       "team_name": "Timberwolves",
-      "wins": 36,
-      "losses": 46,
       "nba_debut": "1989",
       "max_year": "2019"
     }
@@ -218,8 +190,6 @@
       "team_div": "Atlantic",
       "team_city": "Brooklyn",
       "team_name": "Nets",
-      "wins": 42,
-      "losses": 40,
       "nba_debut": "1976",
       "max_year": "2019"
     }
@@ -233,8 +203,6 @@
       "team_div": "Atlantic",
       "team_city": "New York",
       "team_name": "Knicks",
-      "wins": 17,
-      "losses": 65,
       "nba_debut": "1946",
       "max_year": "2019"
     }
@@ -248,8 +216,6 @@
       "team_div": "Southeast",
       "team_city": "Orlando",
       "team_name": "Magic",
-      "wins": 42,
-      "losses": 40,
       "nba_debut": "1989",
       "max_year": "2019"
     }
@@ -263,8 +229,6 @@
       "team_div": "Central",
       "team_city": "Indiana",
       "team_name": "Pacers",
-      "wins": 48,
-      "losses": 34,
       "nba_debut": "1976",
       "max_year": "2019"
     }
@@ -278,8 +242,6 @@
       "team_div": "Atlantic",
       "team_city": "Philadelphia",
       "team_name": "76ers",
-      "wins": 51,
-      "losses": 31,
       "nba_debut": "1949",
       "max_year": "2019"
     }
@@ -293,8 +255,6 @@
       "team_div": "Pacific",
       "team_city": "Phoenix",
       "team_name": "Suns",
-      "wins": 19,
-      "losses": 63,
       "nba_debut": "1968",
       "max_year": "2019"
     }
@@ -308,8 +268,6 @@
       "team_div": "Northwest",
       "team_city": "Portland",
       "team_name": "Trail Blazers",
-      "wins": 53,
-      "losses": 29,
       "nba_debut": "1970",
       "max_year": "2019"
     }
@@ -323,8 +281,6 @@
       "team_div": "Pacific",
       "team_city": "Sacramento",
       "team_name": "Kings",
-      "wins": 39,
-      "losses": 43,
       "nba_debut": "1948",
       "max_year": "2019"
     }
@@ -338,8 +294,6 @@
       "team_div": "Southwest",
       "team_city": "San Antonio",
       "team_name": "Spurs",
-      "wins": 48,
-      "losses": 34,
       "nba_debut": "1976",
       "max_year": "2019"
     }
@@ -353,8 +307,6 @@
       "team_div": "Northwest",
       "team_city": "Oklahoma City",
       "team_name": "Thunder",
-      "wins": 49,
-      "losses": 33,
       "nba_debut": "1967",
       "max_year": "2019"
     }
@@ -368,8 +320,6 @@
       "team_div": "Atlantic",
       "team_city": "Toronto",
       "team_name": "Raptors",
-      "wins": 58,
-      "losses": 24,
       "nba_debut": "1995",
       "max_year": "2019"
     }
@@ -383,8 +333,6 @@
       "team_div": "Northwest",
       "team_city": "Utah",
       "team_name": "Jazz",
-      "wins": 50,
-      "losses": 32,
       "nba_debut": "1974",
       "max_year": "2019"
     }
@@ -398,8 +346,6 @@
       "team_div": "Southwest",
       "team_city": "Memphis",
       "team_name": "Grizzlies",
-      "wins": 33,
-      "losses": 49,
       "nba_debut": "1995",
       "max_year": "2019"
     }
@@ -413,8 +359,6 @@
       "team_div": "Southeast",
       "team_city": "Washington",
       "team_name": "Wizards",
-      "wins": 32,
-      "losses": 50,
       "nba_debut": "1961",
       "max_year": "2019"
     }
@@ -428,8 +372,6 @@
       "team_div": "Central",
       "team_city": "Detroit",
       "team_name": "Pistons",
-      "wins": 41,
-      "losses": 41,
       "nba_debut": "1948",
       "max_year": "2019"
     }
@@ -443,8 +385,6 @@
       "team_div": "Southeast",
       "team_city": "Charlotte",
       "team_name": "Hornets",
-      "wins": 39,
-      "losses": 43,
       "nba_debut": "1988",
       "max_year": "2019"
     }
@@ -458,8 +398,6 @@
       "team_div": "None",
       "team_city": "None",
       "team_name": "None",
-      "wins": 82,
-      "losses": 0,
       "nba_debut": "1950",
       "max_year": "2019"
     }

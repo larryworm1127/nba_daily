@@ -11,7 +11,9 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
 from django.views.decorators.csrf import csrf_protect
+from rest_framework import generics
 
+from main.serializer import TeamSerializer
 from .forms import DateForm
 from .models import (Player, Team, Game, PlayerSeasonStats, PlayerCareerStats,
                      Standing, TeamGameLog, PlayerGameLog)
@@ -162,10 +164,15 @@ class StandingListView(generic.ListView):
     """Season standing page.
     """
     model = Standing
-    # queryset = Standing.objects.order_by('-win_percent')
     extra_context = {
         'headers': [
             ('bg-danger', 'East Conference', 'East'),
             ('bg-primary', 'West Conference', 'West')
         ]
     }
+
+
+# REST API views
+class TeamTestView(generics.ListCreateAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer

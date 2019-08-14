@@ -117,3 +117,6 @@ staticfiles/
 #main/templatetags/0007_populate_season_stats_data.py
 #main/templatetags/0008_populate_standing_data.py
 #main/data
+
+# JS stuff
+node_modules
