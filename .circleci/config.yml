@@ -26,6 +26,7 @@ jobs:
           command: |
             echo $(python3 --version)
             pipenv sync
+            pipenv install --dev
 
       - save_cache:
           paths:
