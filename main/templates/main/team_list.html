@@ -39,7 +39,7 @@
               <a class="nounderline dark-grey" href="{{ team.get_absolute_url }}">{{ team.team_abb }}</a>
             </th>
             {% set team_stats = team.season_stats.first %}
-            <td class="">{{ team.standing.wins }} - {{ team.standing.losses }}</td>
+            <td class="">{{ team.standing.get_wins_losses }}</td>
             <td>{{ team.standing.win_percent }}</td>
             <td>{{ team_stats.points }}</td>
             <td>{{ team_stats.rebounds }}</td>
