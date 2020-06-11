@@ -19,16 +19,16 @@
   },
   "homepage": "https://github.com/larryworm1127/nba_daily#readme",
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-react": "^7.10.1",
+    "babel-loader": "^8.1.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "prop-types": "^15.7.2",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "weak-key": "^1.0.1",
-    "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "weak-key": "^1.0.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }
