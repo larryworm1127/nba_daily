@@ -1,4 +1,4 @@
-# nba_daily
+# NBA Daily
 
 [![CircleCI](https://circleci.com/gh/larryworm1127/nba_daily.svg?style=svg)](https://circleci.com/gh/larryworm1127/nba_daily)
 
@@ -18,6 +18,12 @@ and user Django-RESTframework to convert to Django server as a data API server.
 NBA data are currently scrapped periodically and manually by running Python
 scripts. The scrapped data are stored in local database but future plan may be
 to scrap live data and use cache to avoid all the database management.
+
+**Requirements:**
+
+- Python 3
+- Pipenv
+- Npm
 
 ## Features
 
@@ -44,3 +50,49 @@ averages, as well as various misc player info such as age, height, etc.
 - **Team per game stats:** similar to player player per game stats but for teams.
 
 - **Team detail stats:** similar to player detail stats but for teams.
+
+## Software Setup
+
+### Basic logistics
+
+To run the web app locally, start by clone the project:
+```bash
+$ git clone https://github.com/larryworm1127/nba_daily.git
+```
+Navigate into the project folder, and run the following:
+```bash
+$ pipenv sync
+```
+This will create a virtual environment for the web app and install all required
+packages specified in `Pipenv.lock`.
+
+Next run:
+```bash
+$ npm install
+```
+which will install required npm packages for the website.
+
+### Populate database
+
+Due to the new changes for NBA stats scraping, the current scapper no longer
+functions correctly. Hence a copy of 2018-19 season data is stored in the repo
+(JSON files) under `main/data` folder. A set of Django model fixtures are 
+already created under `main/fixtures` to assist with populating the database.
+Simply run
+```bash
+$ python get_data.py
+```
+or
+```bash
+$ ./get_data.py
+```
+and follow the command line tooltips to populate the database.
+
+### Run the Django server
+
+Lastly, simply run
+```bash
+$ python manage.py runserver
+```
+which will run the Django server and you can access the website home page
+through localhost URL: http://127.0.0.1:8000/
