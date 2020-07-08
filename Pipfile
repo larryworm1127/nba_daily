@@ -8,7 +8,6 @@ hypothesis = "*"
 
 [packages]
 django = "*"
-djangorestframework = "*"
 nba-py = {editable = true,git = "https://github.com/larryworm1127/nba_py.git"}
 pandas = "*"
 jinja2 = "*"

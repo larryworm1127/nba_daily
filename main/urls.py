@@ -34,8 +34,3 @@ urlpatterns += [
 urlpatterns += [
     path('games/<str:pk>', views.GameDetailView.as_view(), name='boxscore'),
 ]
-
-# Rest API URL
-urlpatterns += [
-    path('api/teams/', views.TeamTestView.as_view(), name='test_team'),
-]

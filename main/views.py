@@ -11,12 +11,18 @@ from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
 from django.views.decorators.csrf import csrf_protect
-from rest_framework import generics
 
-from main.serializer import TeamSerializer
 from .forms import DateForm
-from .models import (Player, Team, Game, PlayerSeasonStats, PlayerCareerStats,
-                     Standing, TeamGameLog, PlayerGameLog)
+from .models import (
+    Player,
+    Team,
+    Game,
+    PlayerSeasonStats,
+    PlayerCareerStats,
+    Standing,
+    TeamGameLog,
+    PlayerGameLog
+)
 
 
 # ==============================================================================
@@ -66,10 +72,13 @@ def players(request, pk: int):
     """Individual player stats page.
     """
     player = get_object_or_404(Player, pk=pk)
-    reg_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Regular')
-    post_season = PlayerSeasonStats.objects.filter(player=pk, season_type='Post')
+    reg_season = PlayerSeasonStats.objects.filter(player=pk,
+                                                  season_type='Regular')
+    post_season = PlayerSeasonStats.objects.filter(player=pk,
+                                                   season_type='Post')
     reg_total = PlayerCareerStats.objects.get(player=pk, season_type='Regular')
-    post_total = PlayerCareerStats.objects.filter(player=pk, season_type='Post').first()
+    post_total = PlayerCareerStats.objects.filter(player=pk,
+                                                  season_type='Post').first()
 
     context = {
         'title': player.get_full_name(),
@@ -170,9 +179,3 @@ class StandingListView(generic.ListView):
             ('bg-primary', 'West Conference', 'West')
         ]
     }
-
-
-# REST API views
-class TeamTestView(generics.ListCreateAPIView):
-    queryset = Team.objects.all()
-    serializer_class = TeamSerializer

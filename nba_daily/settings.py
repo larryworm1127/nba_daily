@@ -27,7 +27,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', "test_key")
 DEBUG = os.environ.get('DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = [
-    'nba-daily-2019.herokuapp.com',
     '127.0.0.1',
     'localhost'
 ]
@@ -43,8 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
-    'rest_framework',
-    'frontend.apps.FrontendConfig',
 ]
 
 MIDDLEWARE = [

@@ -65,7 +65,8 @@ class Team(models.Model):
 class Standing(models.Model):
     """Individual team standing model.
     """
-    team = models.OneToOneField(Team, on_delete=models.CASCADE, related_name='standing')
+    team = models.OneToOneField(Team, on_delete=models.CASCADE,
+                                related_name='standing')
     wins = models.IntegerField()
     losses = models.IntegerField()
     home_record = models.CharField(max_length=5)
@@ -86,7 +87,8 @@ class Standing(models.Model):
     def seed(self) -> int:
         """Return the seed of current team.
         """
-        conf_teams = Standing.objects.filter(team__team_conf=self.team.team_conf)
+        conf_teams = Standing.objects.filter(
+            team__team_conf=self.team.team_conf)
         return list(conf_teams).index(self) + 1
 
     def get_wins_losses(self) -> str:
@@ -138,7 +140,8 @@ class Player(models.Model):
     def get_age(self) -> int:
         """Return the calculated age of the player.
         """
-        return datetime.today().year - datetime.strptime(self.birth_date, "%Y-%m-%d").year
+        return datetime.today().year - datetime.strptime(self.birth_date,
+                                                         "%Y-%m-%d").year
 
     def get_photo_url(self) -> str:
         """Return the URL to player photo.
@@ -203,7 +206,8 @@ class TeamSeasonStats(SeasonStats):
     """Individual team season stats model.
     """
     season = models.CharField(max_length=10)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='season_stats')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE,
+                             related_name='season_stats')
     wins = models.IntegerField()
     losses = models.IntegerField()
     win_percent = models.FloatField()
@@ -222,7 +226,8 @@ class TeamSeasonStats(SeasonStats):
 class PlayerCareerStats(SeasonStats):
     """Individual player career total stats model.
     """
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='career_stats')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE,
+                               related_name='career_stats')
     games_played = models.IntegerField()
     games_started = models.IntegerField()
 
@@ -241,8 +246,10 @@ class PlayerSeasonStats(SeasonStats):
     """Individual player season total stats model.
     """
     season = models.CharField(max_length=10)
-    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_stats')
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE,
+                                  related_name='+')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE,
+                               related_name='season_stats')
     games_played = models.IntegerField(validators=[MaxValueValidator(82)])
     games_started = models.IntegerField(validators=[MaxValueValidator(82)])
 
@@ -274,8 +281,10 @@ class Game(models.Model):
     game_date = models.CharField(max_length=30)
     dnp_players = models.TextField(blank=True)
     inactive_players = models.TextField(blank=True)
-    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home')
-    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away')
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE,
+                                  related_name='home')
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE,
+                                  related_name='away')
     broadcaster = models.CharField(max_length=10, blank=True)
 
     def __str__(self) -> str:
@@ -288,7 +297,8 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         dnp_players = {
-            Player.objects.get(pk=pk): reason for pk, reason in inst.decode(self.dnp_players).items()
+            Player.objects.get(pk=pk): reason for pk, reason in
+            inst.decode(self.dnp_players).items()
             if Player.objects.filter(pk=pk).count() > 0
         }
         return dnp_players
@@ -298,7 +308,8 @@ class Game(models.Model):
         """
         inst = JSONDecoder()
         inactive_player = [
-            Player.objects.get(pk=pk) for pk in inst.decode(self.inactive_players)
+            Player.objects.get(pk=pk) for pk in
+            inst.decode(self.inactive_players)
             if Player.objects.filter(pk=pk).count() > 0
         ]
         return inactive_player
@@ -395,8 +406,10 @@ class GameLog(models.Model):
 class TeamGameLog(GameLog):
     """Individual team game log model.
     """
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='team_game_log')
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='team_game_log')
+    game = models.ForeignKey(Game, on_delete=models.CASCADE,
+                             related_name='team_game_log')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE,
+                             related_name='team_game_log')
     curr_wins = models.IntegerField()
     curr_losses = models.IntegerField()
     pts_q1 = models.IntegerField()
@@ -436,8 +449,10 @@ class TeamGameLog(GameLog):
 class PlayerGameLog(GameLog):
     """Individual player game log model.
     """
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='game_log')
-    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='+')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE,
+                               related_name='game_log')
+    curr_team = models.ForeignKey(Team, on_delete=models.CASCADE,
+                                  related_name='+')
     order = models.IntegerField()
     plus_minus = models.IntegerField()
 
