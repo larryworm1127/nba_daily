@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6174340613c1a68e604bc46387e2aa1e767790f1eb4c5016983981ecd41f3941"
+            "sha256": "c7fe82b6c539be8367871bbd7cbe5d77298e6259abf84c303c2f61c04fcd494f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -59,6 +59,14 @@
             ],
             "index": "pypi",
             "version": "==0.3.1"
+        },
+        "djangorestframework": {
+            "hashes": [
+                "sha256:05809fc66e1c997fd9a32ea5730d9f4ba28b109b9da71fccfa5ff241201fd0a4",
+                "sha256:e782087823c47a26826ee5b6fa0c542968219263fb3976ec3c31edab23a4001f"
+            ],
+            "index": "pypi",
+            "version": "==3.11.0"
         },
         "gunicorn": {
             "hashes": [
@@ -120,6 +128,14 @@
                 "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"
             ],
             "version": "==1.1.1"
+        },
+        "nba-api": {
+            "hashes": [
+                "sha256:7a6cdf9b3426fc3a75cf74ad0530953c37424ff2edd1b906801c456713ac039e",
+                "sha256:bc614995b80211d123ae3e9e383e721956939846198e5cbb04392c4765183fc5"
+            ],
+            "index": "pypi",
+            "version": "==1.1.8"
         },
         "nba-py": {
             "editable": true,

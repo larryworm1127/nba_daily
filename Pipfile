@@ -16,6 +16,8 @@ gunicorn = "*"
 requests-cache = "*"
 simplejson = "*"
 psycopg2-binary = "*"
+nba-api = "*"
+djangorestframework = "*"
 
 [requires]
 python_version = "3.8"
