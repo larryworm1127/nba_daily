@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'fontawesomefree',
     'rest_framework',
     'main.apps.MainConfig',
-    'api.apps.ApiConfig'
+    'api.apps.ApiConfig',
+    'frontend.apps.FrontendConfig',
 ]
 
 MIDDLEWARE = [
