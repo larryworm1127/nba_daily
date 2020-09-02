@@ -130,20 +130,6 @@ class CollectData:
             }
             time.sleep(0.5)
 
-        # boxscore_data = {}
-        # for game_id in [f'002180{"%04d" % index}' for index in range(1, 1231)]:
-        #     self.logger.info(f'Retrieving boxscore data for {game_id}')
-        #
-        #     with open(f'data/{self.season}/boxscore/{game_id}.json') as f:
-        #         data = json.load(f)
-        #
-        #     boxscore_data[game_id] = {
-        #         'player_data': pd.read_json(data['PLAYER_DATA']),
-        #         'game_summary': pd.read_json(data['GAME_SUMMARY']),
-        #         'inactive_players': pd.read_json(data['INACTIVE_PLAYER']),
-        #         'line_score': pd.read_json(data['LINE_SCORE'])
-        #     }
-
         return boxscore_data
 
     def get_team_game_log(self) -> Dict[str, pd.DataFrame]:
