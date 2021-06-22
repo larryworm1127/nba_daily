@@ -6,14 +6,13 @@
 
 from datetime import datetime
 
+import requests
 from dateutil import parser
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
 from django.views.decorators.csrf import csrf_protect
-from nba_api.stats.endpoints.leaguestandings import LeagueStandings
 
-from api.serializer import StandingsSerializer
 from .forms import DateForm
 from .models import (
     Player,
@@ -21,7 +20,6 @@ from .models import (
     Game,
     PlayerSeasonStats,
     PlayerCareerStats,
-    Standing,
     TeamGameLog,
     PlayerGameLog
 )
@@ -184,37 +182,14 @@ class GameDetailView(generic.DetailView):
 
 
 def standings(request):
-    key_field_map = {
-        'TeamID': 'team_id',
-        'TeamCity': 'team_city',
-        'TeamName': 'team_name',
-        'WinPCT': 'win_pct',
-        'WINS': 'wins',
-        'LOSSES': 'losses',
-        'HOME': 'home_record',
-        'ROAD': 'road_record',
-        'L10': 'last_ten',
-        'ConferenceRecord': 'conference_record',
-        'CurrentStreak': 'curr_streak',
-        'Conference': 'conference',
-        'PlayoffRank': 'rank',
-        'PointsPG': 'points_pg',
-        'OppPointsPG': 'opp_points_pg',
-        'DiffPointsPG': 'diff_points_pg'
-    }
-    data = LeagueStandings().get_data_frames()[0][key_field_map.keys()]
-    standings_data = data.rename(columns=key_field_map).to_dict(orient='record')
-
-    serializer = StandingsSerializer(data=standings_data, many=True)
-    if not serializer.is_valid():
-        pass
-
+    """Season standing page.
+    """
+    response = requests.get(f'http://{request.get_host()}/api/standings')
     context = {
         'headers': [
             ('bg-danger', 'East Conference', 'East'),
             ('bg-primary', 'West Conference', 'West')
         ],
-        'data': serializer.data
+        'data': response.json()
     }
-
-    return render(request, 'main/standing_test.html', context=context)
+    return render(request, 'main/standings.html', context=context)

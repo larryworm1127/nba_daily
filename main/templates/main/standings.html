@@ -31,36 +31,36 @@
         </thead>
         <tbody>
           {% for team in data %}
-            {% if team.conference == conf %}
+            {% if team.Conference == conf %}
               <tr>
-                {% if team.rank < 9 %}
-                  <th>{{ team.rank }}</th>
+                {% if team.PlayoffRank < 9 %}
+                  <th>{{ team.PlayoffRank }}</th>
                 {% else %}
-                  <td>{{ team.rank }}</td>
+                  <td>{{ team.PlayoffRank }}</td>
                 {% endif %}
                 <th>
                   <a class="nounderline grey" href="#">
-                    {% with 'images/'|add:team.team_id|add:'.png' as logo_path %}
+                    {% with 'images/'|add:team.TeamID|add:'.png' as logo_path %}
                       <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
                     {% endwith %}
-                    {{ team.team_city }} {{ team.team_name }}
+                    {{ team.TeamCity }} {{ team.TeamName }}
                   </a>
                 </th>
-                <td>{{ team.wins }}</td>
-                <td>{{ team.losses }}</td>
-                <td>{{ team.win_pct|multiply:100 }}</td>
-                <td>{{ team.conference_record }}</td>
-                <td>{{ team.home_record }}</td>
-                <td>{{ team.road_record }}</td>
-                <td>{{ team.last_ten }}</td>
-                {% if team.curr_streak > 0 %}
-                  <td>Won {{ team.curr_streak }}</td>
+                <td>{{ team.WINS }}</td>
+                <td>{{ team.LOSSES }}</td>
+                <td>{{ team.WinPCT|multiply:100 }}</td>
+                <td>{{ team.ConferenceRecord }}</td>
+                <td>{{ team.HOME }}</td>
+                <td>{{ team.ROAD }}</td>
+                <td>{{ team.L10 }}</td>
+                {% if team.CurrentStreak > 0 %}
+                  <td>Won {{ team.CurrentStreak }}</td>
                 {% else %}
-                  <td>Lost {{ team.curr_streak|multiply:-1 }}</td>
+                  <td>Lost {{ team.CurrentStreak|multiply:-1 }}</td>
                 {% endif %}
-                <td>{{ team.points_pg }}</td>
-                <td>{{ team.opp_points_pg }}</td>
-                <td>{{ team.diff_points_pg }}</td>
+                <td>{{ team.PointsPG }}</td>
+                <td>{{ team.OppPointsPg }}</td>
+                <td>{{ team.DiffPointsPG }}</td>
               </tr>
             {% endif %}
           {% endfor %}
