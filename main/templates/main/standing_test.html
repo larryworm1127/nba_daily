@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block title %}Standing{% endblock %}
+
+{% load static %}
+{% load tags %}
+{% load filters %}
+
+{% block body %}
+  <div class="container" id="standings-container">
+    <br>
+    {% for class, header, conf in headers %}
+      <h4>{{ header }}</h4>
+      <table class="standings-datatable table table-sm">
+        <thead>
+          <tr class="{{ class }} text-white">
+            <th>RANK</th>
+            <th>TEAM</th>
+            <th>W</th>
+            <th>L</th>
+            <th>PCT</th>
+            <th>CONF</th>
+            <th>HOME</th>
+            <th>ROAD</th>
+            <th>LAST 10</th>
+            <th>STREAK</th>
+            <th>PF</th>
+            <th>PA</th>
+            <th>DIFF</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for team in data %}
+            {% if team.conference == conf %}
+              <tr>
+                {% if team.rank < 9 %}
+                  <th>{{ team.rank }}</th>
+                {% else %}
+                  <td>{{ team.rank }}</td>
+                {% endif %}
+                <th>
+                  <a class="nounderline grey" href="#">
+                    {% with 'images/'|add:team.team_id|add:'.png' as logo_path %}
+                      <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
+                    {% endwith %}
+                    {{ team.team_city }} {{ team.team_name }}
+                  </a>
+                </th>
+                <td>{{ team.wins }}</td>
+                <td>{{ team.losses }}</td>
+                <td>{{ team.win_pct|multiply:100 }}</td>
+                <td>{{ team.conference_record }}</td>
+                <td>{{ team.home_record }}</td>
+                <td>{{ team.road_record }}</td>
+                <td>{{ team.last_ten }}</td>
+                {% if team.curr_streak > 0 %}
+                  <td>Won {{ team.curr_streak }}</td>
+                {% else %}
+                  <td>Lost {{ team.curr_streak|multiply:-1 }}</td>
+                {% endif %}
+                <td>{{ team.points_pg }}</td>
+                <td>{{ team.opp_points_pg }}</td>
+                <td>{{ team.diff_points_pg }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -182,3 +182,11 @@ body {
         min-width: 49px;
     }
 }
+
+.standings-datatable {
+    text-align: center;
+}
+
+.standings-datatable th {
+    text-align: center;
+}

@@ -176,9 +176,16 @@ $(document).ready(function () {
         "aaSorting": [],
         "aoColumns": [
             {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["asc", "desc"]},
+            {"bSortable": false},
             {"orderSequence": ["desc", "asc"]},
-            {"orderSequence": ["asc", "desc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]}
         ]
