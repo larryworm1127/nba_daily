@@ -11,4 +11,5 @@ app_name = 'api'
 
 urlpatterns = [
     path('standings/', views.standings_api, name='standings-api'),
+    path('team_list/', views.team_list_api, name='team-list-api'),
 ]

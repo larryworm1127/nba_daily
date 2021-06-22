@@ -142,11 +142,21 @@ class TeamGamesListView(generic.ListView):
         return context
 
 
-class TeamListView(generic.ListView):
+# class TeamListView(generic.ListView):
+#     """Team list page.
+#     """
+#     model = Team
+#     queryset = Team.objects.filter(~Q(team_id=0))
+
+
+def teams(request):
     """Team list page.
     """
-    model = Team
-    queryset = Team.objects.filter(~Q(team_id=0))
+    response = requests.get(f'http://{request.get_host()}/api/team_list')
+    context = {
+        'data': response.json()
+    }
+    return render(request, 'main/teams.html', context=context)
 
 
 # ==============================================================================
