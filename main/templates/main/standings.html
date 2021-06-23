@@ -39,7 +39,7 @@
                   <td>{{ team.PlayoffRank }}</td>
                 {% endif %}
                 <th>
-                  <a class="nounderline grey" href="#">
+                  <a class="nounderline grey" href="{% url 'main:teams' pk=team.TeamID %}">
                     {% with 'images/'|add:team.TeamID|add:'.png' as logo_path %}
                       <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
                     {% endwith %}

@@ -74,6 +74,5 @@ def team_list_api(request):
     data = LeagueDashTeamStats(per_mode_detailed='PerGame')
     team_list: DataFrame = data.get_data_frames()[0][keys]
     team_list['TEAM_ID'] = team_list['TEAM_ID'].astype(str)
-    print(team_list.to_dict(orient='record'))
 
     return Response(team_list.to_dict(orient='record'))

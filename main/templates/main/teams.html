@@ -44,7 +44,7 @@
         {% for team in data %}
           <tr>
             <th class="text-lg-center">
-              <a class="nounderline dark-grey" href="#">{{ team.TEAM_NAME }}</a>
+              <a class="nounderline dark-grey" href="{% url 'main:teams' pk=team.TEAM_ID %}">{{ team.TEAM_NAME }}</a>
             </th>
             <td>{{ team.GP }}</td>
             <td>{{ team.W }}</td>
