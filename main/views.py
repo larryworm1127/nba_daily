@@ -46,7 +46,8 @@ def score(request, date: str):
 def render_score_page(request, page: str, date: datetime.date, title: str):
     """Render generic score page.
     """
-    games = Game.objects.filter(game_date=date.strftime("%b %d, %Y"))
+    # games = Game.objects.filter(game_date=date.strftime("%b %d, %Y"))
+    games = requests.get(f'http://{request.get_host()}/api/games/{date}').json()
 
     # Validate date input
     if request.method == 'POST':

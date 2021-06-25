@@ -1,4 +1,8 @@
+from datetime import datetime
+
+from nba_api.stats.endpoints.boxscoresummaryv2 import BoxScoreSummaryV2
 from nba_api.stats.endpoints.leaguedashteamstats import LeagueDashTeamStats
+from nba_api.stats.endpoints.leaguegamefinder import LeagueGameFinder
 from nba_api.stats.endpoints.leaguestandings import LeagueStandings
 from pandas import DataFrame
 from rest_framework.decorators import api_view
@@ -25,33 +29,8 @@ def standings_api(request):
         'ROAD', 'L10', 'ConferenceRecord', 'CurrentStreak', 'Conference',
         'PlayoffRank', 'PointsPG', 'OppPointsPG', 'DiffPointsPG'
     ]
-    # key_field_map = {
-    #     'TeamID': 'team_id',
-    #     'TeamCity': 'team_city',
-    #     'TeamName': 'team_name',
-    #     'WinPCT': 'win_pct',
-    #     'WINS': 'wins',
-    #     'LOSSES': 'losses',
-    #     'HOME': 'home_record',
-    #     'ROAD': 'road_record',
-    #     'L10': 'last_ten',
-    #     'ConferenceRecord': 'conference_record',
-    #     'CurrentStreak': 'curr_streak',
-    #     'Conference': 'conference',
-    #     'PlayoffRank': 'rank',
-    #     'PointsPG': 'points_pg',
-    #     'OppPointsPG': 'opp_points_pg',
-    #     'DiffPointsPG': 'diff_points_pg'
-    # }
     standings: DataFrame = LeagueStandings().get_data_frames()[0][keys]
-    # standings = data.rename(columns=key_field_map)
     standings['TeamID'] = standings['TeamID'].astype(str)
-
-    # serializer = StandingsSerializer(data=standings, many=True)
-    # if not serializer.is_valid():
-    #     return Response(serializer.errors)
-
-    # return Response(serializer.data)
     return Response(standings.to_dict(orient='record'))
 
 
@@ -76,3 +55,46 @@ def team_list_api(request):
     team_list['TEAM_ID'] = team_list['TEAM_ID'].astype(str)
 
     return Response(team_list.to_dict(orient='record'))
+
+
+@api_view(['GET'])
+def game_by_date_api(request, date):
+    """
+    Endpoint class: LeagueGameFinder()
+
+    Endpoint fields:
+        TEAM_ID, TEAM_ABBREVIATION, TEAM_WINS_LOSSES, PTS_QTR1, PTS_QTR2,
+        PTS_QTR3, PTS_QTR4, PTS_OT1, PTS_OT2, PTS_OT3, PTS_OT4, PTS_OT5,
+        PTS_OT6, PTS_OT7, PTS_OT8, PTS_OT9, PTS_OT10, PTS
+
+    Date format: 2021-06-24 (%Y-%m-%d)
+    """
+    line_score_keys = [
+        'GAME_DATE_EST', 'GAME_SEQUENCE', 'TEAM_CITY_NAME', 'TEAM_NICKNAME',
+        'GAME_ID'
+    ]
+    broadcast_keys = [
+        'GAME_STATUS_TEXT', 'NATL_TV_BROADCASTER_ABBREVIATION', 'LIVE_PERIOD'
+    ]
+
+    parsed_date = datetime.strptime(date, '%Y-%m-%d').strftime('%m/%d/%Y')
+    data = LeagueGameFinder(
+        league_id_nullable='00',
+        date_to_nullable=parsed_date,
+        date_from_nullable=parsed_date
+    )
+
+    games = data.get_data_frames()[0]
+    games_summary = {}
+    for game_id in set(games['GAME_ID']):
+        box_score = BoxScoreSummaryV2(game_id).get_data_frames()
+        line_score: DataFrame = box_score[5]
+        line_score.drop(line_score_keys, axis=1, inplace=True)
+        line_score['TEAM_ID'] = line_score['TEAM_ID'].astype(str)
+        broadcast: DataFrame = box_score[0][broadcast_keys].iloc[0]
+        games_summary[game_id] = {
+            'line_score': line_score.to_dict(orient='record'),
+            'broadcast': broadcast.to_dict()
+        }
+
+    return Response(games_summary)

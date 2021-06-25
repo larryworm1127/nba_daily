@@ -20,51 +20,62 @@
         </form>
 
         <div class="list-group">
-          {% if games.count > 0 %}
-            {% for game in games %}
+          {% if games %}
+            {% for game_id, data in games.items %}
               <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{{ game.get_absolute_url }}">
                 <div class="row">
-                  {% if game.away_team_game_log.result == 'W' %}
+                  {% if data.line_score.0.PTS > data.line_score.1.PTS %}
                     <div class="col-xs-4">
                       <b class="winning-team">
-                        <img class="team-logo" alt="away-logo" src="{% static game.away_team.get_logo_path %}">
-                          {{ game.away_team.team_abb }} {{ game.away_team_game_log.points }}
+                        {% with 'images/'|add:data.line_score.0.TEAM_ID|add:'.png' as logo_path %}
+                          <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
+                        {% endwith %}
+                        {{ data.line_score.0.TEAM_ABBREVIATION }} {{ data.line_score.0.PTS }}
                       </b>
                       <br>
-                      {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
+                      {{ data.line_score.0.TEAM_WINS_LOSSES }}
                     </div>
 
                     <div class="col-xs-4">
                       <div class="final-text">Final</div>
-                      <div class="broadcaster">{{ game.broadcaster }}</div>
+                      {% if data.broadcast.NATL_TV_BROADCASTER_ABBREVIATION != None %}
+                        <div class="broadcaster">{{ data.broadcast.NATL_TV_BROADCASTER_ABBREVIATION }}</div>
+                      {% endif %}
                     </div>
 
                     <div class="col-xs-4">
-                      <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
-                        {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}
+                      {% with 'images/'|add:data.line_score.1.TEAM_ID|add:'.png' as logo_path %}
+                        <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
+                      {% endwith %}
+                      {{ data.line_score.1.TEAM_ABBREVIATION }} {{ data.line_score.1.PTS }}
                       <br>
-                      {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
+                      {{ data.line_score.1.TEAM_WINS_LOSSES }}
                     </div>
 
                   {% else %}
                     <div class="col-xs-4">
-                      <img class="team-logo" alt="away-logo" src="{% static game.away_team.get_logo_path %}">
-                        {{ game.away_team.team_abb }} {{ game.away_team_game_log.points }}
+                      {% with 'images/'|add:data.line_score.0.TEAM_ID|add:'.png' as logo_path %}
+                        <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
+                      {% endwith %}
+                      {{ data.line_score.0.TEAM_ABBREVIATION }} {{ data.line_score.0.PTS }}
                       <br>
-                      {{ game.away_team_game_log.curr_wins }}-{{ game.away_team_game_log.curr_losses }}
+                      {{ data.line_score.0.TEAM_WINS_LOSSES }}
                     </div>
 
                     <div class="col-xs-4">
                       <div class="final-text">Final</div>
-                      <div class="broadcaster">{{ game.broadcaster }}</div>
+                      <div class="broadcaster">{{ data.broadcast.NATL_TV_BROADCASTER_ABBREVIATION }}</div>
                     </div>
 
                     <div class="col-xs-4">
                       <b class="winning-team">
-                        <img class="team-logo" alt="home-logo" src="{% static game.home_team.get_logo_path %}">
-                          {{ game.home_team.team_abb }} {{ game.home_team_game_log.points }}</b>
+                        {% with 'images/'|add:data.line_score.1.TEAM_ID|add:'.png' as logo_path %}
+                          <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
+                        {% endwith %}
+                        {{ data.line_score.1.TEAM_ABBREVIATION }} {{ data.line_score.1.PTS }}
+                      </b>
                       <br>
-                      {{ game.home_team_game_log.curr_wins }}-{{ game.home_team_game_log.curr_losses }}
+                      {{ data.line_score.1.TEAM_WINS_LOSSES }}
                     </div>
                   {% endif %}
                 </div>
