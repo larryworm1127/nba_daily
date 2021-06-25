@@ -3,12 +3,15 @@
 @date: 07/27/2019
 @author: Larry Shi
 """
+from unittest import skip
+
 from django.test import TestCase
 from django.urls import reverse
 
 from main.models import Team, Player
 
 
+@skip
 class TeamListViewTest(TestCase):
     """Test class for <TeamListView> generic view.
     """
