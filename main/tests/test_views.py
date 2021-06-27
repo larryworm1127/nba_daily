@@ -5,34 +5,16 @@
 """
 from unittest import skip
 
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from main.models import Team, Player
 
 
 @skip
-class TeamListViewTest(TestCase):
+class TeamListViewTest(SimpleTestCase):
     """Test class for <TeamListView> generic view.
     """
-
-    @classmethod
-    def setUpTestData(cls):
-        """Setup data for testing.
-        """
-        # Create teams for tests
-        num_teams = 30
-        for team_id in range(1, num_teams + 1):
-            Team.objects.create(
-                team_id=team_id,
-                team_abb='TOT',
-                team_conf='N/A',
-                team_div='N/A',
-                team_city='N/A',
-                team_name='N/A',
-                nba_debut='1950',
-                max_year='2018-19'
-            )
 
     def test_view_url_exists_at_desired_location(self):
         """Test if the view has the correct URL.
@@ -51,18 +33,10 @@ class TeamListViewTest(TestCase):
         """
         response = self.client.get(reverse('main:team_list'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'main/team_list.html')
-
-    def test_lists_all_teams(self):
-        """Test if the view correctly lists all teams created and does not paginate.
-        """
-        response = self.client.get(reverse('main:team_list'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('is_paginated' in response.context)
-        self.assertTrue(response.context['is_paginated'] is False)
-        self.assertTrue(len(response.context['team_list']) == 30)
+        self.assertTemplateUsed(response, 'main/teams_stats.html')
 
 
+@skip
 class PlayerListViewTest(TestCase):
     """Test class for <PlayerListView> generic view.
     """
