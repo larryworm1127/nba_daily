@@ -8,7 +8,6 @@ from datetime import datetime
 
 import requests
 from dateutil import parser
-from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import generic
 from django.views.decorators.csrf import csrf_protect
@@ -118,10 +117,10 @@ class PlayerListView(generic.ListView):
 # ==============================================================================
 # Teams views
 # ==============================================================================
-class TeamDetailView(generic.DetailView):
-    """Individual team detail page.
-    """
-    model = Team
+# class TeamDetailView(generic.DetailView):
+#     """Individual team detail page.
+#     """
+#     model = Team
 
 
 class TeamGamesListView(generic.ListView):
@@ -149,15 +148,21 @@ class TeamGamesListView(generic.ListView):
 #     model = Team
 #     queryset = Team.objects.filter(~Q(team_id=0))
 
+def teams(request, pk):
+    """Individual team detail page.
+    """
+    response = requests.get(f'http://{request.get_host()}/api/teams/{pk}')
+    return render(request, 'main/teams.html', context=response.json())
 
-def teams(request):
+
+def teams_stats(request):
     """Team list page.
     """
     response = requests.get(f'http://{request.get_host()}/api/team_list')
     context = {
         'data': response.json()
     }
-    return render(request, 'main/teams.html', context=context)
+    return render(request, 'main/teams_stats.html', context=context)
 
 
 # ==============================================================================

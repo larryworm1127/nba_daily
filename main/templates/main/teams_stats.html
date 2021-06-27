@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+
+{% block title %}Team List{% endblock %}
+
+{% load filters %}
+{% load tags %}
+
+{% block body %}
+  <div class="container stats-table-extended">
+    <br>
+
+    <table class="team-list-table table table-sm text-lg-center">
+      <thead class="thead-inverse">
+        <tr class="bg-primary text-white">
+          <th class="text-lg-center">TEAM</th>
+          <th class="bg-primary text-lg-center">GP</th>
+          <th class="bg-primary text-lg-center">W</th>
+          <th class="bg-primary text-lg-center">L</th>
+          <th class="bg-primary text-lg-center">WIN%</th>
+          <th class="bg-primary text-lg-center">PTS</th>
+          <th class="bg-primary text-lg-center">FGM</th>
+          <th class="bg-primary text-lg-center">FGA</th>
+          <th class="bg-primary text-lg-center">FG%</th>
+          <th class="bg-primary text-lg-center">3PM</th>
+          <th class="bg-primary text-lg-center">3PA</th>
+          <th class="bg-primary text-lg-center">3P%</th>
+          <th class="bg-primary text-lg-center">FTM</th>
+          <th class="bg-primary text-lg-center">FTA</th>
+          <th class="bg-primary text-lg-center">FT%</th>
+          <th class="bg-primary text-lg-center">OREB</th>
+          <th class="bg-primary text-lg-center">DREB</th>
+          <th class="bg-primary text-lg-center">REB</th>
+          <th class="bg-primary text-lg-center">AST</th>
+          <th class="bg-primary text-lg-center">TOV</th>
+          <th class="bg-primary text-lg-center">STL</th>
+          <th class="bg-primary text-lg-center">BLK</th>
+          <th class="bg-primary text-lg-center">BLKA</th>
+          <th class="bg-primary text-lg-center">PF</th>
+          <th class="bg-primary text-lg-center">PFD</th>
+          <th class="bg-primary text-lg-center">+/-</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for team in data %}
+          <tr>
+            <th class="text-lg-center">
+              <a class="nounderline dark-grey" href="{% url 'main:teams' pk=team.TEAM_ID %}">{{ team.TEAM_NAME }}</a>
+            </th>
+            <td>{{ team.GP }}</td>
+            <td>{{ team.W }}</td>
+            <td>{{ team.L }}</td>
+            <td>{{ team.W_PCT }}</td>
+            <td>{{ team.PTS }}</td>
+            <td>{{ team.FGM }}</td>
+            <td>{{ team.FGA }}</td>
+            <td>{{ team.FG_PCT|multiply:100 }}</td>
+            <td>{{ team.FG3M }}</td>
+            <td>{{ team.FG3A }}</td>
+            <td>{{ team.FG3_PCT|multiply:100 }}</td>
+            <td>{{ team.FTM }}</td>
+            <td>{{ team.FTA }}</td>
+            <td>{{ team.FT_PCT|multiply:100 }}</td>
+            <td>{{ team.OREB }}</td>
+            <td>{{ team.DREB }}</td>
+            <td>{{ team.REB }}</td>
+            <td>{{ team.AST }}</td>
+            <td>{{ team.TOV }}</td>
+            <td>{{ team.STL }}</td>
+            <td>{{ team.BLK }}</td>
+            <td>{{ team.BLKA }}</td>
+            <td>{{ team.PF }}</td>
+            <td>{{ team.PFD }}</td>
+            <td>{{ team.PLUS_MINUS }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

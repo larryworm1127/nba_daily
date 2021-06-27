@@ -1,9 +1,12 @@
 from datetime import datetime
 
 from nba_api.stats.endpoints.boxscoresummaryv2 import BoxScoreSummaryV2
+from nba_api.stats.endpoints.commonteamroster import CommonTeamRoster
 from nba_api.stats.endpoints.leaguedashteamstats import LeagueDashTeamStats
 from nba_api.stats.endpoints.leaguegamefinder import LeagueGameFinder
 from nba_api.stats.endpoints.leaguestandings import LeagueStandings
+from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
+from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -58,9 +61,103 @@ def team_list_api(request):
 
 
 @api_view(['GET'])
+def team_detail_api(request, team_id):
+    """
+    Endpoint class: CommonTeamRoster(), TeamPlayerDashboard(), TeamInfoCommon()
+
+    'players' Endpoint fields:
+        PLAYER, NUM, POSITION, HEIGHT, WEIGHT, BIRTH_DATE, AGE, EXP, SCHOOL,
+        PLAYER_ID
+
+    'coaches' Endpoint fields:
+        COACH_NAME, COACH_TYPE
+
+    'team_info' Endpoint fields:
+        TEAM_ID, "TEAM_CITY", TEAM_NAME, TEAM_ABBREVIATION, TEAM_CONFERENCE,
+        TEAM_DIVISION, W, L, PCT, CONF_RANK, DIV_RANK, MIN_YEAR, MAX_YEAR
+    """
+    players_drop_keys = [
+        'TeamID', 'SEASON', 'LeagueID', 'NICKNAME', 'PLAYER_SLUG'
+    ]
+    coaches_drop_keys = [
+        'TEAM_ID', 'SEASON', 'COACH_ID', 'SORT_SEQUENCE', 'SUB_SORT_SEQUENCE',
+        'IS_ASSISTANT', 'FIRST_NAME', 'LAST_NAME'
+    ]
+    team_info_drop_keys = [
+        'SEASON_YEAR', 'TEAM_CODE', 'TEAM_SLUG'
+    ]
+    team_stats_keys = [
+        "GP", "FGM", "FGA", "FG_PCT", "FG3M", "FG3A", "FG3_PCT", "FTM", "FTA",
+        "FT_PCT", "OREB", "DREB", "REB", "AST", "TOV", "STL", "BLK", "BLKA",
+        "PF", "PFD", "PTS", "PLUS_MINUS"
+    ]
+    player_stats_keys = [
+        "PLAYER_ID", "PLAYER_NAME", "GP", "W", "L", "MIN", "FGM", "FGA",
+        "FG_PCT", "FG3M", "FG3A", "FG3_PCT", "FTM", "FTA", "FT_PCT", "OREB",
+        "DREB", "REB", "AST", "TOV", "STL", "BLK", "BLKA", "PF", "PFD", "PTS",
+        "PLUS_MINUS", "DD2", "TD3"
+    ]
+    pct_keys = ['FG_PCT', 'FG3_PCT', 'FT_PCT']
+
+    players, coaches = CommonTeamRoster(team_id).get_data_frames()
+    players.drop(players_drop_keys, axis=1, inplace=True)
+    players['AGE'] = players['AGE'].astype(int)
+    coaches.drop(coaches_drop_keys, axis=1, inplace=True)
+
+    team_info = TeamInfoCommon(team_id).get_data_frames()[0]
+    team_info.drop(team_info_drop_keys, axis=1, inplace=True)
+    team_info['TEAM_ID'] = team_info['TEAM_ID'].astype(str)
+
+    team_stats, player_stats = TeamPlayerDashboard(
+        team_id,
+        per_mode_detailed='PerGame'
+    ).get_data_frames()
+    team_stats = team_stats[team_stats_keys]
+    team_stats[pct_keys] = round(team_stats[pct_keys] * 100, 1)
+    team_stats.rename(
+        {
+            'PLUS_MINUS': '+/-',
+            'FG_PCT': 'FG%',
+            'FG3_PCT': 'FG3%',
+            'FT_PCT': 'FT%'
+        },
+        axis=1,
+        inplace=True
+    )
+
+    player_stats = player_stats[player_stats_keys]
+    player_stats[pct_keys] = round(player_stats[pct_keys] * 100, 1)
+    player_stats.rename(
+        {
+            'PLUS_MINUS': '+/-',
+            'FG_PCT': 'FG%',
+            'FG3_PCT': 'FG3%',
+            'FT_PCT': 'FT%'
+        },
+        axis=1,
+        inplace=True
+    )
+
+    result = {
+        'players': players.to_dict(orient='record'),
+        'coaches': coaches.to_dict(orient='record'),
+        'team_info': {
+            key: value[0]
+            for key, value in team_info.to_dict().items()
+        },
+        'team_stats': {
+            key: value[0]
+            for key, value in team_stats.to_dict().items()
+        },
+        'player_stats': player_stats.to_dict(orient='record')
+    }
+    return Response(result)
+
+
+@api_view(['GET'])
 def game_by_date_api(request, date):
     """
-    Endpoint class: LeagueGameFinder()
+    Endpoint class: LeagueGameFinder(), BoxScoreSummaryV2()
 
     Endpoint fields:
         TEAM_ID, TEAM_ABBREVIATION, TEAM_WINS_LOSSES, PTS_QTR1, PTS_QTR2,
@@ -69,7 +166,7 @@ def game_by_date_api(request, date):
 
     Date format: 2021-06-24 (%Y-%m-%d)
     """
-    line_score_keys = [
+    line_score_drop_keys = [
         'GAME_DATE_EST', 'GAME_SEQUENCE', 'TEAM_CITY_NAME', 'TEAM_NICKNAME',
         'GAME_ID'
     ]
@@ -89,7 +186,7 @@ def game_by_date_api(request, date):
     for game_id in set(games['GAME_ID']):
         box_score = BoxScoreSummaryV2(game_id).get_data_frames()
         line_score: DataFrame = box_score[5]
-        line_score.drop(line_score_keys, axis=1, inplace=True)
+        line_score.drop(line_score_drop_keys, axis=1, inplace=True)
         line_score['TEAM_ID'] = line_score['TEAM_ID'].astype(str)
         broadcast: DataFrame = box_score[0][broadcast_keys].iloc[0]
         games_summary[game_id] = {

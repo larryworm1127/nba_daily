@@ -164,7 +164,7 @@ body {
 }
 
 .stats-table {
-    width: 70%
+    width: 75%
 }
 
 .stats-table-extended {
@@ -189,4 +189,8 @@ body {
 
 .standings-datatable th {
     text-align: center;
+}
+
+.coach-datatable {
+    width: 45%;
 }

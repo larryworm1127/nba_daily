@@ -3,24 +3,34 @@
 {% block title %}{{ team.get_full_name }}{% endblock %}
 
 {% load static %}
+{% load filters %}
 
 {% block body %}
   <div class="container stats-table">
     <div class="row">
       <div class="col-md-6">
         <br>
-        <h4>{{ team.get_full_name }}</h4>
-        <img class="team-logo-lg" alt="team-logo" src="{% static team.get_logo_path %}">
+        <h4>{{ team_info.TEAM_CITY }} {{ team_info.TEAM_NAME }}</h4>
+        {% with 'images/'|add:team_info.TEAM_ID|add:'.png' as logo_path %}
+          <img class="team-logo-lg" alt="team-logo" src="{% static logo_path %}">
+        {% endwith %}
 
         <h4>{{ team.season_year }}</h4>
         <ul class="list-unstyled">
-          <li><b>W-L Record:</b>
-            <a href="{% url 'main:standing' %}">{{ team.standing.get_wins_losses }}</a>
+          <li><b>Record:</b>
+            <a href="{% url 'main:standing' %}">{{ team_info.W }}-{{ team_info.L }}</a>
           </li>
-          <li><b>Conference:</b> {{ team.team_conf }}</li>
-          <li><b>Divison:</b> {{ team.team_div }}</li>
-          <li><b>NBA Debut:</b> {{ team.nba_debut }}</li>
-          <li><b>Max Year:</b> {{ team.max_year }}</li>
+          <li><b>Win%:</b> {{ team_info.PCT|multiply:100 }}</li>
+          <li><b>Conference:</b>
+            {{ team_info.TEAM_CONFERENCE }}
+            (#{{ team_info.CONF_RANK }} in {{ team_info.TEAM_CONFERENCE }})
+          </li>
+          <li><b>Divison:</b>
+            {{ team_info.TEAM_DIVISION }}
+            (#{{ team_info.DIV_RANK|add:1 }} in {{ team_info.TEAM_DIVISION }})
+          </li>
+          <li><b>NBA Debut:</b> {{ team_info.MIN_YEAR }}</li>
+          <li><b>Max Year:</b> {{ team_info.MAX_YEAR }}</li>
         </ul>
       </div>
     </div>

@@ -158,6 +158,7 @@ $(document).ready(function () {
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]}
         ]
     });
@@ -177,6 +178,55 @@ $(document).ready(function () {
         "aoColumns": [
             {"orderSequence": ["desc", "asc"]},
             {"bSortable": false},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]}
+        ]
+    });
+});
+
+$(document).ready(function () {
+    $('.team-player-stats-datatable').DataTable({
+        "drawCallback": function (settings) {
+            $(".team-player-stats-datatable").wrap("<div class='table-responsive'></div>");
+        },
+
+        paging: false,
+        pageLength: 50,
+        "bFilter": false,
+        "bInfo": false,
+        /* Disable initial sort */
+        "aaSorting": [],
+        "order": [[24, "desc"]],
+        "columnDefs": [
+            { type: "natural", targets: 7}
+        ],
+        "aoColumns": [
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
+            {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},
             {"orderSequence": ["desc", "asc"]},

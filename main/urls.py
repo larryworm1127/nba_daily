@@ -25,8 +25,9 @@ urlpatterns += [
 # Teams pages URL
 urlpatterns += [
     # path('teams/', views.TeamListView.as_view(), name='team_list'),
-    path('teams/', views.teams, name='team_list'),
-    path('teams/<int:pk>/', views.TeamDetailView.as_view(), name='teams'),
+    path('teams/', views.teams_stats, name='team_list'),
+    # path('teams/<int:pk>/', views.TeamDetailView.as_view(), name='teams'),
+    path('teams/<int:pk>/', views.teams, name='teams'),
     path('teams/<int:pk>/<str:season>', views.TeamGamesListView.as_view(), name='team_games'),
     # path('standing/', views.StandingListView.as_view(), name='standing'),
     path('standings/', views.standings, name='standing')
