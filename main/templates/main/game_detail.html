@@ -89,11 +89,14 @@
             <th class="bg-primary text-lg-center">PTS</th>
             <th class="bg-primary text-lg-center">REB</th>
             <th class="bg-primary text-lg-center">AST</th>
-            <th class="bg-primary text-lg-center boxscore-column-width">FG</th>
+            <th class="bg-primary text-lg-center">FGM</th>
+            <th class="bg-primary text-lg-center">FGA</th>
             <th class="bg-primary text-lg-center">FG%</th>
-            <th class="bg-primary text-lg-center boxscore-column-width">3P</th>
+            <th class="bg-primary text-lg-center">3PM</th>
+            <th class="bg-primary text-lg-center">3PA</th>
             <th class="bg-primary text-lg-center">3P%</th>
-            <th class="bg-primary text-lg-center boxscore-column-width">FT</th>
+            <th class="bg-primary text-lg-center">FTM</th>
+            <th class="bg-primary text-lg-center">FTA</th>
             <th class="bg-primary text-lg-center">FT%</th>
             <th class="bg-primary text-lg-center">OREB</th>
             <th class="bg-primary text-lg-center">DREB</th>
@@ -115,11 +118,14 @@
               <td>{{ pstats.points }}</td>
               <td>{{ pstats.rebounds }}</td>
               <td>{{ pstats.assists }}</td>
-              <td>{{ pstats.fg_made }}-{{ pstats.fg_attempt }}</td>
+              <td>{{ pstats.fg_made }}</td>
+              <td>{{ pstats.fg_attempt }}</td>
               <td>{{ pstats.fg_percent|multiply:100 }}</td>
-              <td>{{ pstats.fg3_made }}-{{ pstats.fg3_attempt }}</td>
+              <td>{{ pstats.fg3_made }}</td>
+              <td>{{ pstats.fg3_attempt }}</td>
               <td>{{ pstats.fg3_percent|multiply:100 }}</td>
-              <td>{{ pstats.ft_made }}-{{ pstats.ft_attempt }}</td>
+              <td>{{ pstats.ft_made }}</td>
+              <td>{{ pstats.ft_attempt }}</td>
               <td>{{ pstats.ft_percent|multiply:100 }}</td>
               <td>{{ pstats.offense_reb }}</td>
               <td>{{ pstats.defense_reb }}</td>
@@ -143,11 +149,14 @@
                 <td>0</td>
                 <td>0</td>
                 <td>0</td>
-                <td>0-0</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0.0</td>
-                <td>0-0</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0.0</td>
-                <td>0-0</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0.0</td>
                 <td>0</td>
                 <td>0</td>
@@ -167,11 +176,14 @@
             <td>{{ tstats.points }}</td>
             <td>{{ tstats.rebounds }}</td>
             <td>{{ tstats.assists }}</td>
-            <td>{{ tstats.fg_made }}-{{ tstats.fg_attempt }}</td>
+            <td>{{ tstats.fg_made }}</td>
+            <td>{{ tstats.fg_attempt }}</td>
             <td>{{ tstats.fg_percent|multiply:100 }}</td>
-            <td>{{ tstats.fg3_made }}-{{ tstats.fg3_attempt }}</td>
+            <td>{{ tstats.fg3_made }}</td>
+            <td>{{ tstats.fg3_attempt }}</td>
             <td>{{ tstats.fg3_percent|multiply:100 }}</td>
-            <td>{{ tstats.ft_made }}-{{ tstats.ft_attempt }}</td>
+            <td>{{ tstats.ft_made }}</td>
+            <td>{{ tstats.ft_attempt }}</td>
             <td>{{ tstats.ft_percent|multiply:100 }}</td>
             <td>{{ tstats.offense_reb }}</td>
             <td>{{ tstats.defense_reb }}</td>
