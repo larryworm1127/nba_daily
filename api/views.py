@@ -12,6 +12,44 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
+# Util functions
+def update_pct_fields(df: DataFrame) -> DataFrame:
+    """Convert pct fields from 0.xxx to xx.x format.
+    """
+    keys = [
+        'FG_PCT', 'FG3_PCT', 'FT_PCT', 'WIN_PCT', 'WinPCT', 'W_PCT'
+    ]
+
+    result = df.copy()
+    for key in keys:
+        if key in df.keys():
+            result[key] = round(100 * result[key], 1)
+
+    return result
+
+
+def update_keys_name(df: DataFrame) -> DataFrame:
+    """Update certain keys names to display names.
+    """
+    mapping = {
+        'PLUS_MINUS': '+/-',
+        'FG_PCT': 'FG%',
+        'FG3_PCT': 'FG3%',
+        'FT_PCT': 'FT%',
+        'WIN_PCT': 'WIN%',
+        'W_PCT': 'WIN%',
+        'WinPCT': 'WIN%'
+    }
+
+    result = df.copy()
+    for key, value in mapping.items():
+        if key in df.keys():
+            result.rename({key: value}, axis=1, inplace=True)
+
+    return result
+
+
+# API views
 @api_view(['GET'])
 def standings_api(request):
     """
@@ -34,6 +72,8 @@ def standings_api(request):
     ]
     standings: DataFrame = LeagueStandings().get_data_frames()[0][keys]
     standings['TeamID'] = standings['TeamID'].astype(str)
+    standings = update_pct_fields(standings)
+
     return Response(standings.to_dict(orient='record'))
 
 
@@ -56,6 +96,8 @@ def team_list_api(request):
     data = LeagueDashTeamStats(per_mode_detailed='PerGame')
     team_list: DataFrame = data.get_data_frames()[0][keys]
     team_list['TEAM_ID'] = team_list['TEAM_ID'].astype(str)
+    team_list = update_pct_fields(team_list)
+    team_list = update_keys_name(team_list)
 
     return Response(team_list.to_dict(orient='record'))
 
@@ -97,7 +139,6 @@ def team_detail_api(request, team_id):
         "DREB", "REB", "AST", "TOV", "STL", "BLK", "BLKA", "PF", "PFD", "PTS",
         "PLUS_MINUS", "DD2", "TD3"
     ]
-    pct_keys = ['FG_PCT', 'FG3_PCT', 'FT_PCT']
 
     players, coaches = CommonTeamRoster(team_id).get_data_frames()
     players.drop(players_drop_keys, axis=1, inplace=True)
@@ -112,31 +153,11 @@ def team_detail_api(request, team_id):
         team_id,
         per_mode_detailed='PerGame'
     ).get_data_frames()
-    team_stats = team_stats[team_stats_keys]
-    team_stats[pct_keys] = round(team_stats[pct_keys] * 100, 1)
-    team_stats.rename(
-        {
-            'PLUS_MINUS': '+/-',
-            'FG_PCT': 'FG%',
-            'FG3_PCT': 'FG3%',
-            'FT_PCT': 'FT%'
-        },
-        axis=1,
-        inplace=True
-    )
+    team_stats = update_pct_fields(team_stats[team_stats_keys])
+    team_stats = update_keys_name(team_stats)
 
-    player_stats = player_stats[player_stats_keys]
-    player_stats[pct_keys] = round(player_stats[pct_keys] * 100, 1)
-    player_stats.rename(
-        {
-            'PLUS_MINUS': '+/-',
-            'FG_PCT': 'FG%',
-            'FG3_PCT': 'FG3%',
-            'FT_PCT': 'FT%'
-        },
-        axis=1,
-        inplace=True
-    )
+    player_stats = update_pct_fields(player_stats[player_stats_keys])
+    player_stats = update_keys_name(player_stats)
 
     result = {
         'players': players.to_dict(orient='record'),

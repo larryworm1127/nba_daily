@@ -67,7 +67,7 @@
     <thead class="thead-inverse">
       <tr class="bg-primary text-white">
         {% for header in player_stats.0.keys %}
-          {% if header == 'PLAYER' %}
+          {% if header == 'PLAYER_NAME' %}
             <th class="text-lg-center">Player</th>
           {% elif forloop.counter0 > 1 %}
             <th class="bg-primary text-lg-center">{{ header }}</th>
@@ -79,8 +79,10 @@
       {% for player in player_stats %}
         <tr>
           {% for header, stat in player.items %}
-            {% if header == 'PLAYER' %}
-              <th>{{ stat }}</th>
+            {% if header == 'PLAYER_NAME' %}
+              <th>
+                <a class="nounderline" href="{% url 'main:players' player.PLAYER_ID %}">{{ stat }}</a>
+              </th>
             {% elif forloop.counter0 > 1 %}
               <td>{{ stat }}</td>
             {% endif %}

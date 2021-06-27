@@ -22,7 +22,7 @@
             <th>CONF</th>
             <th>HOME</th>
             <th>ROAD</th>
-            <th>LAST 10</th>
+            <th>L10</th>
             <th>STREAK</th>
             <th>PF</th>
             <th>PA</th>
@@ -48,7 +48,7 @@
                 </th>
                 <td>{{ team.WINS }}</td>
                 <td>{{ team.LOSSES }}</td>
-                <td>{{ team.WinPCT|multiply:100 }}</td>
+                <td>{{ team.WinPCT }}</td>
                 <td>{{ team.ConferenceRecord }}</td>
                 <td>{{ team.HOME }}</td>
                 <td>{{ team.ROAD }}</td>
@@ -59,7 +59,7 @@
                   <td>Lost {{ team.CurrentStreak|multiply:-1 }}</td>
                 {% endif %}
                 <td>{{ team.PointsPG }}</td>
-                <td>{{ team.OppPointsPg }}</td>
+                <td>{{ team.OppPointsPG }}</td>
                 <td>{{ team.DiffPointsPG }}</td>
               </tr>
             {% endif %}
