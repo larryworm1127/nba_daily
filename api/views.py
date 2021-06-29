@@ -1,6 +1,10 @@
 from datetime import datetime
 
+import numpy
+import simplejson
+from dateutil import parser
 from nba_api.stats.endpoints.boxscoresummaryv2 import BoxScoreSummaryV2
+from nba_api.stats.endpoints.boxscoretraditionalv2 import BoxScoreTraditionalV2
 from nba_api.stats.endpoints.commonteamroster import CommonTeamRoster
 from nba_api.stats.endpoints.leaguedashteamstats import LeagueDashTeamStats
 from nba_api.stats.endpoints.leaguegamefinder import LeagueGameFinder
@@ -10,6 +14,18 @@ from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+
+# Encoder
+def converter(obj):
+    if isinstance(obj, numpy.integer):
+        return int(obj)
+    elif isinstance(obj, numpy.floating):
+        return float(obj)
+    elif isinstance(obj, numpy.ndarray):
+        return obj.tolist()
+
+    raise TypeError(repr(obj) + " is not JSON serializable")
 
 
 # Util functions
@@ -38,7 +54,8 @@ def update_keys_name(df: DataFrame) -> DataFrame:
         'FT_PCT': 'FT%',
         'WIN_PCT': 'WIN%',
         'W_PCT': 'WIN%',
-        'WinPCT': 'WIN%'
+        'WinPCT': 'WIN%',
+        'START_POSITION': 'P'
     }
 
     result = df.copy()
@@ -47,6 +64,30 @@ def update_keys_name(df: DataFrame) -> DataFrame:
             result.rename({key: value}, axis=1, inplace=True)
 
     return result
+
+
+def clean_single_game_data(df: DataFrame) -> None:
+    float_fields = ['FG_PCT', 'FG3_PCT', 'FT_PCT']
+    ignore_fields = [
+        'TEAM_ID', 'PLAYER_ID', 'PLAYER_NAME', 'START_POSITION', 'COMMENT'
+    ]
+    time_fields = ['MIN']
+    for index, row in df.iterrows():
+        if row['MIN'] is None:
+            for key, value in row.items():
+                if key in float_fields:
+                    row[key] = 0.0
+                elif key in time_fields:
+                    row[key] = '00:00'
+                elif key not in ignore_fields:
+                    row[key] = 0
+
+        df.iloc[index] = row
+
+    for col_type, key in zip(df.dtypes, df.keys()):
+        if key not in ignore_fields and key not in float_fields and \
+                key not in time_fields:
+            df[key] = df[key].astype(int)
 
 
 # API views
@@ -74,7 +115,7 @@ def standings_api(request):
     standings['TeamID'] = standings['TeamID'].astype(str)
     standings = update_pct_fields(standings)
 
-    return Response(standings.to_dict(orient='record'))
+    return Response(standings.to_dict(orient='records'))
 
 
 @api_view(['GET'])
@@ -99,7 +140,7 @@ def team_list_api(request):
     team_list = update_pct_fields(team_list)
     team_list = update_keys_name(team_list)
 
-    return Response(team_list.to_dict(orient='record'))
+    return Response(team_list.to_dict(orient='records'))
 
 
 @api_view(['GET'])
@@ -160,8 +201,8 @@ def team_detail_api(request, team_id):
     player_stats = update_keys_name(player_stats)
 
     result = {
-        'players': players.to_dict(orient='record'),
-        'coaches': coaches.to_dict(orient='record'),
+        'players': players.to_dict(orient='records'),
+        'coaches': coaches.to_dict(orient='records'),
         'team_info': {
             key: value[0]
             for key, value in team_info.to_dict().items()
@@ -170,7 +211,7 @@ def team_detail_api(request, team_id):
             key: value[0]
             for key, value in team_stats.to_dict().items()
         },
-        'player_stats': player_stats.to_dict(orient='record')
+        'player_stats': player_stats.to_dict(orient='records')
     }
     return Response(result)
 
@@ -211,8 +252,116 @@ def game_by_date_api(request, date):
         line_score['TEAM_ID'] = line_score['TEAM_ID'].astype(str)
         broadcast: DataFrame = box_score[0][broadcast_keys].iloc[0]
         games_summary[game_id] = {
-            'line_score': line_score.to_dict(orient='record'),
+            'line_score': line_score.to_dict(orient='records'),
             'broadcast': broadcast.to_dict()
         }
 
     return Response(games_summary)
+
+
+@api_view(['GET'])
+def game_by_id_api(request, game_id):
+    """
+    Endpoint class: BoxScoreTraditionalV2(), BoxScoreSummaryV2()
+    """
+    line_score_drop_keys = [
+        'GAME_DATE_EST', 'GAME_SEQUENCE', 'TEAM_CITY_NAME', 'TEAM_NICKNAME',
+        'GAME_ID'
+    ]
+    broadcast_keys = [
+        'GAME_STATUS_TEXT', 'NATL_TV_BROADCASTER_ABBREVIATION', 'LIVE_PERIOD',
+        'HOME_TEAM_ID', 'VISITOR_TEAM_ID', 'GAME_DATE_EST'
+    ]
+    inactive_players_drop_keys = [
+        'TEAM_CITY', 'TEAM_NAME'
+    ]
+    player_stats_drop_keys = [
+        'GAME_ID', 'TEAM_CITY', 'TEAM_ABBREVIATION', 'NICKNAME'
+    ]
+    team_stats_drop_keys = [
+        'GAME_ID', 'TEAM_ABBREVIATION'
+    ]
+    overtime_keys = [
+        f'PTS_OT{i}' for i in range(1, 11)
+    ]
+
+    # Get box score summary
+    box_score_summary = BoxScoreSummaryV2(game_id).get_data_frames()
+    summary: DataFrame = box_score_summary[0][broadcast_keys].iloc[0]
+    summary['HOME_TEAM_ID'] = summary['HOME_TEAM_ID'].astype(str)
+    summary['VISITOR_TEAM_ID'] = summary['VISITOR_TEAM_ID'].astype(str)
+
+    line_score: DataFrame = box_score_summary[5]
+    line_score.drop(line_score_drop_keys, axis=1, inplace=True)
+    line_score['TEAM_ID'] = line_score['TEAM_ID'].astype(str)
+
+    inactive_players: DataFrame = box_score_summary[3]
+    inactive_players.drop(inactive_players_drop_keys, axis=1, inplace=True)
+    inactive_players['PLAYER_ID'] = inactive_players['PLAYER_ID'].astype(str)
+    inactive_players['TEAM_ID'] = inactive_players['TEAM_ID'].astype(str)
+
+    # Get traditional box score data
+    box_score = BoxScoreTraditionalV2(game_id).get_data_frames()
+    player_stats, team_stats, _ = box_score
+    player_stats.drop(player_stats_drop_keys, axis=1, inplace=True)
+    player_stats = update_pct_fields(player_stats)
+    clean_single_game_data(player_stats)
+    player_stats = update_keys_name(player_stats)
+    player_stats['TEAM_ID'] = player_stats['TEAM_ID'].astype(str)
+
+    team_stats.drop(team_stats_drop_keys, axis=1, inplace=True)
+    team_stats = update_pct_fields(team_stats)
+    team_stats = update_keys_name(team_stats)
+    team_stats['TEAM_ID'] = team_stats['TEAM_ID'].astype(str)
+
+    # Split data to two teams
+    home_team_id = summary['HOME_TEAM_ID']
+    home_line_score = line_score[line_score['TEAM_ID'] == home_team_id].iloc[0]
+    home_team_data = {
+        'player_stats': [],
+        'line_score': home_line_score.drop(overtime_keys).to_dict(),
+        'team_stats':
+            team_stats[team_stats['TEAM_ID'] == home_team_id].iloc[0].to_dict()
+    }
+
+    away_team_id = summary['VISITOR_TEAM_ID']
+    away_line_score = line_score[line_score['TEAM_ID'] == away_team_id].iloc[0]
+    away_team_data = {
+        'player_stats': [],
+        'line_score': away_line_score.drop(overtime_keys).to_dict(),
+        'team_stats':
+            team_stats[team_stats['TEAM_ID'] == away_team_id].iloc[0].to_dict()
+    }
+
+    for _, row in player_stats.iterrows():
+        if row.get('TEAM_ID') == home_team_id:
+            home_team_data['player_stats'].append(row.to_dict())
+        elif row.get('TEAM_ID') == away_team_id:
+            away_team_data['player_stats'].append(row.to_dict())
+
+    overtime = {
+        i: {
+            'flag': False if i > summary['LIVE_PERIOD'] - 4 else True,
+            'home': home_line_score[overtime_keys].iloc[i - 1],
+            'away': away_line_score[overtime_keys].iloc[i - 1]
+        }
+        for i in range(1, 11)
+    }
+
+    # Return JSON response
+    result = {
+        'summary': summary.to_dict(),
+        'inactive_players': inactive_players.to_dict(orient='records'),
+        'overtime': overtime,
+        'home_team': home_team_data,
+        'away_team': away_team_data
+    }
+    date = parser.parse(result['summary']['GAME_DATE_EST'])
+    result['summary']['GAME_DATE_EST'] = date.strftime('%B %d, %Y')
+
+    home_pts = line_score[line_score['TEAM_ID'] == home_team_id].iloc[0]['PTS']
+    away_pts = line_score[line_score['TEAM_ID'] == away_team_id].iloc[0]['PTS']
+    result['summary']['HOME_WON'] = bool(home_pts > away_pts)
+
+    serialized = simplejson.dumps(result, ignore_nan=True, default=converter)
+    return Response(simplejson.loads(serialized))

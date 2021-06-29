@@ -194,3 +194,7 @@ body {
 .coach-datatable {
     width: 45%;
 }
+
+#game-detail {
+    width: 70%;
+}

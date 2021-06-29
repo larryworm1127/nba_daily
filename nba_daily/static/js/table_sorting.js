@@ -18,7 +18,7 @@ $(document).ready(function () {
     "bInfo": false,
     /* Disable initial sort */
     "aaSorting": [],
-    "aoColumns": [null].concat(getAOColumnsDesc(17))
+    "aoColumns": [null].concat(getAOColumnsDesc(21))
   });
 });
 

@@ -1,17 +1,17 @@
 {% extends 'layout.html' %}
 
-{% block title %}Boxscore{% endblock %}
+{% block title %}BoxScore{% endblock %}
 
 {% load static %}
 {% load filters %}
 {% load tags %}
 
 {% block body %}
-  <div class="container">
+  <div class="container" id="game-detail">
     <br>
     <div class="row">
       <div class="col-lg-5">
-        <h3>{{ game.game_date }}</h3>
+        <h3>{{ summary.GAME_DATE_EST }}</h3>
         <br>
         <table class="table table-sm">
           <thead class="thead-inverse">
@@ -21,52 +21,122 @@
               <th class="bg-primary text-lg-center">Q2</th>
               <th class="bg-primary text-lg-center">Q3</th>
               <th class="bg-primary text-lg-center">Q4</th>
-              {% for period in overtime %}
-                <th class="bg-primary text-lg-center">OT{{ period }}</th>
+              {% for period, data in overtime.items %}
+                {% if data.flag %}
+                  <th class="bg-primary text-lg-center">OT{{ period }}</th>
+                {% endif %}
               {% endfor %}
               <th class="bg-primary text-lg-center">TOTAL</th>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              {% if summary.HOME_WON %}
+                <th class="text-lg-center">
+                  {% with 'images/'|add:summary.HOME_TEAM_ID|add:'.png' as logo_path %}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static logo_path %}">
+                  {% endwith %}
+                  &nbsp{{ home_team.line_score.TEAM_ABBREVIATION }}
+                </th>
+              {% else %}
+                <td class="text-lg-center">
+                  {% with 'images/'|add:summary.HOME_TEAM_ID|add:'.png' as logo_path %}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static logo_path %}">
+                  {% endwith %}
+                  &nbsp{{ home_team.line_score.TEAM_ABBREVIATION }}
+                </td>
+              {% endif %}
 
-            {% for tstats in game.team_game_log.all %}
-              <tr>
-                {% if tstats.result == 'W' and tstats.team == game.home_team %}
-                  <th class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">
-                    &nbsp{{ tstats.team.team_abb }}
-                  </th>
-                {% else %}
-                  <td class="text-lg-center">
-                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static tstats.team.get_logo_path %}">
-                    &nbsp{{ tstats.team.team_abb }}
-                  </td>
-                {% endif %}
+              {% if home_team.line_score.PTS_QTR1 > away_team.line_score.PTS_QTR1 %}
+                <th class="text-lg-center">{{ home_team.line_score.PTS_QTR1 }}</th>
+              {% else %}
+                <td class="text-lg-center">{{ home_team.line_score.PTS_QTR1 }}</td>
+              {% endif %}
 
-                <td class="text-lg-center">{{ tstats.pts_q1 }}</td>
-                <td class="text-lg-center">{{ tstats.pts_q2 }}</td>
-                <td class="text-lg-center">{{ tstats.pts_q3 }}</td>
-                <td class="text-lg-center">{{ tstats.pts_q4 }}</td>
-                {% if overtime.stop >= 2 %}
-                  <td class="text-lg-center">{{ tstats.pts_ot1 }}</td>
-                {% endif %}
-                {% if overtime.stop >= 3 %}
-                  <td class="text-lg-center">{{ tstats.pts_ot2 }}</td>
-                {% endif %}
-                {% if overtime.stop >= 4 %}
-                  <td class="text-lg-center">{{ tstats.pts_ot3 }}</td>
-                {% endif %}
-                {% if overtime.stop >= 5 %}
-                  <td class="text-lg-center">{{ tstats.pts_ot4 }}</td>
-                {% endif %}
+              {% if home_team.line_score.PTS_QTR2 > away_team.line_score.PTS_QTR2 %}
+                <th class="text-lg-center">{{ home_team.line_score.PTS_QTR2 }}</th>
+              {% else %}
+                <td class="text-lg-center">{{ home_team.line_score.PTS_QTR2 }}</td>
+              {% endif %}
 
-                {% if tstats.result == 'W' %}
-                  <th class="text-lg-center">{{ tstats.points }}</th>
-                {% else %}
-                  <td class="text-lg-center">{{ tstats.points }}</td>
+              {% if home_team.line_score.PTS_QTR3 > away_team.line_score.PTS_QTR3 %}
+                <th class="text-lg-center">{{ home_team.line_score.PTS_QTR3 }}</th>
+              {% else %}
+                <td class="text-lg-center">{{ home_team.line_score.PTS_QTR3 }}</td>
+              {% endif %}
+
+              {% if home_team.line_score.PTS_QTR4 > away_team.line_score.PTS_QTR4 %}
+                <th class="text-lg-center">{{ home_team.line_score.PTS_QTR4 }}</th>
+              {% else %}
+                <td class="text-lg-center">{{ home_team.line_score.PTS_QTR4 }}</td>
+              {% endif %}
+
+              {% for data in overtime.values %}
+                {% if data.bool %}
+                  <td class="text-lg-center">{{ data.home }}</td>
                 {% endif %}
-              </tr>
-            {% endfor %}
+              {% endfor %}
+
+              {% if summary.HOME_WON %}
+                <th class="text-lg-center">{{ home_team.line_score.PTS }}</th>
+              {% else %}
+                <td class="text-lg-center">{{ home_team.line_score.PTS }}</td>
+              {% endif %}
+            </tr>
+
+            <tr>
+              {% if summary.HOME_WON %}
+                <td class="text-lg-center">
+                  {% with 'images/'|add:summary.VISITOR_TEAM_ID|add:'.png' as logo_path %}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static logo_path %}">
+                  {% endwith %}
+                  &nbsp{{ away_team.line_score.TEAM_ABBREVIATION }}
+                </td>
+              {% else %}
+                <th class="text-lg-center">
+                  {% with 'images/'|add:summary.VISITOR_TEAM_ID|add:'.png' as logo_path %}
+                    <img class="team-logo-sm-quarter" alt="team-logo" src="{% static logo_path %}">
+                  {% endwith %}
+                  &nbsp{{ away_team.line_score.TEAM_ABBREVIATION }}
+                </th>
+              {% endif %}
+
+              {% if home_team.line_score.PTS_QTR1 > away_team.line_score.PTS_QTR1 %}
+                <td class="text-lg-center">{{ away_team.line_score.PTS_QTR1 }}</td>
+              {% else %}
+                <th class="text-lg-center">{{ away_team.line_score.PTS_QTR1 }}</th>
+              {% endif %}
+
+              {% if home_team.line_score.PTS_QTR2 > away_team.line_score.PTS_QTR2 %}
+                <td class="text-lg-center">{{ away_team.line_score.PTS_QTR2 }}</td>
+              {% else %}
+                <th class="text-lg-center">{{ away_team.line_score.PTS_QTR2 }}</th>
+              {% endif %}
+
+              {% if home_team.line_score.PTS_QTR3 > away_team.line_score.PTS_QTR3 %}
+                <td class="text-lg-center">{{ away_team.line_score.PTS_QTR3 }}</td>
+              {% else %}
+                <th class="text-lg-center">{{ away_team.line_score.PTS_QTR3 }}</th>
+              {% endif %}
+
+              {% if home_team.line_score.PTS_QTR4 > away_team.line_score.PTS_QTR4 %}
+                <td class="text-lg-center">{{ away_team.line_score.PTS_QTR4 }}</td>
+              {% else %}
+                <th class="text-lg-center">{{ away_team.line_score.PTS_QTR4 }}</th>
+              {% endif %}
+
+              {% for data in overtime.values %}
+                {% if data.bool %}
+                  <td class="text-lg-center">{{ data.away }}</td>
+                {% endif %}
+              {% endfor %}
+
+              {% if summary.HOME_WON %}
+                <td class="text-lg-center">{{ away_team.line_score.PTS }}</td>
+              {% else %}
+                <th class="text-lg-center">{{ away_team.line_score.PTS }}</th>
+              {% endif %}
+            </tr>
           </tbody>
         </table>
       </div>
@@ -74,134 +144,124 @@
     <br>
 
     {# Boxscore Tables #}
-    {% for tstats in game.team_game_log.all %}
-      <table class="boxscores-datatable table table-sm text-lg-center">
-        <h4>
-          <a class="nounderline dark-grey" href="{% url 'main:teams' tstats.team.team_id %}">
-            <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static tstats.team.get_logo_path %}">&nbsp{{ tstats.team.get_full_name }}
-          </a>
-          ({{ tstats.curr_wins }}-{{ tstats.curr_losses }})
-        </h4>
-        <thead class="thead-inverse">
-          <tr class="bg-primary text-white">
-            <th class="text-lg-center">PLAYER</th>
-            <th class="bg-primary text-lg-center">MIN</th>
-            <th class="bg-primary text-lg-center">PTS</th>
-            <th class="bg-primary text-lg-center">REB</th>
-            <th class="bg-primary text-lg-center">AST</th>
-            <th class="bg-primary text-lg-center">FGM</th>
-            <th class="bg-primary text-lg-center">FGA</th>
-            <th class="bg-primary text-lg-center">FG%</th>
-            <th class="bg-primary text-lg-center">3PM</th>
-            <th class="bg-primary text-lg-center">3PA</th>
-            <th class="bg-primary text-lg-center">3P%</th>
-            <th class="bg-primary text-lg-center">FTM</th>
-            <th class="bg-primary text-lg-center">FTA</th>
-            <th class="bg-primary text-lg-center">FT%</th>
-            <th class="bg-primary text-lg-center">OREB</th>
-            <th class="bg-primary text-lg-center">DREB</th>
-            <th class="bg-primary text-lg-center">STL</th>
-            <th class="bg-primary text-lg-center">BLK</th>
-            <th class="bg-primary text-lg-center">TOV</th>
-            <th class="bg-primary text-lg-center">PF</th>
-            <th class="bg-primary text-lg-center">+/-</th>
-          </tr>
-        </thead>
-        <tbody>
-          {# Players Data Rows #}
-          {% for pstats in tstats.get_player_game_logs %}
-            <tr>
-              <th>
-                <a class="nounderline" href="{{ pstats.player.get_absolute_url }}">{{ pstats.player.get_full_name }}</a>
-              </th>
-              <td>{{ pstats.minutes }}</td>
-              <td>{{ pstats.points }}</td>
-              <td>{{ pstats.rebounds }}</td>
-              <td>{{ pstats.assists }}</td>
-              <td>{{ pstats.fg_made }}</td>
-              <td>{{ pstats.fg_attempt }}</td>
-              <td>{{ pstats.fg_percent|multiply:100 }}</td>
-              <td>{{ pstats.fg3_made }}</td>
-              <td>{{ pstats.fg3_attempt }}</td>
-              <td>{{ pstats.fg3_percent|multiply:100 }}</td>
-              <td>{{ pstats.ft_made }}</td>
-              <td>{{ pstats.ft_attempt }}</td>
-              <td>{{ pstats.ft_percent|multiply:100 }}</td>
-              <td>{{ pstats.offense_reb }}</td>
-              <td>{{ pstats.defense_reb }}</td>
-              <td>{{ pstats.steals }}</td>
-              <td>{{ pstats.blocks }}</td>
-              <td>{{ pstats.turnovers }}</td>
-              <td>{{ pstats.fouls }}</td>
-              <td>{{ pstats.plus_minus }}</td>
-            </tr>
-          {% endfor %}
-
-          {# DNP Players Data Rows #}
-          {% for player, reason in game.get_dnp_players.items %}
-            {% if player.team == tstats.team %}
-              <tr>
-                <th>
-                  <a class="nounderline" href="{{ player.get_absolute_url }}">{{ player.get_full_name }}</a><br/>
-                  {{ reason }}
-                </th>
-                <td class="text-lg-center">0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0.0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0.0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0.0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
+    <h4>
+      <a class="nounderline dark-grey" href="{% url 'main:teams' summary.HOME_TEAM_ID %}">
+        {% with 'images/'|add:summary.HOME_TEAM_ID|add:'.png' as logo_path %}
+          <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static logo_path %}">
+        {% endwith %}
+        &nbsp{{ home_team.team_stats.TEAM_CITY }} {{ home_team.team_stats.TEAM_NAME }}
+      </a>
+      ({{ home_team.line_score.TEAM_WINS_LOSSES }})
+    </h4>
+    <table class="table boxscores-datatable table-sm text-lg-center">
+      <thead class="thead-inverse">
+        <tr class="bg-primary text-white">
+          {% for key in home_team.player_stats.0.keys %}
+            {% if key == 'PLAYER_NAME' %}
+              <th class="text-lg-center">PLAYER</th>
+            {% elif forloop.counter0 > 1 and key != 'COMMENT' %}
+              <th class="bg-primary text-lg-center">{{ key }}</th>
             {% endif %}
           {% endfor %}
-        </tbody>
-        <tfoot>
+        </tr>
+      </thead>
+      <tbody>
+        {# Players Data Rows #}
+        {% for player in home_team.player_stats %}
           <tr>
-            <th>TEAM</th>
-            <td class="text-lg-center">{{ tstats.minutes }}</td>
-            <td>{{ tstats.points }}</td>
-            <td>{{ tstats.rebounds }}</td>
-            <td>{{ tstats.assists }}</td>
-            <td>{{ tstats.fg_made }}</td>
-            <td>{{ tstats.fg_attempt }}</td>
-            <td>{{ tstats.fg_percent|multiply:100 }}</td>
-            <td>{{ tstats.fg3_made }}</td>
-            <td>{{ tstats.fg3_attempt }}</td>
-            <td>{{ tstats.fg3_percent|multiply:100 }}</td>
-            <td>{{ tstats.ft_made }}</td>
-            <td>{{ tstats.ft_attempt }}</td>
-            <td>{{ tstats.ft_percent|multiply:100 }}</td>
-            <td>{{ tstats.offense_reb }}</td>
-            <td>{{ tstats.defense_reb }}</td>
-            <td>{{ tstats.steals }}</td>
-            <td>{{ tstats.blocks }}</td>
-            <td>{{ tstats.turnovers }}</td>
-            <td>{{ tstats.fouls }}</td>
-            <td>{{ tstats.get_plus_minus }}</td>
+            {% for header, stat in player.items %}
+              {% if header == 'PLAYER_NAME' %}
+                <th>
+                  <a class="nounderline" href="{% url 'main:players' player.PLAYER_ID %}">{{ player.PLAYER_NAME }}</a>
+                  {% if player.COMMMENT != "" %}
+                    <br/>{{ player.COMMENT }}
+                  {% endif %}
+                </th>
+              {% elif forloop.counter0 > 2 and header != 'COMMENT' %}
+                <td>{{ stat }}</td>
+              {% endif %}
+            {% endfor %}
           </tr>
-        </tfoot>
-      </table>
-      <br>
-    {% endfor %}
+        {% endfor %}
+      </tbody>
+
+      <tfoot>
+        <tr>
+          {% for header, stat in home_team.team_stats.items %}
+            {% if forloop.counter0 == 0 %}
+              <th>TEAM</th>
+            {% elif forloop.counter0 == 1 %}
+              <td></td>
+            {% elif forloop.counter0 > 2 %}
+              <td>{{ stat }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </tfoot>
+    </table>
+    <br>
+
+    <h4>
+      <a class="nounderline dark-grey" href="{% url 'main:teams' summary.VISITOR_TEAM_ID %}">
+        {% with 'images/'|add:summary.VISITOR_TEAM_ID|add:'.png' as logo_path %}
+          <img class="team-logo-sm-boxscore" alt="team-logo" src="{% static logo_path %}">
+        {% endwith %}
+        &nbsp{{ away_team.team_stats.TEAM_CITY }} {{ away_team.team_stats.TEAM_NAME }}
+      </a>
+      ({{ away_team.line_score.TEAM_WINS_LOSSES }})
+    </h4>
+    <table class="table boxscores-datatable table-sm text-lg-center">
+      <thead class="thead-inverse">
+        <tr class="bg-primary text-white">
+          {% for key in away_team.player_stats.0.keys %}
+            {% if key == 'PLAYER_NAME' %}
+              <th class="text-lg-center">PLAYER</th>
+            {% elif forloop.counter0 > 1 and key != 'COMMENT' %}
+              <th class="bg-primary text-lg-center">{{ key }}</th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {# Players Data Rows #}
+        {% for player in away_team.player_stats %}
+          <tr>
+            {% for header, stat in player.items %}
+              {% if header == 'PLAYER_NAME' %}
+                <th>
+                  <a class="nounderline" href="{% url 'main:players' player.PLAYER_ID %}">{{ player.PLAYER_NAME }}</a>
+                  {% if player.COMMMENT != "" %}
+                    <br/>{{ player.COMMENT }}
+                  {% endif %}
+                </th>
+              {% elif forloop.counter0 > 2 and header != 'COMMENT' %}
+                <td>{{ stat }}</td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+
+      <tfoot>
+        <tr>
+          {% for header, stat in away_team.team_stats.items %}
+            {% if forloop.counter0 == 0 %}
+              <th>TEAM</th>
+            {% elif forloop.counter0 == 1 %}
+              <td></td>
+            {% elif forloop.counter0 > 2 %}
+              <td>{{ stat }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </tfoot>
+    </table>
+    <br>
 
     {# Inactive Player Data Rows #}
     <br>
     <div class="row">
-      {% if game.inactive_players|length > 0 %}
+      {% if inactive_players|length > 0 %}
         <div class="col-lg-6">
           <h4>Inactive Players</h4>
           <table class="table table-sm">
@@ -213,11 +273,19 @@
               </tr>
             </thead>
             <tbody>
-              {% for player in game.get_inactive_players %}
+              {% for player in inactive_players %}
                 <tr>
-                  <th><a class="nounderline dark-grey" href="{{ player.get_absolute_url }}">{{ player.get_full_name }}</a></th>
-                  <td class="text-lg-center">{{ player.team.team_abb }}</td>
-                  <td class="text-lg-center">{{ player.jersey }}</td>
+                  <th>
+                    <a class="nounderline dark-grey" href="{% url 'main:players' player.PLAYER_ID %}">
+                      {{ player.FIRST_NAME }} {{ player.LAST_NAME }}
+                    </a>
+                  </th>
+                  <td class="text-lg-center">
+                    <a class="nounderline dark-grey" href="{% url 'main:teams' player.TEAM_ID %}">
+                      {{ player.TEAM_ABBREVIATION }}
+                    </a>
+                  </td>
+                  <td class="text-lg-center">{{ player.JERSEY_NUM }}</td>
                 </tr>
               {% endfor %}
             </tbody>

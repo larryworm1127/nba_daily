@@ -22,7 +22,7 @@
         <div class="list-group">
           {% if games %}
             {% for game_id, data in games.items %}
-              <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{{ game.get_absolute_url }}">
+              <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{% url 'main:boxscore' game_id %}">
                 <div class="row">
                   {% if data.line_score.0.PTS > data.line_score.1.PTS %}
                     <div class="col-xs-4">

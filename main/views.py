@@ -46,7 +46,7 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
     """Render generic score page.
     """
     # games = Game.objects.filter(game_date=date.strftime("%b %d, %Y"))
-    games = requests.get(f'http://{request.get_host()}/api/games/{date}').json()
+    games = requests.get(f'http://{request.get_host()}/api/score/{date}').json()
 
     # Validate date input
     if request.method == 'POST':
@@ -168,18 +168,25 @@ def teams_stats(request):
 # ==============================================================================
 # Games views
 # ==============================================================================
-class GameDetailView(generic.DetailView):
+# class GameDetailView(generic.DetailView):
+#     """Single game box score page.
+#     """
+#     model = Game
+#
+#     def get_context_data(self, **kwargs):
+#         """Return the updated context data.
+#         """
+#         context = super(GameDetailView, self).get_context_data(**kwargs)
+#         game = get_object_or_404(Game, pk=self.kwargs['pk'])
+#         context['overtime'] = range(1, game.overtime() + 1)
+#         return context
+
+
+def game_detail(request, game_id):
     """Single game box score page.
     """
-    model = Game
-
-    def get_context_data(self, **kwargs):
-        """Return the updated context data.
-        """
-        context = super(GameDetailView, self).get_context_data(**kwargs)
-        game = get_object_or_404(Game, pk=self.kwargs['pk'])
-        context['overtime'] = range(1, game.overtime() + 1)
-        return context
+    response = requests.get(f'http://{request.get_host()}/api/games/{game_id}')
+    return render(request, 'main/game_detail.html', context=response.json())
 
 
 # ==============================================================================

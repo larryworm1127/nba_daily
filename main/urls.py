@@ -35,5 +35,6 @@ urlpatterns += [
 
 # Games page URL
 urlpatterns += [
-    path('games/<str:pk>', views.GameDetailView.as_view(), name='boxscore'),
+    # path('games/<str:pk>', views.GameDetailView.as_view(), name='boxscore'),
+    path('games/<str:game_id>', views.game_detail, name='boxscore'),
 ]
