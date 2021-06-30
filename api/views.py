@@ -3,8 +3,10 @@ from datetime import datetime
 import numpy
 import simplejson
 from dateutil import parser
+from nba_api.stats.endpoints.playercareerstats import PlayerCareerStats
 from nba_api.stats.endpoints.boxscoresummaryv2 import BoxScoreSummaryV2
 from nba_api.stats.endpoints.boxscoretraditionalv2 import BoxScoreTraditionalV2
+from nba_api.stats.endpoints.commonplayerinfo import CommonPlayerInfo
 from nba_api.stats.endpoints.commonteamroster import CommonTeamRoster
 from nba_api.stats.endpoints.leaguedashteamstats import LeagueDashTeamStats
 from nba_api.stats.endpoints.leaguegamefinder import LeagueGameFinder
@@ -14,6 +16,9 @@ from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+# Constants
+PLAYER_PHOTO_LINK = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/{player_id}.png"
 
 
 # Encoder
@@ -111,7 +116,7 @@ def standings_api(request):
         'ROAD', 'L10', 'ConferenceRecord', 'CurrentStreak', 'Conference',
         'PlayoffRank', 'PointsPG', 'OppPointsPG', 'DiffPointsPG'
     ]
-    standings: DataFrame = LeagueStandings().get_data_frames()[0][keys]
+    standings = LeagueStandings().get_data_frames()[0][keys]
     standings['TeamID'] = standings['TeamID'].astype(str)
     standings = update_pct_fields(standings)
 
@@ -135,7 +140,7 @@ def team_list_api(request):
         'PLUS_MINUS'
     ]
     data = LeagueDashTeamStats(per_mode_detailed='PerGame')
-    team_list: DataFrame = data.get_data_frames()[0][keys]
+    team_list = data.league_dash_team_stats.get_data_frame()[keys]
     team_list['TEAM_ID'] = team_list['TEAM_ID'].astype(str)
     team_list = update_pct_fields(team_list)
     team_list = update_keys_name(team_list)
@@ -181,19 +186,15 @@ def team_detail_api(request, team_id):
         "PLUS_MINUS", "DD2", "TD3"
     ]
 
-    players, coaches = CommonTeamRoster(team_id).get_data_frames()
-    players.drop(players_drop_keys, axis=1, inplace=True)
+    roster_data = CommonTeamRoster(team_id)
+    players = roster_data.common_team_roster.get_data_frame().drop(players_drop_keys, axis=1)
     players['AGE'] = players['AGE'].astype(int)
-    coaches.drop(coaches_drop_keys, axis=1, inplace=True)
+    coaches = roster_data.coaches.get_data_frame().drop(coaches_drop_keys, axis=1)
 
-    team_info = TeamInfoCommon(team_id).get_data_frames()[0]
-    team_info.drop(team_info_drop_keys, axis=1, inplace=True)
+    team_info = TeamInfoCommon(team_id).team_info_common.get_data_frame().drop(team_info_drop_keys, axis=1)
     team_info['TEAM_ID'] = team_info['TEAM_ID'].astype(str)
 
-    team_stats, player_stats = TeamPlayerDashboard(
-        team_id,
-        per_mode_detailed='PerGame'
-    ).get_data_frames()
+    team_stats, player_stats = TeamPlayerDashboard(team_id, per_mode_detailed='PerGame').get_data_frames()
     team_stats = update_pct_fields(team_stats[team_stats_keys])
     team_stats = update_keys_name(team_stats)
 
@@ -243,17 +244,16 @@ def game_by_date_api(request, date):
         date_from_nullable=parsed_date
     )
 
-    games = data.get_data_frames()[0]
+    games = data.league_game_finder_results.get_data_frame()
     games_summary = {}
     for game_id in set(games['GAME_ID']):
-        box_score = BoxScoreSummaryV2(game_id).get_data_frames()
-        line_score: DataFrame = box_score[5]
-        line_score.drop(line_score_drop_keys, axis=1, inplace=True)
+        box_score = BoxScoreSummaryV2(game_id)
+        line_score = box_score.line_score.get_data_frame().drop(line_score_drop_keys, axis=1)
         line_score['TEAM_ID'] = line_score['TEAM_ID'].astype(str)
-        broadcast: DataFrame = box_score[0][broadcast_keys].iloc[0]
+        broadcast = box_score.game_summary.get_data_frame()[broadcast_keys]
         games_summary[game_id] = {
             'line_score': line_score.to_dict(orient='records'),
-            'broadcast': broadcast.to_dict()
+            'broadcast': broadcast.iloc[0].to_dict()
         }
 
     return Response(games_summary)
@@ -286,30 +286,27 @@ def game_by_id_api(request, game_id):
     ]
 
     # Get box score summary
-    box_score_summary = BoxScoreSummaryV2(game_id).get_data_frames()
-    summary: DataFrame = box_score_summary[0][broadcast_keys].iloc[0]
+    box_score = BoxScoreSummaryV2(game_id)
+    summary = box_score.game_summary.get_data_frame()[broadcast_keys].iloc[0]
     summary['HOME_TEAM_ID'] = summary['HOME_TEAM_ID'].astype(str)
     summary['VISITOR_TEAM_ID'] = summary['VISITOR_TEAM_ID'].astype(str)
 
-    line_score: DataFrame = box_score_summary[5]
-    line_score.drop(line_score_drop_keys, axis=1, inplace=True)
+    line_score = box_score.line_score.get_data_frame().drop(line_score_drop_keys, axis=1)
     line_score['TEAM_ID'] = line_score['TEAM_ID'].astype(str)
 
-    inactive_players: DataFrame = box_score_summary[3]
-    inactive_players.drop(inactive_players_drop_keys, axis=1, inplace=True)
+    inactive_players = box_score.inactive_players.get_data_frame().drop(inactive_players_drop_keys, axis=1)
     inactive_players['PLAYER_ID'] = inactive_players['PLAYER_ID'].astype(str)
     inactive_players['TEAM_ID'] = inactive_players['TEAM_ID'].astype(str)
 
     # Get traditional box score data
-    box_score = BoxScoreTraditionalV2(game_id).get_data_frames()
-    player_stats, team_stats, _ = box_score
-    player_stats.drop(player_stats_drop_keys, axis=1, inplace=True)
+    box_score_trad = BoxScoreTraditionalV2(game_id)
+    player_stats = box_score_trad.player_stats.get_data_frame().drop(player_stats_drop_keys, axis=1)
     player_stats = update_pct_fields(player_stats)
     clean_single_game_data(player_stats)
     player_stats = update_keys_name(player_stats)
     player_stats['TEAM_ID'] = player_stats['TEAM_ID'].astype(str)
 
-    team_stats.drop(team_stats_drop_keys, axis=1, inplace=True)
+    team_stats = box_score_trad.team_stats.get_data_frame().drop(team_stats_drop_keys, axis=1)
     team_stats = update_pct_fields(team_stats)
     team_stats = update_keys_name(team_stats)
     team_stats['TEAM_ID'] = team_stats['TEAM_ID'].astype(str)
@@ -365,3 +362,53 @@ def game_by_id_api(request, game_id):
 
     serialized = simplejson.dumps(result, ignore_nan=True, default=converter)
     return Response(simplejson.loads(serialized))
+
+
+@api_view(['GET'])
+def player_detail_api(request, player_id):
+    """
+    Endpoint class:
+    """
+    player_info_keys = [
+        'DISPLAY_FIRST_LAST', 'BIRTHDATE', 'SCHOOL', 'COUNTRY', 'HEIGHT',
+        'WEIGHT', 'SEASON_EXP', 'JERSEY', 'POSITION', 'TEAM_NAME', 'TEAM_CITY',
+        'FROM_YEAR', 'TEAM_ID', 'DRAFT_ROUND', 'DRAFT_NUMBER', 'PERSON_ID'
+    ]
+    player_info = CommonPlayerInfo(player_id).common_player_info.get_data_frame().iloc[0][player_info_keys]
+    player_info['BIRTHDATE'] = parser.parse(player_info['BIRTHDATE']).strftime('%Y-%m-%d')
+    player_info['TEAM_ID'] = player_info['TEAM_ID'].astype(str)
+    player_info['PHOTO_URL'] = PLAYER_PHOTO_LINK.format(player_id=player_id)
+    player_info['AGE'] = datetime.today().year - parser.parse(player_info['BIRTHDATE']).year
+
+    career_drop_keys = [
+        'PLAYER_ID', 'LEAGUE_ID', 'Team_ID'
+    ]
+    season_drop_keys = [
+        'PLAYER_ID', 'LEAGUE_ID', 'PLAYER_AGE'
+    ]
+    career_stats = PlayerCareerStats(203507, per_mode36='PerGame')
+    career_regular_season = career_stats.career_totals_regular_season.get_data_frame().iloc[0].drop(career_drop_keys)
+    career_regular_season = update_keys_name(update_pct_fields(career_regular_season))
+    career_post_season = career_stats.career_totals_post_season.get_data_frame().iloc[0].drop(career_drop_keys)
+    career_post_season = update_keys_name(update_pct_fields(career_post_season))
+    regular_season = career_stats.season_totals_regular_season.get_data_frame().drop(season_drop_keys, axis=1)
+    regular_season = update_keys_name(update_pct_fields(regular_season))
+    post_season = career_stats.season_totals_post_season.get_data_frame().drop(season_drop_keys, axis=1)
+    post_season = update_keys_name(update_pct_fields(post_season))
+
+    result = {
+        'player_info': player_info.to_dict(),
+        'stats': {
+            'regular_season': {
+                'display_name': "Regular",
+                'season': regular_season.iloc[::-1].to_dict(orient='records'),
+                'career': career_regular_season.to_dict()
+            },
+            'post_season': {
+                'display_name': "Post",
+                'season': post_season.iloc[::-1].to_dict(orient='records'),
+                'career': career_post_season.to_dict()
+            }
+        }
+    }
+    return Response(result)

@@ -71,21 +71,8 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
 def players(request, pk: int):
     """Individual player stats page.
     """
-    player = get_object_or_404(Player, pk=pk)
-    reg_season = PlayerSeasonStats.objects.filter(player=pk,
-                                                  season_type='Regular')
-    post_season = PlayerSeasonStats.objects.filter(player=pk,
-                                                   season_type='Post')
-    reg_total = PlayerCareerStats.objects.get(player=pk, season_type='Regular')
-    post_total = PlayerCareerStats.objects.filter(player=pk,
-                                                  season_type='Post').first()
-
-    context = {
-        'title': player.get_full_name(),
-        'player': player,
-        'data': [(reg_season, reg_total), (post_season, post_total)],
-    }
-    return render(request, 'main/players.html', context)
+    data = requests.get(f'http://{request.get_host()}/api/players/{pk}').json()
+    return render(request, 'main/players.html', data)
 
 
 class PlayerGamesListView(generic.ListView):

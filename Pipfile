@@ -18,6 +18,8 @@ simplejson = "*"
 psycopg2-binary = "*"
 nba-api = "*"
 djangorestframework = "*"
+numpy = "*"
+python-dateutil = "*"
 
 [requires]
 python_version = "3.8"
