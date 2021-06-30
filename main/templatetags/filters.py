@@ -55,6 +55,16 @@ def multiply(value: Any, arg: Any) -> Optional[Union[int, float]]:
 
 
 @register.filter
+def subtract(value, arg):
+    """Number subtraction filter for django template language.
+    """
+    try:
+        return value - arg
+    except (ValueError, TypeError):
+        return None
+
+
+@register.filter
 def get_date(value: Any, arg: Any) -> Optional[str]:
     """Get date filter for django template language.
 

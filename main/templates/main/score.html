@@ -63,7 +63,15 @@
                     </div>
 
                     <div class="col-xs-4">
-                      <div class="final-text">Final</div>
+                      {% if data.broadcast.GAME_STATUS_TEXT == 'Final' %}
+                        <div class="final-text">Final</div>
+                      {% else %}
+                        {% if data.broadcast.LIVE_PERIOD <= 4 %}
+                          <div class="final-text">Live Q{{ data.broadcast.LIVE_PERIOD }}</div>
+                        {% else %}
+                          <div class="final-text">Live OT{{ data.broadcast.LIVE_PERIOD|subtract:4 }}</div>
+                        {% endif %}
+                      {% endif %}
                       <div class="broadcaster">{{ data.broadcast.NATL_TV_BROADCASTER_ABBREVIATION }}</div>
                     </div>
 
