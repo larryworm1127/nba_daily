@@ -3,7 +3,6 @@ from datetime import datetime
 import numpy
 import simplejson
 from dateutil import parser
-from nba_api.stats.endpoints.playercareerstats import PlayerCareerStats
 from nba_api.stats.endpoints.boxscoresummaryv2 import BoxScoreSummaryV2
 from nba_api.stats.endpoints.boxscoretraditionalv2 import BoxScoreTraditionalV2
 from nba_api.stats.endpoints.commonplayerinfo import CommonPlayerInfo
@@ -11,6 +10,7 @@ from nba_api.stats.endpoints.commonteamroster import CommonTeamRoster
 from nba_api.stats.endpoints.leaguedashteamstats import LeagueDashTeamStats
 from nba_api.stats.endpoints.leaguegamefinder import LeagueGameFinder
 from nba_api.stats.endpoints.leaguestandings import LeagueStandings
+from nba_api.stats.endpoints.playercareerstats import PlayerCareerStats
 from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
 from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from pandas import DataFrame
@@ -34,24 +34,30 @@ def converter(obj):
 
 
 # Util functions
-def update_pct_fields(df: DataFrame) -> DataFrame:
-    """Convert pct fields from 0.xxx to xx.x format.
+def update_fields(df: DataFrame, single_game: bool = False) -> DataFrame:
+    """Convert pct fields from 0.xxx to xx.x format and update certain keys
+    names to display names.
     """
+    # Update percentage fields
     keys = [
         'FG_PCT', 'FG3_PCT', 'FT_PCT', 'WIN_PCT', 'WinPCT', 'W_PCT'
     ]
-
     result = df.copy()
     for key in keys:
         if key in df.keys():
             result[key] = round(100 * result[key], 1)
 
-    return result
+    # Change team id type to string
+    team_id_keys = ['TEAM_ID', 'TeamID']
+    for key in team_id_keys:
+        if key in df.keys():
+            result[key] = result[key].astype(str)
 
+    # Update single game stat fields if enabled
+    if single_game:
+        clean_single_game_data(result)
 
-def update_keys_name(df: DataFrame) -> DataFrame:
-    """Update certain keys names to display names.
-    """
+    # Rename fields for display purpose
     mapping = {
         'PLUS_MINUS': '+/-',
         'FG_PCT': 'FG%',
@@ -59,11 +65,8 @@ def update_keys_name(df: DataFrame) -> DataFrame:
         'FT_PCT': 'FT%',
         'WIN_PCT': 'WIN%',
         'W_PCT': 'WIN%',
-        'WinPCT': 'WIN%',
         'START_POSITION': 'P'
     }
-
-    result = df.copy()
     for key, value in mapping.items():
         if key in df.keys():
             result.rename({key: value}, axis=1, inplace=True)
@@ -116,9 +119,7 @@ def standings_api(request):
         'ROAD', 'L10', 'ConferenceRecord', 'CurrentStreak', 'Conference',
         'PlayoffRank', 'PointsPG', 'OppPointsPG', 'DiffPointsPG'
     ]
-    standings = LeagueStandings().get_data_frames()[0][keys]
-    standings['TeamID'] = standings['TeamID'].astype(str)
-    standings = update_pct_fields(standings)
+    standings = update_fields(LeagueStandings().standings.get_data_frame()[keys])
 
     return Response(standings.to_dict(orient='records'))
 
@@ -139,13 +140,8 @@ def team_list_api(request):
         'REB', 'AST', 'TOV', 'STL', 'BLK', 'BLKA', 'PF', 'PFD', 'PTS',
         'PLUS_MINUS'
     ]
-    data = LeagueDashTeamStats(per_mode_detailed='PerGame')
-    team_list = data.league_dash_team_stats.get_data_frame()[keys]
-    team_list['TEAM_ID'] = team_list['TEAM_ID'].astype(str)
-    team_list = update_pct_fields(team_list)
-    team_list = update_keys_name(team_list)
-
-    return Response(team_list.to_dict(orient='records'))
+    data = update_fields(LeagueDashTeamStats(per_mode_detailed='PerGame').league_dash_team_stats.get_data_frame()[keys])
+    return Response(data.to_dict(orient='records'))
 
 
 @api_view(['GET'])
@@ -171,9 +167,17 @@ def team_detail_api(request, team_id):
         'TEAM_ID', 'SEASON', 'COACH_ID', 'SORT_SEQUENCE', 'SUB_SORT_SEQUENCE',
         'IS_ASSISTANT', 'FIRST_NAME', 'LAST_NAME'
     ]
+    roster_data = CommonTeamRoster(team_id)
+    players = roster_data.common_team_roster.get_data_frame().drop(players_drop_keys, axis=1)
+    players['AGE'] = players['AGE'].astype(int)
+    coaches = roster_data.coaches.get_data_frame().drop(coaches_drop_keys, axis=1)
+
     team_info_drop_keys = [
         'SEASON_YEAR', 'TEAM_CODE', 'TEAM_SLUG'
     ]
+    team_info = TeamInfoCommon(team_id).team_info_common.get_data_frame().drop(team_info_drop_keys, axis=1)
+    team_info['TEAM_ID'] = team_info['TEAM_ID'].astype(str)
+
     team_stats_keys = [
         "GP", "FGM", "FGA", "FG_PCT", "FG3M", "FG3A", "FG3_PCT", "FTM", "FTA",
         "FT_PCT", "OREB", "DREB", "REB", "AST", "TOV", "STL", "BLK", "BLKA",
@@ -185,21 +189,9 @@ def team_detail_api(request, team_id):
         "DREB", "REB", "AST", "TOV", "STL", "BLK", "BLKA", "PF", "PFD", "PTS",
         "PLUS_MINUS", "DD2", "TD3"
     ]
-
-    roster_data = CommonTeamRoster(team_id)
-    players = roster_data.common_team_roster.get_data_frame().drop(players_drop_keys, axis=1)
-    players['AGE'] = players['AGE'].astype(int)
-    coaches = roster_data.coaches.get_data_frame().drop(coaches_drop_keys, axis=1)
-
-    team_info = TeamInfoCommon(team_id).team_info_common.get_data_frame().drop(team_info_drop_keys, axis=1)
-    team_info['TEAM_ID'] = team_info['TEAM_ID'].astype(str)
-
     team_stats, player_stats = TeamPlayerDashboard(team_id, per_mode_detailed='PerGame').get_data_frames()
-    team_stats = update_pct_fields(team_stats[team_stats_keys])
-    team_stats = update_keys_name(team_stats)
-
-    player_stats = update_pct_fields(player_stats[player_stats_keys])
-    player_stats = update_keys_name(player_stats)
+    team_stats = update_fields(team_stats[team_stats_keys])
+    player_stats = update_fields(player_stats[player_stats_keys])
 
     result = {
         'players': players.to_dict(orient='records'),
@@ -237,7 +229,7 @@ def game_by_date_api(request, date):
         'GAME_STATUS_TEXT', 'NATL_TV_BROADCASTER_ABBREVIATION', 'LIVE_PERIOD'
     ]
 
-    parsed_date = datetime.strptime(date, '%Y-%m-%d').strftime('%m/%d/%Y')
+    parsed_date = parser.parse(date).strftime('%m/%d/%Y')
     data = LeagueGameFinder(
         league_id_nullable='00',
         date_to_nullable=parsed_date,
@@ -264,61 +256,50 @@ def game_by_id_api(request, game_id):
     """
     Endpoint class: BoxScoreTraditionalV2(), BoxScoreSummaryV2()
     """
+    # Get box score summary
     line_score_drop_keys = [
         'GAME_DATE_EST', 'GAME_SEQUENCE', 'TEAM_CITY_NAME', 'TEAM_NICKNAME',
         'GAME_ID'
     ]
-    broadcast_keys = [
+    summary_keys = [
         'GAME_STATUS_TEXT', 'NATL_TV_BROADCASTER_ABBREVIATION', 'LIVE_PERIOD',
         'HOME_TEAM_ID', 'VISITOR_TEAM_ID', 'GAME_DATE_EST'
     ]
-    inactive_players_drop_keys = [
+    inactive_drop_keys = [
         'TEAM_CITY', 'TEAM_NAME'
     ]
+    box_score = BoxScoreSummaryV2(game_id)
+    summary = box_score.game_summary.get_data_frame()[summary_keys].iloc[0]
+    summary['HOME_TEAM_ID'] = summary['HOME_TEAM_ID'].astype(str)
+    summary['VISITOR_TEAM_ID'] = summary['VISITOR_TEAM_ID'].astype(str)
+
+    line_score = update_fields(box_score.line_score.get_data_frame().drop(line_score_drop_keys, axis=1))
+    inactive_players = update_fields(box_score.inactive_players.get_data_frame().drop(inactive_drop_keys, axis=1))
+
+    # Get traditional box score data
     player_stats_drop_keys = [
         'GAME_ID', 'TEAM_CITY', 'TEAM_ABBREVIATION', 'NICKNAME'
     ]
     team_stats_drop_keys = [
         'GAME_ID', 'TEAM_ABBREVIATION'
     ]
+    box_score_trad = BoxScoreTraditionalV2(game_id)
+    player_stats = update_fields(
+        box_score_trad.player_stats.get_data_frame().drop(player_stats_drop_keys, axis=1),
+        single_game=True
+    )
+    team_stats = update_fields(box_score_trad.team_stats.get_data_frame().drop(team_stats_drop_keys, axis=1))
+
+    # Split data to two teams
     overtime_keys = [
         f'PTS_OT{i}' for i in range(1, 11)
     ]
-
-    # Get box score summary
-    box_score = BoxScoreSummaryV2(game_id)
-    summary = box_score.game_summary.get_data_frame()[broadcast_keys].iloc[0]
-    summary['HOME_TEAM_ID'] = summary['HOME_TEAM_ID'].astype(str)
-    summary['VISITOR_TEAM_ID'] = summary['VISITOR_TEAM_ID'].astype(str)
-
-    line_score = box_score.line_score.get_data_frame().drop(line_score_drop_keys, axis=1)
-    line_score['TEAM_ID'] = line_score['TEAM_ID'].astype(str)
-
-    inactive_players = box_score.inactive_players.get_data_frame().drop(inactive_players_drop_keys, axis=1)
-    inactive_players['PLAYER_ID'] = inactive_players['PLAYER_ID'].astype(str)
-    inactive_players['TEAM_ID'] = inactive_players['TEAM_ID'].astype(str)
-
-    # Get traditional box score data
-    box_score_trad = BoxScoreTraditionalV2(game_id)
-    player_stats = box_score_trad.player_stats.get_data_frame().drop(player_stats_drop_keys, axis=1)
-    player_stats = update_pct_fields(player_stats)
-    clean_single_game_data(player_stats)
-    player_stats = update_keys_name(player_stats)
-    player_stats['TEAM_ID'] = player_stats['TEAM_ID'].astype(str)
-
-    team_stats = box_score_trad.team_stats.get_data_frame().drop(team_stats_drop_keys, axis=1)
-    team_stats = update_pct_fields(team_stats)
-    team_stats = update_keys_name(team_stats)
-    team_stats['TEAM_ID'] = team_stats['TEAM_ID'].astype(str)
-
-    # Split data to two teams
     home_team_id = summary['HOME_TEAM_ID']
     home_line_score = line_score[line_score['TEAM_ID'] == home_team_id].iloc[0]
     home_team_data = {
         'player_stats': [],
         'line_score': home_line_score.drop(overtime_keys).to_dict(),
-        'team_stats':
-            team_stats[team_stats['TEAM_ID'] == home_team_id].iloc[0].to_dict()
+        'team_stats': team_stats[team_stats['TEAM_ID'] == home_team_id].iloc[0].to_dict()
     }
 
     away_team_id = summary['VISITOR_TEAM_ID']
@@ -326,8 +307,7 @@ def game_by_id_api(request, game_id):
     away_team_data = {
         'player_stats': [],
         'line_score': away_line_score.drop(overtime_keys).to_dict(),
-        'team_stats':
-            team_stats[team_stats['TEAM_ID'] == away_team_id].iloc[0].to_dict()
+        'team_stats': team_stats[team_stats['TEAM_ID'] == away_team_id].iloc[0].to_dict()
     }
 
     for _, row in player_stats.iterrows():
@@ -376,7 +356,6 @@ def player_detail_api(request, player_id):
     ]
     player_info = CommonPlayerInfo(player_id).common_player_info.get_data_frame().iloc[0][player_info_keys]
     player_info['BIRTHDATE'] = parser.parse(player_info['BIRTHDATE']).strftime('%Y-%m-%d')
-    player_info['TEAM_ID'] = player_info['TEAM_ID'].astype(str)
     player_info['PHOTO_URL'] = PLAYER_PHOTO_LINK.format(player_id=player_id)
     player_info['AGE'] = datetime.today().year - parser.parse(player_info['BIRTHDATE']).year
 
@@ -386,15 +365,15 @@ def player_detail_api(request, player_id):
     season_drop_keys = [
         'PLAYER_ID', 'LEAGUE_ID', 'PLAYER_AGE'
     ]
-    career_stats = PlayerCareerStats(203507, per_mode36='PerGame')
+    career_stats = PlayerCareerStats(player_id, per_mode36='PerGame')
     career_regular_season = career_stats.career_totals_regular_season.get_data_frame().iloc[0].drop(career_drop_keys)
-    career_regular_season = update_keys_name(update_pct_fields(career_regular_season))
+    career_regular_season = update_fields(career_regular_season)
     career_post_season = career_stats.career_totals_post_season.get_data_frame().iloc[0].drop(career_drop_keys)
-    career_post_season = update_keys_name(update_pct_fields(career_post_season))
+    career_post_season = update_fields(career_post_season)
     regular_season = career_stats.season_totals_regular_season.get_data_frame().drop(season_drop_keys, axis=1)
-    regular_season = update_keys_name(update_pct_fields(regular_season))
+    regular_season = update_fields(regular_season)
     post_season = career_stats.season_totals_post_season.get_data_frame().drop(season_drop_keys, axis=1)
-    post_season = update_keys_name(update_pct_fields(post_season))
+    post_season = update_fields(post_season)
 
     result = {
         'player_info': player_info.to_dict(),
