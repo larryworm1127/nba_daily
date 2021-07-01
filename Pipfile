@@ -20,6 +20,7 @@ nba-api = "*"
 djangorestframework = "*"
 numpy = "*"
 python-dateutil = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"

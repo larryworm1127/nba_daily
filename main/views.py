@@ -17,8 +17,6 @@ from .models import (
     Player,
     Team,
     Game,
-    PlayerSeasonStats,
-    PlayerCareerStats,
     TeamGameLog,
     PlayerGameLog
 )
@@ -45,7 +43,6 @@ def score(request, date: str):
 def render_score_page(request, page: str, date: datetime.date, title: str):
     """Render generic score page.
     """
-    # games = Game.objects.filter(game_date=date.strftime("%b %d, %Y"))
     games = requests.get(f'http://{request.get_host()}/api/score/{date}').json()
 
     # Validate date input
@@ -68,10 +65,10 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
 # ==============================================================================
 # Players views
 # ==============================================================================
-def players(request, pk: int):
+def players(request, team_id: int):
     """Individual player stats page.
     """
-    data = requests.get(f'http://{request.get_host()}/api/players/{pk}').json()
+    data = requests.get(f'http://{request.get_host()}/api/players/{team_id}').json()
     return render(request, 'main/players.html', data)
 
 
@@ -104,12 +101,6 @@ class PlayerListView(generic.ListView):
 # ==============================================================================
 # Teams views
 # ==============================================================================
-# class TeamDetailView(generic.DetailView):
-#     """Individual team detail page.
-#     """
-#     model = Team
-
-
 class TeamGamesListView(generic.ListView):
     """Individual team season game log page.
     """
@@ -129,16 +120,10 @@ class TeamGamesListView(generic.ListView):
         return context
 
 
-# class TeamListView(generic.ListView):
-#     """Team list page.
-#     """
-#     model = Team
-#     queryset = Team.objects.filter(~Q(team_id=0))
-
-def teams(request, pk):
+def teams(request, team_id):
     """Individual team detail page.
     """
-    response = requests.get(f'http://{request.get_host()}/api/teams/{pk}')
+    response = requests.get(f'http://{request.get_host()}/api/teams/{team_id}')
     return render(request, 'main/teams.html', context=response.json())
 
 
@@ -155,20 +140,6 @@ def teams_stats(request):
 # ==============================================================================
 # Games views
 # ==============================================================================
-# class GameDetailView(generic.DetailView):
-#     """Single game box score page.
-#     """
-#     model = Game
-#
-#     def get_context_data(self, **kwargs):
-#         """Return the updated context data.
-#         """
-#         context = super(GameDetailView, self).get_context_data(**kwargs)
-#         game = get_object_or_404(Game, pk=self.kwargs['pk'])
-#         context['overtime'] = range(1, game.overtime() + 1)
-#         return context
-
-
 def game_detail(request, game_id):
     """Single game box score page.
     """
@@ -179,18 +150,6 @@ def game_detail(request, game_id):
 # ==============================================================================
 # Standing views
 # ==============================================================================
-# class StandingListView(generic.ListView):
-#     """Season standing page.
-#     """
-#     model = Standing
-#     extra_context = {
-#         'headers': [
-#             ('bg-danger', 'East Conference', 'East'),
-#             ('bg-primary', 'West Conference', 'West')
-#         ]
-#     }
-
-
 def standings(request):
     """Season standing page.
     """
