@@ -29,7 +29,7 @@ DEBUG = os.environ.get('DEBUG', '') != 'False'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'https://nba-mock.herokuapp.com/'
+    'nba-mock.herokuapp.com'
 ]
 
 
