@@ -33,7 +33,11 @@ $(document).ready(function () {
     "bInfo": false,
     /* Disable initial sort */
     "aaSorting": [],
-    "aoColumns": getAOColumnsDesc(20)
+    "aoColumns": [
+      {"orderSequence": ["desc", "asc"]},
+      {"bSortable": false},
+      {"bSortable": false}
+    ].concat(getAOColumnsDesc(20))
   });
 });
 
@@ -48,7 +52,7 @@ $(document).ready(function () {
     "bInfo": false,
     /* Disable initial sort */
     "aaSorting": [],
-    "aoColumns": getAOColumnsDesc(20)
+    "aoColumns": getAOColumnsDesc(23)
   });
 });
 
@@ -63,7 +67,11 @@ $(document).ready(function () {
     "bInfo": false,
     /* Disable initial sort */
     "aaSorting": [],
-    "aoColumns": getAOColumnsDesc(19)
+    "aoColumns": [
+      {"orderSequence": ["desc", "asc"]},
+      {"bSortable": false},
+      {"bSortable": false}
+    ].concat(getAOColumnsDesc(22))
   });
 });
 
