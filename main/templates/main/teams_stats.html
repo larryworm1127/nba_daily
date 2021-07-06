@@ -27,7 +27,7 @@
             {% for header, stat in team.items %}
               {% if header == 'TEAM_NAME' %}
                 <th class="text-lg-center">
-                  <a class="nounderline dark-grey" href="{% url 'main:teams' pk=team.TEAM_ID %}">{{ team.TEAM_NAME }}</a>
+                  <a class="nounderline dark-grey" href="{% url 'main:teams' team.TEAM_ID %}">{{ team.TEAM_NAME }}</a>
                 </th>
               {% elif forloop.counter0 > 1 %}
                 <td>{{ stat }}</td>

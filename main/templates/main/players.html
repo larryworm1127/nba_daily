@@ -26,7 +26,11 @@
             {% for header, stat in season_stats.items %}
               {% if header == 'SEASON_ID' %}
                 <th class="text-lg-center">
-                  <a class="nounderline" href="{% url 'main:player_games' player_info.PERSON_ID '2018-19' %}">{{ stat }}</a>
+                  {% with season=season_stats.SEASON_ID season_type=stat_table.display_name %}
+                    <a class="nounderline" href="{% url 'main:player_games' player_info.PERSON_ID season season_type %}">
+                      {{ stat }}
+                    </a>
+                  {% endwith %}
                 </th>
               {% elif header == 'TEAM_ABBREVIATION' %}
                 <th class="text-lg-center">

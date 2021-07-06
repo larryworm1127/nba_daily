@@ -65,30 +65,19 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
 # ==============================================================================
 # Players views
 # ==============================================================================
-def players(request, team_id: int):
+def players(request, player_id):
     """Individual player stats page.
     """
-    data = requests.get(f'http://{request.get_host()}/api/players/{team_id}').json()
+    data = requests.get(f'http://{request.get_host()}/api/players/{player_id}').json()
     return render(request, 'main/players.html', data)
 
 
-class PlayerGamesListView(generic.ListView):
+def players_game_log(request, player_id, season, season_type):
     """Individual player season game log page.
     """
-    model = PlayerGameLog
-    template_name = 'main/player_games.html'
-
-    def get_queryset(self):
-        """Return desired queryset to be displayed.
-        """
-        return PlayerGameLog.objects.filter(player=self.kwargs['pk'])
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        """Return the updated context data.
-        """
-        context = super(PlayerGamesListView, self).get_context_data(**kwargs)
-        context['player'] = get_object_or_404(Player, pk=self.kwargs['pk'])
-        return context
+    url = f'http://{request.get_host()}/api/players/{player_id}/{season}/{season_type}'
+    data = requests.get(url).json()
+    return render(request, 'main/player_games.html', data)
 
 
 class PlayerListView(generic.ListView):

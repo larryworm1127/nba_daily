@@ -13,6 +13,7 @@ from nba_api.stats.endpoints.leaguestandings import LeagueStandings
 from nba_api.stats.endpoints.playercareerstats import PlayerCareerStats
 from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
 from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
+from nba_api.stats.endpoints.playergamelog import PlayerGameLog
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -347,7 +348,7 @@ def game_by_id_api(request, game_id):
 @api_view(['GET'])
 def player_detail_api(request, player_id):
     """
-    Endpoint class:
+    Endpoint class: CommonPlayerInfo(), PlayerCareerStats()
     """
     player_info_keys = [
         'DISPLAY_FIRST_LAST', 'BIRTHDATE', 'SCHOOL', 'COUNTRY', 'HEIGHT',
@@ -358,6 +359,7 @@ def player_detail_api(request, player_id):
     player_info['BIRTHDATE'] = parser.parse(player_info['BIRTHDATE']).strftime('%Y-%m-%d')
     player_info['PHOTO_URL'] = PLAYER_PHOTO_LINK.format(player_id=player_id)
     player_info['AGE'] = datetime.today().year - parser.parse(player_info['BIRTHDATE']).year
+    player_info = update_fields(player_info)
 
     career_drop_keys = [
         'PLAYER_ID', 'LEAGUE_ID', 'Team_ID'
@@ -391,3 +393,43 @@ def player_detail_api(request, player_id):
         }
     }
     return Response(result)
+
+
+@api_view(['GET'])
+def player_game_log_api(request, player_id, season, season_type):
+    """
+    Endpoint classes: PlayerGameLog
+
+    season attribute examples: 2020-21, 2019-20
+    """
+    season_type_keys = {
+        'Regular': 'Regular Season',
+        'Post': 'Playoffs'
+    }
+
+    player_info_keys = [
+        'DISPLAY_FIRST_LAST', 'BIRTHDATE', 'SCHOOL', 'COUNTRY', 'HEIGHT',
+        'WEIGHT', 'SEASON_EXP', 'JERSEY', 'POSITION', 'TEAM_NAME', 'TEAM_CITY',
+        'FROM_YEAR', 'TEAM_ID', 'DRAFT_ROUND', 'DRAFT_NUMBER', 'PERSON_ID'
+    ]
+    player_info = CommonPlayerInfo(player_id).common_player_info.get_data_frame().iloc[0][player_info_keys]
+    player_info['BIRTHDATE'] = parser.parse(player_info['BIRTHDATE']).strftime('%Y-%m-%d')
+    player_info['PHOTO_URL'] = PLAYER_PHOTO_LINK.format(player_id=player_id)
+    player_info['AGE'] = datetime.today().year - parser.parse(player_info['BIRTHDATE']).year
+    player_info = update_fields(player_info)
+
+    game_log_drop_keys = [
+        'SEASON_ID', 'Player_ID', 'VIDEO_AVAILABLE'
+    ]
+    data = PlayerGameLog(
+        player_id=player_id,
+        season=season,
+        season_type_all_star=season_type_keys[season_type]
+    )
+    game_log = update_fields(data.player_game_log.get_data_frame().drop(game_log_drop_keys, axis=1))
+
+    return Response({
+        'player_info': player_info.to_dict(),
+        'season_type': season_type,
+        'game_log': game_log.to_dict(orient='records')
+    })

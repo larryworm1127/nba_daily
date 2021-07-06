@@ -18,15 +18,15 @@ urlpatterns = [
 # Players pages URL
 urlpatterns += [
     path('players/', views.PlayerListView.as_view(), name='player_list'),
-    path('players/<int:team_id>/', views.players, name='players'),
-    path('players/<int:pk>/<str:season>', views.PlayerGamesListView.as_view(), name='player_games')
+    path('players/<int:player_id>/', views.players, name='players'),
+    path('players/<int:player_id>/<str:season>/<str:season_type>', views.players_game_log, name='player_games')
 ]
 
 # Teams pages URL
 urlpatterns += [
     path('teams/', views.teams_stats, name='team_list'),
     path('teams/<int:team_id>/', views.teams, name='teams'),
-    path('teams/<int:pk>/<str:season>', views.TeamGamesListView.as_view(), name='team_games'),
+    path('teams/<int:team_id>/<str:season>', views.TeamGamesListView.as_view(), name='team_games'),
     path('standings/', views.standings, name='standing')
 ]
 

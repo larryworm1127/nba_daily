@@ -10,7 +10,12 @@
     <div class="row">
       <div class="col-lg-6">
         <br>
-        <h4>{{ player_info.DISPLAY_FIRST_LAST }} #{{ player_info.JERSEY }} {{ player_info.POSITION }}</h4>
+        <h4>
+          <a class="nounderline dark-grey" href="{% url 'main:players' player_info.PERSON_ID %}">
+            {{ player_info.DISPLAY_FIRST_LAST }}
+          </a>
+          #{{ player_info.JERSEY }} {{ player_info.POSITION }}
+        </h4>
         <h4>
           {% with 'images/'|add:player_info.TEAM_ID|add:'.png' as logo_path %}
             <img class="team-logo-sm" alt="team-logo" src="{% static logo_path %}">
