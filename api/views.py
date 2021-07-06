@@ -14,12 +14,17 @@ from nba_api.stats.endpoints.playercareerstats import PlayerCareerStats
 from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
 from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from nba_api.stats.endpoints.playergamelog import PlayerGameLog
+from nba_api.stats.endpoints.teamgamelog import TeamGameLog
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 # Constants
 PLAYER_PHOTO_LINK = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/{player_id}.png"
+SEASON_TYPES = {
+    'Regular': 'Regular Season',
+    'Post': 'Playoffs'
+}
 
 
 # Encoder
@@ -41,7 +46,7 @@ def update_fields(df: DataFrame, single_game: bool = False) -> DataFrame:
     """
     # Update percentage fields
     keys = [
-        'FG_PCT', 'FG3_PCT', 'FT_PCT', 'WIN_PCT', 'WinPCT', 'W_PCT'
+        'FG_PCT', 'FG3_PCT', 'FT_PCT', 'WIN_PCT', 'WinPCT', 'W_PCT', 'PCT'
     ]
     result = df.copy()
     for key in keys:
@@ -177,7 +182,7 @@ def team_detail_api(request, team_id):
         'SEASON_YEAR', 'TEAM_CODE', 'TEAM_SLUG'
     ]
     team_info = TeamInfoCommon(team_id).team_info_common.get_data_frame().drop(team_info_drop_keys, axis=1)
-    team_info['TEAM_ID'] = team_info['TEAM_ID'].astype(str)
+    team_info = update_fields(team_info)
 
     team_stats_keys = [
         "GP", "FGM", "FGA", "FG_PCT", "FG3M", "FG3A", "FG3_PCT", "FTM", "FTA",
@@ -197,14 +202,8 @@ def team_detail_api(request, team_id):
     result = {
         'players': players.to_dict(orient='records'),
         'coaches': coaches.to_dict(orient='records'),
-        'team_info': {
-            key: value[0]
-            for key, value in team_info.to_dict().items()
-        },
-        'team_stats': {
-            key: value[0]
-            for key, value in team_stats.to_dict().items()
-        },
+        'team_info': team_info.to_dict(orient='records')[0],
+        'team_stats': team_stats.to_dict(orient='records')[0],
         'player_stats': player_stats.to_dict(orient='records')
     }
     return Response(result)
@@ -401,12 +400,8 @@ def player_game_log_api(request, player_id, season, season_type):
     Endpoint classes: PlayerGameLog
 
     season attribute examples: 2020-21, 2019-20
+    season_type attribute: ['Regular', 'Post']
     """
-    season_type_keys = {
-        'Regular': 'Regular Season',
-        'Post': 'Playoffs'
-    }
-
     player_info_keys = [
         'DISPLAY_FIRST_LAST', 'BIRTHDATE', 'SCHOOL', 'COUNTRY', 'HEIGHT',
         'WEIGHT', 'SEASON_EXP', 'JERSEY', 'POSITION', 'TEAM_NAME', 'TEAM_CITY',
@@ -424,12 +419,41 @@ def player_game_log_api(request, player_id, season, season_type):
     data = PlayerGameLog(
         player_id=player_id,
         season=season,
-        season_type_all_star=season_type_keys[season_type]
+        season_type_all_star=SEASON_TYPES[season_type]
     )
     game_log = update_fields(data.player_game_log.get_data_frame().drop(game_log_drop_keys, axis=1))
 
     return Response({
         'player_info': player_info.to_dict(),
+        'season_type': season_type,
+        'game_log': game_log.to_dict(orient='records')
+    })
+
+
+@api_view(['GET'])
+def team_game_log_api(request, team_id, season, season_type):
+    """
+    Endpoint classes: TeamGameLog()
+    """
+    team_info_drop_keys = [
+        'SEASON_YEAR', 'TEAM_CODE', 'TEAM_SLUG'
+    ]
+    team_info = TeamInfoCommon(team_id).team_info_common.get_data_frame().drop(team_info_drop_keys, axis=1)
+    team_info = update_fields(team_info)
+
+    game_log_drop_keys = [
+        'Team_ID'
+    ]
+    data = TeamGameLog(
+        team_id=team_id,
+        season=season,
+        season_type_all_star=SEASON_TYPES[season_type]
+    )
+    game_log = update_fields(data.team_game_log.get_data_frame().drop(game_log_drop_keys, axis=1))
+
+    return Response({
+        'team_info': team_info.to_dict(orient='records')[0],
+        'season': season,
         'season_type': season_type,
         'game_log': game_log.to_dict(orient='records')
     })

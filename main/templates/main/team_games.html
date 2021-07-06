@@ -4,60 +4,44 @@
 
 {% block content %}
 
-  <h4>Regular Season </h4>
-  <table class="team-games-datatable table table-sm text-lg-center">
-    <thead class="thead-inverse">
-      <tr class="bg-warning text-white">
-        <th class="text-lg-center">DATE</th>
-        <th class="bg-primary text-lg-center">MATCH</th>
-        <th class="bg-primary text-lg-center">W/L</th>
-        <th class="bg-primary text-lg-center">MIN</th>
-        <th class="bg-primary text-lg-center">PTS</th>
-        <th class="bg-primary text-lg-center">REB</th>
-        <th class="bg-primary text-lg-center">AST</th>
-        <th class="bg-primary text-lg-center">FG</th>
-        <th class="bg-primary text-lg-center">FG%</th>
-        <th class="bg-primary text-lg-center">3P</th>
-        <th class="bg-primary text-lg-center">3P%</th>
-        <th class="bg-primary text-lg-center">FT</th>
-        <th class="bg-primary text-lg-center">FT%</th>
-        <th class="bg-primary text-lg-center">OREB</th>
-        <th class="bg-primary text-lg-center">DREB</th>
-        <th class="bg-primary text-lg-center">STL</th>
-        <th class="bg-primary text-lg-center">BLK</th>
-        <th class="bg-primary text-lg-center">TOV</th>
-        <th class="bg-primary text-lg-center">PF</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for game_log in teamgamelog_list %}
-        <tr>
-          <th class="text-lg-center">
-            <a class="nounderline dark-grey" href="{{ game_log.game.get_score_page_url }}">{{ game_log.game.game_date }}</a>
-          </th>
-          <th class="text-lg-center">
-            <a class="nounderline" href="{% url 'main:boxscore' game_log.game.game_id %}">{{ game_log.matchup }}</a>
-          </th>
-          <td>{{ game_log.result }}</td>
-          <td>{{ game_log.minutes }}</td>
-          <td>{{ game_log.points }}</td>
-          <td>{{ game_log.rebounds }}</td>
-          <td>{{ game_log.assists }}</td>
-          <td>{{ game_log.fg_made }} - {{ game_log.fg_attempt }}</td>
-          <td>{{ game_log.fg_percent|multiply:100 }}</td>
-          <td>{{ game_log.fg3_made }} - {{ game_log.fg3_attempt }}</td>
-          <td>{{ game_log.fg3_percent|multiply:100 }}</td>
-          <td>{{ game_log.ft_made }} - {{ game_log.ft_attempt }}</td>
-          <td>{{ game_log.ft_percent|multiply:100 }}</td>
-          <td>{{ game_log.offense_reb }}</td>
-          <td>{{ game_log.defense_reb }}</td>
-          <td>{{ game_log.steals }}</td>
-          <td>{{ game_log.blocks }}</td>
-          <td>{{ game_log.turnovers }}</td>
-          <td>{{ game_log.fouls }}</td>
+  <h4>{{ season_type }} Season</h4>
+  {% if game_log|length > 0 %}
+    <table class="team-games-datatable table table-sm text-lg-center">
+      <thead class="thead-inverse">
+        <tr class="bg-warning text-white">
+          {% for header in game_log.0.keys %}
+            {% if header == 'GAME_DATE' %}
+              <th class="text-lg-center">DATE</th>
+            {% elif header != 'Game_ID' %}
+              <th class="bg-primary text-lg-center">{{ header }}</th>
+            {% endif %}
+          {% endfor %}
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for game in game_log %}
+          <tr>
+            {% for header, stat in game.items %}
+              {% if header == 'GAME_DATE' %}
+                <th class="text-lg-center">
+                  <a class="nounderline dark-grey" href="{% url 'main:score' stat|get_date:0 %}">{{ stat }}</a>
+                </th>
+              {% elif header == 'MATCHUP' %}
+                <th class="text-lg-center">
+                  <a class="nounderline" href="{% url 'main:boxscore' game.Game_ID %}">{{ stat }}</a>
+                </th>
+              {% elif header != 'Game_ID' %}
+                <td>{{ stat }}</td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% else %}
+    <br/>
+    <h5>Team did not play any {{ season_type }} season games.</h5>
+  {% endif %}
 
 {% endblock %}

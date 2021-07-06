@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% block title %}{{ team.get_full_name }}{% endblock %}
+{% block title %}{{ team_info.TEAM_CITY }} {{ team_info.TEAM_NAME }}{% endblock %}
 
 {% load static %}
 {% load filters %}
@@ -20,7 +20,7 @@
           <li><b>Record:</b>
             <a href="{% url 'main:standing' %}">{{ team_info.W }}-{{ team_info.L }}</a>
           </li>
-          <li><b>Win%:</b> {{ team_info.PCT|multiply:100 }}</li>
+          <li><b>Win%:</b> {{ team_info.PCT }}</li>
           <li><b>Conference:</b>
             {{ team_info.TEAM_CONFERENCE }}
             (#{{ team_info.CONF_RANK }} in {{ team_info.TEAM_CONFERENCE }})

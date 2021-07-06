@@ -26,7 +26,7 @@ urlpatterns += [
 urlpatterns += [
     path('teams/', views.teams_stats, name='team_list'),
     path('teams/<int:team_id>/', views.teams, name='teams'),
-    path('teams/<int:team_id>/<str:season>', views.TeamGamesListView.as_view(), name='team_games'),
+    path('teams/<int:team_id>/<str:season>', views.team_game_log, name='team_games'),
     path('standings/', views.standings, name='standing')
 ]
 

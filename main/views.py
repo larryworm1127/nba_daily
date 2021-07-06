@@ -90,23 +90,23 @@ class PlayerListView(generic.ListView):
 # ==============================================================================
 # Teams views
 # ==============================================================================
-class TeamGamesListView(generic.ListView):
-    """Individual team season game log page.
-    """
-    model = TeamGameLog
-    template_name = 'main/team_games.html'
-
-    def get_queryset(self):
-        """Return desired queryset to be displayed.
-        """
-        return TeamGameLog.objects.filter(team=self.kwargs['pk'])
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        """Return the updated context data.
-        """
-        context = super(TeamGamesListView, self).get_context_data(**kwargs)
-        context['team'] = get_object_or_404(Team, pk=self.kwargs['pk'])
-        return context
+# class TeamGamesListView(generic.ListView):
+#     """Individual team season game log page.
+#     """
+#     model = TeamGameLog
+#     template_name = 'main/team_games.html'
+#
+#     def get_queryset(self):
+#         """Return desired queryset to be displayed.
+#         """
+#         return TeamGameLog.objects.filter(team=self.kwargs['pk'])
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         """Return the updated context data.
+#         """
+#         context = super(TeamGamesListView, self).get_context_data(**kwargs)
+#         context['team'] = get_object_or_404(Team, pk=self.kwargs['pk'])
+#         return context
 
 
 def teams(request, team_id):
@@ -114,6 +114,11 @@ def teams(request, team_id):
     """
     response = requests.get(f'http://{request.get_host()}/api/teams/{team_id}')
     return render(request, 'main/teams.html', context=response.json())
+
+
+def team_game_log(request, team_id, season):
+    response = requests.get(f'http://{request.get_host()}/api/teams/{team_id}/{season}/Regular')
+    return render(request, 'main/team_games.html', context=response.json())
 
 
 def teams_stats(request):
