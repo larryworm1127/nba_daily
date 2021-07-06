@@ -15,6 +15,7 @@ from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
 from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from nba_api.stats.endpoints.playergamelog import PlayerGameLog
 from nba_api.stats.endpoints.teamgamelog import TeamGameLog
+from nba_api.stats.endpoints.leagueleaders import LeagueLeaders
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -457,3 +458,12 @@ def team_game_log_api(request, team_id, season, season_type):
         'season_type': season_type,
         'game_log': game_log.to_dict(orient='records')
     })
+
+
+@api_view(['GET'])
+def player_list_api(request):
+    """
+    Endpoint classes: LeagueLeaders()
+    """
+    data = update_fields(LeagueLeaders(per_mode48='PerGame').league_leaders.get_data_frame())
+    return Response(data.to_dict(orient='records'))

@@ -8,18 +8,10 @@ from datetime import datetime
 
 import requests
 from dateutil import parser
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import generic
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import DateForm
-from .models import (
-    Player,
-    Team,
-    Game,
-    TeamGameLog,
-    PlayerGameLog
-)
 
 
 # ==============================================================================
@@ -57,7 +49,6 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
         'title': title,
         'date': date.strftime("%b %d, %Y"),
         'games': games,
-        'closest_date': Game.get_closest_game_date(date).strftime("%m-%d-%Y")
     }
     return render(request, page, context)
 
@@ -77,38 +68,19 @@ def players_game_log(request, player_id, season, season_type):
     """
     url = f'http://{request.get_host()}/api/players/{player_id}/{season}/{season_type}'
     data = requests.get(url).json()
-    return render(request, 'main/player_games.html', data)
+    return render(request, 'main/player_games.html', context=data)
 
 
-class PlayerListView(generic.ListView):
+def players_stats(request):
     """Player list page.
     """
-    model = Player
-    paginate_by = 20
+    data = requests.get(f'http://{request.get_host()}/api/player_list').json()
+    return render(request, 'main/player_list.html', context={'data': data})
 
 
 # ==============================================================================
 # Teams views
 # ==============================================================================
-# class TeamGamesListView(generic.ListView):
-#     """Individual team season game log page.
-#     """
-#     model = TeamGameLog
-#     template_name = 'main/team_games.html'
-#
-#     def get_queryset(self):
-#         """Return desired queryset to be displayed.
-#         """
-#         return TeamGameLog.objects.filter(team=self.kwargs['pk'])
-#
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         """Return the updated context data.
-#         """
-#         context = super(TeamGamesListView, self).get_context_data(**kwargs)
-#         context['team'] = get_object_or_404(Team, pk=self.kwargs['pk'])
-#         return context
-
-
 def teams(request, team_id):
     """Individual team detail page.
     """
@@ -117,6 +89,8 @@ def teams(request, team_id):
 
 
 def team_game_log(request, team_id, season):
+    """Individual team season game log page.
+    """
     response = requests.get(f'http://{request.get_host()}/api/teams/{team_id}/{season}/Regular')
     return render(request, 'main/team_games.html', context=response.json())
 

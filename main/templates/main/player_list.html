@@ -11,56 +11,31 @@
     <table class="player-list-table table table-sm text-lg-center">
       <thead class="thead-inverse">
         <tr class="bg-primary text-white">
-          <th class="text-lg-center">PLAYER</th>
-          <th class="bg-primary text-lg-center">TEAM</th>
-          <th class="bg-primary text-lg-center">GP</th>
-          <th class="bg-primary text-lg-center">GS</th>
-          <th class="bg-primary text-lg-center">MIN</th>
-          <th class="bg-primary text-lg-center">PTS</th>
-          <th class="bg-primary text-lg-center">REB</th>
-          <th class="bg-primary text-lg-center">AST</th>
-          <th class="bg-primary text-lg-center">FG</th>
-          <th class="bg-primary text-lg-center">FG%</th>
-          <th class="bg-primary text-lg-center">3P</th>
-          <th class="bg-primary text-lg-center">3P%</th>
-          <th class="bg-primary text-lg-center">FT</th>
-          <th class="bg-primary text-lg-center">FT%</th>
-          <th class="bg-primary text-lg-center">OREB</th>
-          <th class="bg-primary text-lg-center">DREB</th>
-          <th class="bg-primary text-lg-center">STL</th>
-          <th class="bg-primary text-lg-center">BLK</th>
-          <th class="bg-primary text-lg-center">TOV</th>
-          <th class="bg-primary text-lg-center">PF</th>
+          {% for key in data.0.keys %}
+            {% if key == 'PLAYER' %}
+              <th class="text-lg-center">PLAYER</th>
+            {% elif key != 'PLAYER_ID' %}
+              <th class="bg-primary text-lg-center">{{ key }}</th>
+            {% endif %}
+          {% endfor %}
         </tr>
       </thead>
       <tbody>
-        {% for player in player_list.iterator %}
+        {% for player in data %}
           <tr>
-            <th>
-              <a class="nounderline" href="{{ player.get_absolute_url }}">{{ player.first_name }} {{ player.last_name }}</a>
-            </th>
-            <th class="text-lg-center">
-              <a class="nounderline dark-grey" href="{{ player.team.get_absolute_url }}">{{ player.team.team_abb }} </a>
-            </th>
-            {% set player_stats = player.get_latest_stats %}
-            <td>{{ player_stats.games_played }}</td>
-            <td>{{ player_stats.games_started }}</td>
-            <td>{{ player_stats.minutes }}</td>
-            <td>{{ player_stats.points }}</td>
-            <td>{{ player_stats.rebounds }}</td>
-            <td>{{ player_stats.assists }}</td>
-            <td>{{ player_stats.fg_made }} - {{ player_stats.fg_attempt }}</td>
-            <td>{{ player_stats.fg_percent|multiply:100 }}</td>
-            <td>{{ player_stats.fg3_made }} - {{ player_stats.fg3_attempt }}</td>
-            <td>{{ player_stats.fg3_percent|multiply:100 }}</td>
-            <td>{{ player_stats.ft_made }} - {{ player_stats.ft_attempt }}</td>
-            <td>{{ player_stats.ft_percent|multiply:100 }}</td>
-            <td>{{ player_stats.offense_reb }}</td>
-            <td>{{ player_stats.defense_reb }}</td>
-            <td>{{ player_stats.steals }}</td>
-            <td>{{ player_stats.blocks }}</td>
-            <td>{{ player_stats.turnovers }}</td>
-            <td>{{ player_stats.fouls }}</td>
+            {% for header, stat in player.items %}
+              {% if header == 'PLAYER' %}
+                <th>
+                  <a class="nounderline" href="{% url 'main:players' player.PLAYER_ID %}">{{ stat }}</a>
+                </th>
+              {% elif header == 'TEAM' %}
+                <th class="text-lg-center">
+                  <a class="nounderline dark-grey" href="#">{{ stat }}</a>
+                </th>
+              {% elif forloop.counter0 > 0 %}
+                <td>{{ stat }}</td>
+              {% endif %}
+            {% endfor %}
           </tr>
         {% endfor %}
       </tbody>

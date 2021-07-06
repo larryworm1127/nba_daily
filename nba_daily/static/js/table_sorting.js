@@ -95,19 +95,8 @@ $(document).ready(function () {
     "aaSorting": [],
     "aoColumns": [
       {"orderSequence": ["desc", "asc"]},
-      {"bSortable": false},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]},
-      {"orderSequence": ["desc", "asc"]}
-    ]
+      {"bSortable": false}
+    ].concat(getAOColumnsDesc(11))
   });
 });
 
@@ -137,13 +126,19 @@ $(document).ready(function () {
       $(".player-list-table").wrap("<div class='table-responsive'></div>");
     },
 
-    paging: false,
-    pageLength: 50,
+    pagingType: "full_numbers",
+    paging: true,
+    pageLength: 30,
+    "bLengthChange": false,
     "bFilter": false,
     "bInfo": false,
     /* Disable initial sort */
     "aaSorting": [],
-    "aoColumns": getAOColumnsDesc(20)
+    "aoColumns": [
+      {"orderSequence": ["desc", "asc"]},
+      {"bSortable": false},
+      {"bSortable": false}
+    ].concat(getAOColumnsDesc(20))
   });
 });
 
