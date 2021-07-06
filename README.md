@@ -72,21 +72,6 @@ $ npm install
 ```
 which will install required npm packages for the website.
 
-### Populate database
-
-Due to the new changes for NBA stats scraping, the current scapper no longer
-functions correctly. Hence a copy of 2018-19 season data is stored in the repo
-(JSON files) under `main/data` folder. A set of Django model fixtures are 
-already created under `main/fixtures` to assist with populating the database.
-Simply run
-```bash
-$ python get_data.py
-```
-or
-```bash
-$ ./get_data.py
-```
-and follow the command line tooltips to populate the database.
 
 ### Run the Django server
 
