@@ -6,60 +6,66 @@
 
   {% for stat_table in stats.values %}
     <h4>Career {{ stat_table.display_name }} Season</h4>
-    <table class="seasons-datatable table table-sm text-lg-center">
-      <thead class="thead-inverse">
-        <tr class="bg-primary text-white">
-          {% for header in stat_table.season.0.keys %}
-            {% if header == 'SEASON_ID' %}
-              <th class="text-lg-center">SEASON</th>
-            {% elif header == 'TEAM_ABBREVIATION' %}
-              <th class="bg-primary text-lg-center">TEAM</th>
-            {% elif header != 'TEAM_ID' %}
-              <th class="bg-primary text-lg-center">{{ header }}</th>
-            {% endif %}
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for season_stats in stat_table.season %}
-          <tr>
-            {% for header, stat in season_stats.items %}
+    {% if stat_table.season %}
+      <table class="seasons-datatable table table-sm text-lg-center">
+        <thead class="thead-inverse">
+          <tr class="bg-primary text-white">
+            {% for header in stat_table.season.0.keys %}
               {% if header == 'SEASON_ID' %}
-                <th class="text-lg-center">
-                  {% with season=season_stats.SEASON_ID season_type=stat_table.display_name %}
-                    <a class="nounderline" href="{% url 'main:player_games' player_info.PERSON_ID season season_type %}">
-                      {{ stat }}
-                    </a>
-                  {% endwith %}
-                </th>
+                <th class="text-lg-center">SEASON</th>
               {% elif header == 'TEAM_ABBREVIATION' %}
-                <th class="text-lg-center">
-                  {% if not season_stats.curr_team.team_id == 0 %}
-                    <a class="nounderline text-lg-center dark-grey" href="{% url 'main:teams' season_stats.TEAM_ID %}">
-                      {{ stat }}
-                    </a>
-                  {% else %}
-                    {{ stat }}
-                  {% endif %}
-                </th>
+                <th class="bg-primary text-lg-center">TEAM</th>
               {% elif header != 'TEAM_ID' %}
-                <td>{{ stat }}</td>
+                <th class="bg-primary text-lg-center">{{ header }}</th>
               {% endif %}
             {% endfor %}
           </tr>
-        {% endfor %}
-      </tbody>
-      <tfoot>
-        <tr>
-          <th class="text-lg-center">Career</th>
-          <th></th>
-          {% for header, stat in stat_table.career.items %}
-            <td>{{ stat }}</td>
+        </thead>
+        <tbody>
+          {% for season_stats in stat_table.season %}
+            <tr>
+              {% for header, stat in season_stats.items %}
+                {% if header == 'SEASON_ID' %}
+                  <th class="text-lg-center">
+                    {% with season=season_stats.SEASON_ID season_type=stat_table.display_name %}
+                      <a class="nounderline" href="{% url 'main:player_games' player_info.PERSON_ID season season_type %}">
+                        {{ stat }}
+                      </a>
+                    {% endwith %}
+                  </th>
+                {% elif header == 'TEAM_ABBREVIATION' %}
+                  <th class="text-lg-center">
+                    {% if not season_stats.curr_team.team_id == 0 %}
+                      <a class="nounderline text-lg-center dark-grey" href="{% url 'main:teams' season_stats.TEAM_ID %}">
+                        {{ stat }}
+                      </a>
+                    {% else %}
+                      {{ stat }}
+                    {% endif %}
+                  </th>
+                {% elif header != 'TEAM_ID' %}
+                  <td>{{ stat }}</td>
+                {% endif %}
+              {% endfor %}
+            </tr>
           {% endfor %}
-        </tr>
-      </tfoot>
-    </table>
-    <br>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th class="text-lg-center">Career</th>
+            <th></th>
+            {% for header, stat in stat_table.career.items %}
+              <td>{{ stat }}</td>
+            {% endfor %}
+          </tr>
+        </tfoot>
+      </table>
+      <br>
+
+    {% else %}
+      <br/>
+      <h5>Player did not participate in any {{ stat_table.display_name }} season actions.</h5>
+    {% endif %}
   {% endfor %}
 
 {% endblock %}

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import numpy
+import numpy as np
 import simplejson
 from dateutil import parser
 from nba_api.stats.endpoints.boxscoresummaryv2 import BoxScoreSummaryV2
@@ -9,13 +9,13 @@ from nba_api.stats.endpoints.commonplayerinfo import CommonPlayerInfo
 from nba_api.stats.endpoints.commonteamroster import CommonTeamRoster
 from nba_api.stats.endpoints.leaguedashteamstats import LeagueDashTeamStats
 from nba_api.stats.endpoints.leaguegamefinder import LeagueGameFinder
+from nba_api.stats.endpoints.leagueleaders import LeagueLeaders
 from nba_api.stats.endpoints.leaguestandings import LeagueStandings
 from nba_api.stats.endpoints.playercareerstats import PlayerCareerStats
-from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
-from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from nba_api.stats.endpoints.playergamelog import PlayerGameLog
 from nba_api.stats.endpoints.teamgamelog import TeamGameLog
-from nba_api.stats.endpoints.leagueleaders import LeagueLeaders
+from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
+from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -30,11 +30,11 @@ SEASON_TYPES = {
 
 # Encoder
 def converter(obj):
-    if isinstance(obj, numpy.integer):
+    if isinstance(obj, np.integer):
         return int(obj)
-    elif isinstance(obj, numpy.floating):
+    elif isinstance(obj, np.floating):
         return float(obj)
-    elif isinstance(obj, numpy.ndarray):
+    elif isinstance(obj, np.ndarray):
         return obj.tolist()
 
     raise TypeError(repr(obj) + " is not JSON serializable")
@@ -368,10 +368,14 @@ def player_detail_api(request, player_id):
         'PLAYER_ID', 'LEAGUE_ID', 'PLAYER_AGE'
     ]
     career_stats = PlayerCareerStats(player_id, per_mode36='PerGame')
-    career_regular_season = career_stats.career_totals_regular_season.get_data_frame().iloc[0].drop(career_drop_keys)
-    career_regular_season = update_fields(career_regular_season)
-    career_post_season = career_stats.career_totals_post_season.get_data_frame().iloc[0].drop(career_drop_keys)
-    career_post_season = update_fields(career_post_season)
+    career_regular_season = career_stats.career_totals_regular_season.get_data_frame()
+    if not career_regular_season.empty:
+        career_regular_season = career_regular_season.iloc[0].drop(career_drop_keys)
+        career_regular_season = update_fields(career_regular_season)
+    career_post_season = career_stats.career_totals_post_season.get_data_frame()
+    if not career_post_season.empty:
+        career_post_season = career_post_season.iloc[0].drop(career_drop_keys)
+        career_post_season = update_fields(career_post_season)
     regular_season = career_stats.season_totals_regular_season.get_data_frame().drop(season_drop_keys, axis=1)
     regular_season = update_fields(regular_season)
     post_season = career_stats.season_totals_post_season.get_data_frame().drop(season_drop_keys, axis=1)
