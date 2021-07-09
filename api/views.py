@@ -52,7 +52,11 @@ def update_fields(df: DataFrame, single_game: bool = False) -> DataFrame:
     result = df.copy()
     for key in keys:
         if key in df.keys():
-            result[key] = round(100 * result[key], 1)
+            try:
+                if result[key][0] is not None:
+                    result[key] = round(100 * result[key], 1)
+            except (IndexError, ValueError):
+                result[key] = round(100 * result[key], 1)
 
     # Change team id type to string
     team_id_keys = ['TEAM_ID', 'TeamID']
@@ -84,7 +88,8 @@ def update_fields(df: DataFrame, single_game: bool = False) -> DataFrame:
 def clean_single_game_data(df: DataFrame) -> None:
     float_fields = ['FG_PCT', 'FG3_PCT', 'FT_PCT']
     ignore_fields = [
-        'TEAM_ID', 'PLAYER_ID', 'PLAYER_NAME', 'START_POSITION', 'COMMENT'
+        'TEAM_ID', 'PLAYER_ID', 'PLAYER_NAME', 'START_POSITION', 'COMMENT',
+        'TEAM_NAME', 'TEAM_CITY'
     ]
     time_fields = ['MIN']
     for index, row in df.iterrows():
@@ -289,7 +294,10 @@ def game_by_id_api(request, game_id):
         box_score_trad.player_stats.get_data_frame().drop(player_stats_drop_keys, axis=1),
         single_game=True
     )
-    team_stats = update_fields(box_score_trad.team_stats.get_data_frame().drop(team_stats_drop_keys, axis=1))
+    team_stats = update_fields(
+        box_score_trad.team_stats.get_data_frame().drop(team_stats_drop_keys, axis=1),
+        single_game=True
+    )
 
     # Split data to two teams
     overtime_keys = [

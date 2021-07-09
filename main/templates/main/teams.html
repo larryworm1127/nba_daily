@@ -5,8 +5,8 @@
 {% block content %}
 
   <h4>Current Regular Season</h4>
-  <table class="seasons-datatable table table-sm text-lg-center">
-    <thead class="thead-inverse">
+  <table class="seasons-datatable table table-hover text-lg-center">
+    <thead class="table-dark">
       <tr class="bg-primary text-white">
         <th class="text-lg-center">Team Name</th>
         {% for header in team_stats.keys %}
@@ -30,8 +30,8 @@
   <br>
 
   <h4>Team Roster</h4>
-  <table class="roster-datatable table table-sm text-lg-center">
-    <thead class="thead-inverse">
+  <table class="roster-datatable table table-hover">
+    <thead class="table-dark">
       <tr class="bg-primary text-white">
         <th class="text-lg-center">Player</th>
         <th class="bg-danger text-lg-center">Age</th>
@@ -48,14 +48,14 @@
       {% for player in players %}
         <tr>
           <th><a class="nounderline" href="{% url 'main:players' player.PLAYER_ID %}">{{ player.PLAYER }}</a></th>
-          <td>{{ player.AGE }}</td>
-          <td>{{ player.BIRTH_DATE }}</td>
-          <td>{{ player.POSITION }}</td>
-          <td>{{ player.NUM }}</td>
-          <td>{{ player.HEIGHT }}</td>
-          <td>{{ player.WEIGHT }}</td>
-          <td>{{ player.EXP }}</td>
-          <td>{{ player.SCHOOL }}</td>
+          <td class="text-lg-center">{{ player.AGE }}</td>
+          <td class="text-lg-center">{{ player.BIRTH_DATE }}</td>
+          <td class="text-lg-center">{{ player.POSITION }}</td>
+          <td class="text-lg-center">{{ player.NUM }}</td>
+          <td class="text-lg-center">{{ player.HEIGHT }}</td>
+          <td class="text-lg-center">{{ player.WEIGHT }}</td>
+          <td class="text-lg-center">{{ player.EXP }}</td>
+          <td class="text-lg-center">{{ player.SCHOOL }}</td>
         </tr>
       {% endfor %}
     </tbody>
@@ -63,8 +63,8 @@
   <br>
 
   <h4>Team Players Stats</h4>
-  <table class="team-player-stats-datatable table table-sm text-lg-center">
-    <thead class="thead-inverse">
+  <table class="team-player-stats-datatable table table-hover">
+    <thead class="table-dark">
       <tr class="bg-primary text-white">
         {% for header in player_stats.0.keys %}
           {% if header == 'PLAYER_NAME' %}
@@ -84,7 +84,7 @@
                 <a class="nounderline" href="{% url 'main:players' player.PLAYER_ID %}">{{ stat }}</a>
               </th>
             {% elif forloop.counter0 > 1 %}
-              <td>{{ stat }}</td>
+              <td class="text-lg-center">{{ stat }}</td>
             {% endif %}
           {% endfor %}
         </tr>
@@ -94,8 +94,8 @@
   <br>
 
   <h4>Team Coaches</h4>
-  <table class="coach-datatable table table-sm text-lg-center">
-    <thead class="thead-inverse">
+  <table class="coach-datatable table table-hover text-lg-center">
+    <thead class="table-dark">
       <tr class="bg-primary text-white">
         <th class="text-lg-center">Coach</th>
         <th class="bg-danger text-lg-center">Position</th>

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'fontawesomefree',
     'rest_framework',
     'main.apps.MainConfig',
     'api.apps.ApiConfig'

@@ -7,8 +7,8 @@
   {% for stat_table in stats.values %}
     <h4>Career {{ stat_table.display_name }} Season</h4>
     {% if stat_table.season %}
-      <table class="seasons-datatable table table-sm text-lg-center">
-        <thead class="thead-inverse">
+      <table class="seasons-datatable table table-hover text-lg-center">
+        <thead class="table-dark">
           <tr class="bg-primary text-white">
             {% for header in stat_table.season.0.keys %}
               {% if header == 'SEASON_ID' %}

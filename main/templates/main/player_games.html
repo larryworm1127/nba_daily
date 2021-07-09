@@ -6,8 +6,8 @@
 
   <h4>{{ season_type }} Season</h4>
   {% if game_log|length > 0 %}
-    <table class="player-games-datatable table table-sm text-lg-center">
-      <thead class="thead-inverse">
+    <table class="player-games-datatable table table-hover text-lg-center">
+      <thead class="table-dark">
         <tr class="bg-warning text-white">
           {% for header in game_log.0.keys %}
             {% if header == 'GAME_DATE' %}

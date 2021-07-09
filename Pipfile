@@ -21,6 +21,7 @@ djangorestframework = "*"
 numpy = "*"
 python-dateutil = "*"
 requests = "*"
+fontawesomefree = "*"
 
 [requires]
 python_version = "3.8"

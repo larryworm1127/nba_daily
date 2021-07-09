@@ -13,8 +13,8 @@
       <div class="col-lg-5">
         <h3>{{ summary.GAME_DATE_EST }}</h3>
         <br>
-        <table class="table table-sm">
-          <thead class="thead-inverse">
+        <table class="table table-hover">
+          <thead class="table-dark">
             <tr class="bg-primary text-white">
               <th class="text-lg-center">TEAM</th>
               <th class="bg-primary text-lg-center">Q1</th>
@@ -153,8 +153,8 @@
       </a>
       ({{ home_team.line_score.TEAM_WINS_LOSSES }})
     </h4>
-    <table class="table boxscores-datatable table-sm text-lg-center">
-      <thead class="thead-inverse">
+    <table class="table boxscores-datatable table-hover">
+      <thead class="table-dark">
         <tr class="bg-primary text-white">
           {% for key in home_team.player_stats.0.keys %}
             {% if key == 'PLAYER_NAME' %}
@@ -178,7 +178,7 @@
                   {% endif %}
                 </th>
               {% elif forloop.counter0 > 2 and header != 'COMMENT' %}
-                <td>{{ stat }}</td>
+                <td class="text-lg-center">{{ stat }}</td>
               {% endif %}
             {% endfor %}
           </tr>
@@ -193,7 +193,7 @@
             {% elif forloop.counter0 == 1 %}
               <td></td>
             {% elif forloop.counter0 > 2 %}
-              <td>{{ stat }}</td>
+              <td class="text-lg-center">{{ stat }}</td>
             {% endif %}
           {% endfor %}
         </tr>
@@ -210,8 +210,8 @@
       </a>
       ({{ away_team.line_score.TEAM_WINS_LOSSES }})
     </h4>
-    <table class="table boxscores-datatable table-sm text-lg-center">
-      <thead class="thead-inverse">
+    <table class="table boxscores-datatable table-hover">
+      <thead class="table-dark">
         <tr class="bg-primary text-white">
           {% for key in away_team.player_stats.0.keys %}
             {% if key == 'PLAYER_NAME' %}
@@ -235,7 +235,7 @@
                   {% endif %}
                 </th>
               {% elif forloop.counter0 > 2 and header != 'COMMENT' %}
-                <td>{{ stat }}</td>
+                <td class="text-lg-center">{{ stat }}</td>
               {% endif %}
             {% endfor %}
           </tr>
@@ -250,7 +250,7 @@
             {% elif forloop.counter0 == 1 %}
               <td></td>
             {% elif forloop.counter0 > 2 %}
-              <td>{{ stat }}</td>
+              <td class="text-lg-center">{{ stat }}</td>
             {% endif %}
           {% endfor %}
         </tr>
@@ -264,8 +264,8 @@
       {% if inactive_players|length > 0 %}
         <div class="col-lg-6">
           <h4>Inactive Players</h4>
-          <table class="table table-sm">
-            <thead class="thead-inverse">
+          <table class="table table-hover">
+            <thead class="table-dark">
               <tr class="bg-danger text-white">
                 <th class="text-lg-center">NAME</th>
                 <th class="bg-danger text-lg-center">TEAM</th>

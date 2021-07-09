@@ -46,11 +46,6 @@ li a:active {
     padding-left: 50px;
 }
 
-.reddit-boxes {
-    font-size: 18px;
-    color: #2B2B2B;
-}
-
 body {
     padding-bottom: 70px;
 }
@@ -163,8 +158,12 @@ body {
     margin-top: 10px;
 }
 
-.stats-table {
+.player-stats-table {
     width: 75%
+}
+
+.team-stats-table {
+    width: 80%
 }
 
 .stats-table-extended {
@@ -192,7 +191,7 @@ body {
 }
 
 .coach-datatable {
-    width: 45%;
+    width: 40%;
 }
 
 #game-detail {

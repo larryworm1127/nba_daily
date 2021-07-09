@@ -6,10 +6,10 @@
 {% load tags %}
 
 {% block body %}
-  <div class="container stats-table-extended">
+  <div class="container-fluid stats-table-extended">
     <br>
-    <table class="player-list-table table table-sm text-lg-center">
-      <thead class="thead-inverse">
+    <table class="player-list-table table table-hover">
+      <thead class="table-dark">
         <tr class="bg-primary text-white">
           {% for key in data.0.keys %}
             {% if key == 'PLAYER' %}
@@ -33,7 +33,7 @@
                   <a class="nounderline dark-grey" href="#">{{ stat }}</a>
                 </th>
               {% elif forloop.counter0 > 0 %}
-                <td>{{ stat }}</td>
+                <td class="text-lg-center">{{ stat }}</td>
               {% endif %}
             {% endfor %}
           </tr>

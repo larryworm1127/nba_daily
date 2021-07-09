@@ -28,7 +28,10 @@ $(document).ready(function () {
       $(".player-games-datatable").wrap("<div class='table-responsive'></div>");
     },
 
-    paging: false,
+    pagingType: "full_numbers",
+    paging: true,
+    pageLength: 15,
+    "bLengthChange": false,
     "bFilter": false,
     "bInfo": false,
     /* Disable initial sort */
@@ -62,7 +65,10 @@ $(document).ready(function () {
       $(".team-games-datatable").wrap("<div class='table-responsive'></div>");
     },
 
-    paging: false,
+    pagingType: "full_numbers",
+    paging: true,
+    pageLength: 15,
+    "bLengthChange": false,
     "bFilter": false,
     "bInfo": false,
     /* Disable initial sort */

@@ -13,19 +13,31 @@
         <br>
         <form id="dateform" method="post" class="form-inline text-lg-center">
           {% csrf_token %}
-          <a href="{% url 'main:score' date|get_date:-1 %}" class="btn btn-primary btn-mds"><i class="fa fa-caret-left" aria-hidden="true"></i></a> &nbsp;
-          <label for="datepicker"></label>
-          <input type="text" name="date" id="datepicker" class="form-control form-control-lg" placeholder="&#xf073; &nbsp;{{ date }}">
-          &nbsp; <a href="{% url 'main:score' date|get_date:1 %}" class="btn btn-primary btn-md"><i class="fa fa-caret-right" aria-hidden="true"></i></a>
+          <div class="row g-3">
+            <div class="col-lg-2">
+              <a href="{% url 'main:score' date|get_date:-1 %}" class="btn btn-primary">
+                <i class="fas fa-caret-left" aria-hidden="true"></i>
+              </a>
+            </div>
+
+            <div class="col-lg-8">
+              <input type="text" name="date" id="datepicker" class="form-control form-control-lg" placeholder="&#xf073; &nbsp;{{ date }}">
+            </div>
+            <div class="col-lg-2">
+              <a href="{% url 'main:score' date|get_date:1 %}" class="btn btn-primary btn-md">
+                <i class="fas fa-caret-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
         </form>
 
         <div class="list-group">
           {% if games %}
             {% for game_id, data in games.items %}
-              <a class="score-size text-xs-center nounderline list-group-item list-group-item-action" href="{% url 'main:boxscore' game_id %}">
+              <a class="score-size nounderline list-group-item" href="{% url 'main:boxscore' game_id %}">
                 <div class="row">
                   {% if data.line_score.0.PTS > data.line_score.1.PTS %}
-                    <div class="col-xs-4">
+                    <div class="col text-lg-center">
                       <b class="winning-team">
                         {% with 'images/'|add:data.line_score.0.TEAM_ID|add:'.png' as logo_path %}
                           <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
@@ -36,14 +48,14 @@
                       {{ data.line_score.0.TEAM_WINS_LOSSES }}
                     </div>
 
-                    <div class="col-xs-4">
+                    <div class="col text-lg-center">
                       <div class="final-text">Final</div>
                       {% if data.broadcast.NATL_TV_BROADCASTER_ABBREVIATION != None %}
                         <div class="broadcaster">{{ data.broadcast.NATL_TV_BROADCASTER_ABBREVIATION }}</div>
                       {% endif %}
                     </div>
 
-                    <div class="col-xs-4">
+                    <div class="col text-lg-center">
                       {% with 'images/'|add:data.line_score.1.TEAM_ID|add:'.png' as logo_path %}
                         <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
                       {% endwith %}
@@ -53,7 +65,7 @@
                     </div>
 
                   {% else %}
-                    <div class="col-xs-4">
+                    <div class="col text-lg-center">
                       {% with 'images/'|add:data.line_score.0.TEAM_ID|add:'.png' as logo_path %}
                         <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
                       {% endwith %}
@@ -62,7 +74,7 @@
                       {{ data.line_score.0.TEAM_WINS_LOSSES }}
                     </div>
 
-                    <div class="col-xs-4">
+                    <div class="col text-lg-center">
                       {% if data.broadcast.GAME_STATUS_TEXT == 'Final' %}
                         <div class="final-text">Final</div>
                       {% else %}
@@ -75,7 +87,7 @@
                       <div class="broadcaster">{{ data.broadcast.NATL_TV_BROADCASTER_ABBREVIATION }}</div>
                     </div>
 
-                    <div class="col-xs-4">
+                    <div class="col text-lg-center">
                       <b class="winning-team">
                         {% with 'images/'|add:data.line_score.1.TEAM_ID|add:'.png' as logo_path %}
                           <img class="team-logo" alt="team-logo" src="{% static logo_path %}">
