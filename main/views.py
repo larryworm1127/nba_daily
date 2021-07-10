@@ -10,6 +10,7 @@ import requests
 from dateutil import parser
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 
 from .forms import DateForm
 
@@ -51,6 +52,20 @@ def render_score_page(request, page: str, date: datetime.date, title: str):
         'games': games,
     }
     return render(request, page, context)
+
+
+@require_POST
+def search(request):
+    """Search result view.
+    """
+    if request.method != 'POST':
+        return Exception("Shouldn't reach here!")
+
+    search_type = request.POST['type']
+    search_name = request.POST['name']
+    data = requests.get(f'http://{request.get_host()}/api/search/{search_type}/{search_name}')
+
+    return render(request, 'main/search.html', data.json())
 
 
 # ==============================================================================

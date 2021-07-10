@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List, Dict
 
 import numpy as np
 import simplejson
@@ -16,6 +17,8 @@ from nba_api.stats.endpoints.playergamelog import PlayerGameLog
 from nba_api.stats.endpoints.teamgamelog import TeamGameLog
 from nba_api.stats.endpoints.teaminfocommon import TeamInfoCommon
 from nba_api.stats.endpoints.teamplayerdashboard import TeamPlayerDashboard
+from nba_api.stats.static.players import *
+from nba_api.stats.static.teams import *
 from pandas import DataFrame
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -108,6 +111,19 @@ def clean_single_game_data(df: DataFrame) -> None:
         if key not in ignore_fields and key not in float_fields and \
                 key not in time_fields:
             df[key] = df[key].astype(int)
+
+
+def remove_duplicate(lst: List[Dict]) -> List[Dict]:
+    """Returns a list free of duplicates of given list
+    """
+    seen_ids = []
+    result = []
+    for item in lst:
+        if item['id'] not in seen_ids:
+            result.append(item)
+            seen_ids.append(item['id'])
+
+    return result
 
 
 # API views
@@ -479,3 +495,53 @@ def player_list_api(request):
     """
     data = update_fields(LeagueLeaders(per_mode48='PerGame').league_leaders.get_data_frame())
     return Response(data.to_dict(orient='records'))
+
+
+@api_view(['GET'])
+def search_api(request, search_type: str, name: str):
+    """
+    search_type values: ['player', 'team']
+    name values:
+        - Player:
+            - Full name (e.g. "Kevin Durant")
+            - First/Last name (e.g. "Kevin", or "Durant")
+            - Player ID (e.g. 201939)
+        - Team:
+            - Full name (e.g. "Atlanta Hawks")
+            - Team City (e.g. "Atlanta")
+            - Team Abbreviation (e.g. "ATL")
+            - Team State (e.g. "Ohio")
+            - Team ID (e.g. 1610612737)
+    """
+    if search_type == 'player':
+        if name.isnumeric():
+            player = find_player_by_id(int(name))
+            return Response({'result': [player], 'type': search_type})
+
+        split_name = name.split(" ", 1)
+        result = []
+        if len(split_name) == 1:
+            result.extend(find_players_by_first_name(split_name[0]))
+            result.extend(find_players_by_last_name(split_name[0]))
+        else:
+            result.extend(find_players_by_full_name(name))
+
+        return Response({'result': remove_duplicate(result), 'type': search_type})
+    else:
+        if name.isnumeric():
+            team = find_team_name_by_id(int(name))
+            return Response({'result': [team], 'type': search_type})
+
+        split_name = name.split(" ", 1)
+        result = []
+        if len(split_name) == 1:
+            result.extend(find_teams_by_city(split_name[0]))
+            result.extend(find_teams_by_state(split_name[0]))
+            result.extend(find_teams_by_nickname(split_name[0]))
+            by_abb = find_team_by_abbreviation(split_name[0])
+            if by_abb is not None:
+                result.append(by_abb)
+        else:
+            result.extend(find_teams_by_full_name(name))
+
+        return Response({'result': remove_duplicate(result), 'type': search_type})

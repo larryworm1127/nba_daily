@@ -12,7 +12,8 @@ app_name = 'main'
 # Score/Index pages URL
 urlpatterns = [
     path('', views.index, name='index'),
-    path('score/<str:date>', views.score, name='score')
+    path('score/<str:date>', views.score, name='score'),
+    path('search', views.search, name='search')
 ]
 
 # Players pages URL

@@ -31,8 +31,10 @@
   <!-- ================================================ -->
   <nav class="navbar navbar-static-top navbar-expand-lg navbar-dark bg-primary" id="mainNavBar">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/"><img class="banner-logo" src="{% static 'images/logo.png' %}" alt="logo">NBA Daily</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="/">
+        <img class="banner-logo" src="{% static 'images/logo.png' %}" alt="logo">NBA Daily
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="mainNav">
@@ -48,8 +50,14 @@
           </li>
         </ul>
       </div>
-      <form action="#" method="POST" class="d-flex">
-        <input type="text" name="searchname" class="form-control me-2" placeholder="Search Player or Team...">
+      <form action="/search" method="POST" class="d-flex" id="searchForm">
+        {% csrf_token %}
+        <select class="form-select" name="type" id="searchType" required>
+          <option selected disabled value="">Select Type...</option>
+          <option value="player">Player</option>
+          <option value="team">Team</option>
+        </select>
+        <input type="text" name="name" class="form-control me-2" id="searchName" placeholder="Search Player or Team..." required>
         <button class="btn btn-outline-light" type="submit">Search</button>
       </form>
     </div>
@@ -80,6 +88,6 @@
   <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
   <script src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/natural.js"></script>
-  <script src="{% static 'js/table_sorting.js' %}"></script>
-  <script src="{% static 'js/datePicker.js' %}"></script>
+  <script src="{% static 'js/tableSorting.js' %}"></script>
+  <script src="{% static 'js/formControl.js' %}"></script>
 </body>

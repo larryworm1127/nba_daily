@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+
+{% block title %}Search Result{% endblock %}
+
+{% load static %}
+{% load filters %}
+
+{% block body %}
+
+  <div class="container">
+    <br>
+    {% if type == "player" %}
+      {% if not result %}
+        <h4>Player not found. Player search for allows the following.</h4>
+        <ul>
+          <li>Full name (e.g. "Kevin Durant")</li>
+          <li>First/Last name (e.g. "Kevin", or "Durant")</li>
+          <li>Player ID (e.g. 201939)</li>
+        </ul>
+      {% else %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr class="bg-primary text-white">
+                <th>Player</th>
+                <th>Is Active</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for player in result %}
+                <tr>
+                  <th><a class="nounderline" href="{% url 'main:players' player.id %}">{{ player.full_name }}</a></th>
+                  <td>{{ player.is_active }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    {% else %}
+      {% if not result %}
+        <h4>Team not found. Team search for allows the following.</h4>
+        <ul>
+          <li>Team City (e.g. "Atlanta")</li>
+          <li>Team Abbreviation (e.g. "ATL")</li>
+          <li>Team State (e.g. "Ohio")</li>
+          <li>Team ID (e.g. 1610612737)</li>
+        </ul>
+      {% else %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr class="bg-primary text-white">
+                <th>Team</th>
+                <th>Team Abbreviation</th>
+                <th>State</th>
+                <th>Year Founded</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {% for team in result %}
+                  <th><a class="nounderline" href="{% url 'main:teams' team.id %}">{{ team.full_name }}</a></th>
+                  <td>{{ team.abbreviation }}</td>
+                  <td>{{ team.state }}</td>
+                  <td>{{ team.year_founded }}</td>
+                {% endfor %}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+
+{% endblock %}

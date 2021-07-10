@@ -10,6 +10,7 @@ from . import views
 app_name = 'api'
 
 urlpatterns = [
+    path('search/<str:search_type>/<str:name>', views.search_api),
     path('standings/', views.standings_api),
     path('team_list/', views.team_list_api),
     path('player_list', views.player_list_api),
