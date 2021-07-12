@@ -31,8 +31,8 @@
           </div>
         </form>
 
-        <div class="list-group">
-          {% if games %}
+        {% if games %}
+          <div class="list-group">
             {% for game_id, data in games.items %}
               <a class="score-size nounderline list-group-item" href="{% url 'main:boxscore' game_id %}">
                 <div class="row">
@@ -101,15 +101,15 @@
                 </div>
               </a>
             {% endfor %}
+          </div>
 
-          {% else %}
-            <h4 class="text-lg-center">No games scheduled on this date</h4>
-            <br>
-            <div style="text-align: center">
-              <a class="btn btn-primary btn-mds" href="#">Go To Most Recent Game</a>
-            </div>
-          {% endif %}
-        </div>
+        {% else %}
+          <h4 class="text-lg-center">No games scheduled on this date</h4>
+          <br>
+          <div style="text-align: center">
+            <a class="btn btn-primary btn-mds" href="#">Go To Most Recent Game</a>
+          </div>
+        {% endif %}
 
       </div>
     </div>
